@@ -72,10 +72,10 @@ exit:
         // Create your entries here, or elsewhere
         // You can create your entries whenever/wherever you feel like it
     }
-
+ 
     int     main(void)
     {
-        PluginMenu *menu = new PluginMenu("Action Replay", 0, 5, 1,
+        PluginMenu *menu = new PluginMenu("Action Replay", 0, 6, 0,
                                             "A blank template plugin.\nGives you access to the ActionReplay and others tools.");
 
         // Synnchronize the menu with frame event

@@ -2,8 +2,8 @@ Author: Nanquitas
 
 Version: # Plugin version
     Major: 0
-    Minor: 5
-    Revision: 1
+    Minor: 6
+    Revision: 0
 
 Targets: # Low TitleId of games which are compatibles with this plugin (0 for all)
 
