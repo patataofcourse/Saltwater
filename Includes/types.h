@@ -47,58 +47,42 @@ typedef void (*voidfn)(void);
 /// Creates a bitmask from a bit number.
 #define BIT(n) (1U<<(n))
 
-/// Aligns a struct (and other types?) to m, making sure that the size of the struct is a multiple of m.
-#define ALIGN(m)   __attribute__((aligned(m)))
-/// Packs a struct (and other types?) so it won't include padding bytes.
-#define PACKED     __attribute__((packed))
-#define UNUSED     __attribute__((unused))
+// Fix intellisense errors
+#ifdef _MSC_VER
 
-#ifndef LIBCTRU_NO_DEPRECATION
-/// Flags a function as deprecated.
-#define DEPRECATED __attribute__ ((deprecated))
+    #define ALIGN(m)
+    #define PACKED
+    #define USED
+    #define UNUSED
+    #define DEPRECATED
+    #define NAKED
+    #define NORETURN
+
 #else
-/// Flags a function as deprecated.
-#define DEPRECATED
-#endif
 
-#define USED        __attribute__((used))
-#define UNUSED      __attribute__((unused))
+    /// Aligns a struct (and other types?) to m, making sure that the size of the struct is a multiple of m.
+    #define ALIGN(m)   __attribute__((aligned(m)))
+    /// Packs a struct (and other types?) so it won't include padding bytes.
+    #define PACKED     __attribute__((packed))
+
+    #define USED       __attribute__((used))
+    #define UNUSED     __attribute__((unused))
+
+    #ifndef LIBCTRU_NO_DEPRECATION
+        /// Flags a function as deprecated.
+        #define DEPRECATED __attribute__ ((deprecated))
+    #else
+        /// Flags a function as deprecated.
+        #define DEPRECATED
+    #endif
+    #define NAKED __attribute__((naked))
+    #define NORETURN __attribute__((noreturn))
+
+#endif
 
 #define CUR_THREAD_HANDLE       0xFFFF8000
 #define CUR_PROCESS_HANDLE      0xFFFF8001
 
-#define MPCORE_REGS_BASE        (0x17E00000 | (1u << 31))
-#define MPCORE_SCU_CFG          (*(vu32 *)(MPCORE_REGS_BASE + 4))
-#define MPCORE_INT_ACK          (*(vu32 *)(MPCORE_REGS_BASE + 0x10C))
-
-#define MPCORE_GID_REGS_BASE    (MPCORE_REGS_BASE + 0x1000)
-#define MPCORE_GID_SGI          (*(vu32 *)(MPCORE_GID_REGS_BASE + 0xF00))
-
-#define CFG11_REGS_BASE           (0x10140000 | (1u << 31))
-#define CFG11_WIFICNT             (*(vu8  *)(CFG11_REGS_BASE + 0x180))
-#define CFG11_MPCORE_CFG          (*(vu16 *)(CFG11_REGS_BASE + 0xFFC))
-#define CFG11_MPCORE_CLKCNT       (*(vu16 *)(CFG11_REGS_BASE + 0x1300))
-
-#define L2C_REGS_BASE           (0x17E10000 | (1u << 31))
-#define L2C_CTRL                (*(vu32 *)(L2C_REGS_BASE + 0x100))
-
 /// Structure representing CPU registers
-typedef struct {
-	u32 r[13]; ///< r0-r12.
-	u32 sp;    ///< sp.
-	u32 lr;    ///< lr.
-	u32 pc;    ///< pc. May need to be adjusted.
-	u32 cpsr;  ///< cpsr.
-} CpuRegisters;
-
-/// Structure representing FPU registers
-typedef struct {
-	union{
-		double d[16]; ///< d0-d15.
-		float  f[32]; ///< f0-f31.
-	};
-	u32 fpscr;        ///< fpscr.
-	u32 fpexc;        ///< fpexc.
-} FpuRegisters;
 
 #endif

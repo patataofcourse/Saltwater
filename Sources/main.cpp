@@ -1,6 +1,6 @@
-#include "3ds.h"
+#include <3ds.h>
 #include "csvc.h"
-#include "CTRPluginFramework.hpp"
+#include <CTRPluginFramework.hpp>
 
 #include <vector>
 
@@ -71,11 +71,21 @@ exit:
     {
         // Create your entries here, or elsewhere
         // You can create your entries whenever/wherever you feel like it
+        
+        // Example entry
+        /*menu += new MenuEntry("Test", nullptr, [](MenuEntry *entry)
+        {
+            std::string body("What's the answer ?\n");
+
+            body += std::to_string(42);
+
+            MessageBox("UA", body)();
+        });*/
     }
- 
+
     int     main(void)
     {
-        PluginMenu *menu = new PluginMenu("Action Replay", 0, 6, 0,
+        PluginMenu *menu = new PluginMenu("Action Replay", 0, 7, 0,
                                             "A blank template plugin.\nGives you access to the ActionReplay and others tools.");
 
         // Synnchronize the menu with frame event

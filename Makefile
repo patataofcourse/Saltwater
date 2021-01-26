@@ -7,34 +7,32 @@ endif
 TOPDIR 		?= 	$(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
+CTRPFLIB	?=	$(DEVKITPRO)/libctrpf
+
 TARGET		:= 	$(notdir $(CURDIR))
-PLGINFO 	:= 	$(notdir $(TOPDIR)).plgInfo
+PLGINFO 	:= 	CTRPluginFramework.plgInfo
 
 BUILD		:= 	Build
 INCLUDES	:= 	Includes
-LIBDIRS		:= 	$(TOPDIR)
 SOURCES 	:= 	Sources
-IP			:=  5
-FTP_HOST 	:=	192.168.1.
-FTP_PORT	:=	"5000"
-FTP_PATH	:=	"luma/plugins/"
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH		:=	-march=armv6k -mlittle-endian -mtune=mpcore -mfloat-abi=hard -mtp=soft
+ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS		:=	-Os -mword-relocations \
-				-fomit-frame-pointer -ffunction-sections -fno-strict-aliasing \
-				$(ARCH)
+CFLAGS		:=	$(ARCH) -Os -mword-relocations \
+				-fomit-frame-pointer -ffunction-sections -fno-strict-aliasing
 
 CFLAGS		+=	$(INCLUDE) -DARM11 -D_3DS 
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
-ASFLAGS		:= $(ARCH)
+ASFLAGS		:=	$(ARCH)
 LDFLAGS		:= -T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,--gc-sections,--strip-discarded,--strip-debug
 
-LIBS		:= -lCTRPluginFramework
+LIBS		:= -lctrpf -lctru
+LIBDIRS		:= 	$(CTRPFLIB) $(CTRULIB) $(PORTLIBS)
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -53,7 +51,6 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 CFILES			:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES			:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-#	BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 
 export LD 		:= 	$(CXX)
 export OFILES	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
@@ -63,7 +60,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I $(CURDIR)/$(dir) ) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L $(dir)/lib)
 
-.PHONY: $(BUILD) re clean all install send
+.PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
 all: $(BUILD)
@@ -74,16 +71,10 @@ $(BUILD):
 
 #---------------------------------------------------------------------------------
 clean:
-	@echo clean ...
-	@-rm -fr $(BUILD) $(OUTPUT).3gx
+	@echo clean ... 
+	@rm -fr $(BUILD) $(OUTPUT).3gx
 
 re: clean all
-
-
-send:
-	@echo "Sending plugin over FTP"
-	@$(CURDIR)/sendfile.py $(TARGET).3gx $(FTP_PATH) "$(FTP_HOST)$(IP)" $(FTP_PORT)
-
 
 #---------------------------------------------------------------------------------
 
@@ -106,10 +97,11 @@ $(OUTPUT).3gx : $(OFILES)
 
 #---------------------------------------------------------------------------------
 %.3gx: %.elf
+#---------------------------------------------------------------------------------
 	@echo creating $(notdir $@)
-	@3gxtool.exe -s $(OUTPUT).elf $(TOPDIR)/$(PLGINFO) $@
+	@3gxtool -s $(word 1, $^) $(TOPDIR)/$(PLGINFO) $@
 
 -include $(DEPENDS)
 
-#---------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------
 endif
