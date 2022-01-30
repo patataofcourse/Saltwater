@@ -4,6 +4,8 @@
 
 #include <vector>
 
+char* cheerReadersOriginal = new char[0x13];
+
 namespace CTRPluginFramework
 {
     // This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
@@ -49,7 +51,7 @@ namespace CTRPluginFramework
         }
 
         svcUnmapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, textTotalSize);
-exit:
+        exit:
         svcCloseHandle(processHandle);
     }
 
@@ -58,6 +60,12 @@ exit:
     void    PatchProcess(FwkSettings &settings)
     {
         ToggleTouchscreenForceOn();
+
+        // Patches Cheer Readers to say "It's up to you" instead of "1, 2, 3"
+        u32 address = 0x50a8d6;
+        u32 patchSize = 0x13;
+        char patch[patchSize] = {0x72, 0x76, 0x6c, 0x42, 0x6f, 0x6f, 0x6b, 0x4c, 0x5f, 0x6c, 0x79, 0x6c, 0x69, 0x63, 0x5f, 0x68, 0x65, 0x79, 0x00};
+        Process::Patch(address, patch, patchSize, cheerReadersOriginal);
     }
 
     // This function is called when the process exits
@@ -73,20 +81,17 @@ exit:
         // You can create your entries whenever/wherever you feel like it
         
         // Example entry
-        /*menu += new MenuEntry("Test", nullptr, [](MenuEntry *entry)
+        menu += new MenuEntry("Cheer Readers original value", nullptr, [](MenuEntry *entry)
         {
-            std::string body("What's the answer ?\n");
+            std::string body(cheerReadersOriginal);
 
-            body += std::to_string(42);
-
-            MessageBox("UA", body)();
-        });*/
+            MessageBox("Cheer Readers original value", body)();
+        });
     }
 
     int     main(void)
     {
-        PluginMenu *menu = new PluginMenu("Action Replay", 0, 7, 1,
-                                            "A blank template plugin.\nGives you access to the ActionReplay and others tools.");
+        PluginMenu *menu = new PluginMenu("Some thing or another", 0, 0, 1, "h");
 
         // Synnchronize the menu with frame event
         menu->SynchronizeWithFrame(true);

@@ -8,8 +8,8 @@ Version: # Plugin version
 Targets:
   0018a400
 
-Title: CTRPF - Blank Template
+Title: Saffron
 
-Summary: A CTRPF Plugin, with a lot of tools
+Summary: A patch for playing Rhythm Heaven Megamix mods
 
-Description: rgmpatch but good
+Description: Rhythm Heaven/Paradise Megamix patch, successor to RHMPatch
