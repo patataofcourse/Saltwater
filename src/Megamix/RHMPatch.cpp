@@ -4,7 +4,7 @@
 using namespace CTRPluginFramework;
 
 namespace Megamix {
-    char* rhmpatchBuffer = new char[0x2000000]; //Should be 2MB
+    char* rhmpatchBuffer = new char[0x200000]; //Should be 200KB
 
     int LoadC00Bin(const std::string &path="_:/rhmm/C00.bin") {
         File* file = new File();
