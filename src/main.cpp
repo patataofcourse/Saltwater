@@ -8,7 +8,7 @@
 
 char* cheerReadersOriginal = new char[0x13];
 int C00Result;
-Megamix::Region* region = new Megamix::Region();
+u64 region = CTRPluginFramework::Process::GetTitleID();
 
 namespace CTRPluginFramework
 {
@@ -69,7 +69,7 @@ namespace CTRPluginFramework
         C00Result = Megamix::LoadC00Bin();
 
         // Patches Cheer Readers to say "It's up to you" instead of "1, 2, 3"
-        u32 address = region->CheerLeadersPatch();
+        u32 address = Region::CheerReadersPatch(region);
         u32 patchSize = 0x13;
         char patch[patchSize] = {0x72, 0x76, 0x6c, 0x42, 0x6f, 0x6f, 0x6b, 0x4c, 0x5f, 0x6c, 0x79, 0x6c, 0x69, 0x63, 0x5f, 0x68, 0x65, 0x79, 0x00};
         Process::Patch(address, patch, patchSize, cheerReadersOriginal);
