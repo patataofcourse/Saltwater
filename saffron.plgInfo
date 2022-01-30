@@ -6,8 +6,10 @@ Version: # Plugin version
     Revision: 1
 
 Targets:
-  - 0x0018a400 
+  - 0x00155a00
+  - 0x0018a400
   - 0x0018a500
+  - 0x0018a600
 
 Title: Saffron
 

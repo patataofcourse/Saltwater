@@ -8,7 +8,7 @@
 
 char* cheerReadersOriginal = new char[0x13];
 int C00Result;
-u64 region = CTRPluginFramework::Process::GetTitleID();
+u32 region;
 
 namespace CTRPluginFramework
 {
@@ -65,6 +65,9 @@ namespace CTRPluginFramework
     {
         ToggleTouchscreenForceOn();
 
+        // Init region
+        region = CTRPluginFramework::Process::GetTitleID();
+
         // RHMPatch recreation
         C00Result = Megamix::LoadC00Bin();
 
@@ -103,6 +106,16 @@ namespace CTRPluginFramework
             sprintf(out, "%d", C00Result);
 
             MessageBox("C00.bin result", std::string(out))();
+        });
+
+        // Example entry
+        menu += new MenuEntry("Title ID", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[5];
+
+            sprintf(out, "%x", region);
+
+            MessageBox("Title ID / region", std::string(out))();
         });
     }
 

@@ -4,10 +4,10 @@
 namespace Region {
 
     enum {
-        US = 0x000400000018a400,
-        EU = 0x000400000018a500,
-        JP = 0x0004000000155a00,
-        K0 = 0x000400000018A600,
+        US = 0x18a400,
+        EU = 0x18a500,
+        JP = 0x155a00,
+        K0 = 0x18a600,
     };
 
     u32 CheerReadersPatch(u64 region) {

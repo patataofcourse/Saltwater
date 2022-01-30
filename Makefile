@@ -10,7 +10,7 @@ include $(DEVKITARM)/3ds_rules
 CTRPFLIB	?=	$(DEVKITPRO)/libctrpf
 
 TARGET		:= 	$(notdir $(CURDIR))
-PLGINFO 	:= 	megamix_betterpatch.plgInfo
+PLGINFO 	:= 	saffron.plgInfo
 
 BUILD		:= 	build
 INCLUDES	:= 	include
