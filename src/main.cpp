@@ -4,7 +4,10 @@
 
 #include <vector>
 
+#include "Megamix.hpp"
+
 char* cheerReadersOriginal = new char[0x13];
+int C00Result;
 
 namespace CTRPluginFramework
 {
@@ -61,6 +64,9 @@ namespace CTRPluginFramework
     {
         ToggleTouchscreenForceOn();
 
+        // RHMPatch recreation
+        C00Result = Megamix::LoadC00Bin();
+
         // Patches Cheer Readers to say "It's up to you" instead of "1, 2, 3"
         u32 address = 0x50a8d6;
         u32 patchSize = 0x13;
@@ -86,6 +92,16 @@ namespace CTRPluginFramework
             std::string body(cheerReadersOriginal);
 
             MessageBox("Cheer Readers original value", body)();
+        });
+
+        // Example entry
+        menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[5];
+
+            sprintf(out, "%d", C00Result);
+
+            MessageBox("C00.bin result", std::string(out))();
         });
     }
 

@@ -14,7 +14,7 @@ PLGINFO 	:= 	megamix_betterpatch.plgInfo
 
 BUILD		:= 	build
 INCLUDES	:= 	include
-SOURCES 	:= 	src
+SOURCES 	:= 	src src/Megamix
 
 #---------------------------------------------------------------------------------
 # options for code generation
