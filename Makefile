@@ -10,11 +10,11 @@ include $(DEVKITARM)/3ds_rules
 CTRPFLIB	?=	$(DEVKITPRO)/libctrpf
 
 TARGET		:= 	$(notdir $(CURDIR))
-PLGINFO 	:= 	CTRPluginFramework.plgInfo
+PLGINFO 	:= 	megamix_betterpatch.plgInfo
 
-BUILD		:= 	Build
-INCLUDES	:= 	Includes
-SOURCES 	:= 	Sources
+BUILD		:= 	build
+INCLUDES	:= 	include
+SOURCES 	:= 	src
 
 #---------------------------------------------------------------------------------
 # options for code generation

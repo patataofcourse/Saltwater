@@ -1,0 +1,15 @@
+Author: patataofcourse, rhmodding
+
+Version: # Plugin version
+    Major: 0
+    Minor: 0
+    Revision: 1
+
+Targets:
+  0018a400
+
+Title: CTRPF - Blank Template
+
+Summary: A CTRPF Plugin, with a lot of tools
+
+Description: rgmpatch but good
