@@ -7,7 +7,7 @@
 #include "Megamix.hpp"
 
 char* cheerReadersOriginal = new char[0x13];
-int C00Result;
+int* C00Result;
 u32 region;
 
 namespace CTRPluginFramework
@@ -68,9 +68,6 @@ namespace CTRPluginFramework
         // Init region
         region = CTRPluginFramework::Process::GetTitleID();
 
-        // RHMPatch recreation
-        C00Result = Megamix::LoadC00Bin();
-
         // Patches Cheer Readers to say "It's up to you" instead of "1, 2, 3"
         u32 address = Region::CheerReadersPatch(region);
         u32 patchSize = 0x13;
@@ -103,9 +100,9 @@ namespace CTRPluginFramework
         {
             char* out = new char[5];
 
-            sprintf(out, "%d", C00Result);
+            sprintf(out, "%d - %d", C00Result[0], C00Result[1]);
 
-            MessageBox("C00.bin result", std::string(out))();
+            MessageBox("C00.bin results: Open - Read", std::string(out))();
         });
 
         // Example entry
@@ -116,6 +113,16 @@ namespace CTRPluginFramework
             sprintf(out, "%x", region);
 
             MessageBox("Title ID / region", std::string(out))();
+        });
+
+        // Example entry
+        menu += new MenuEntry("RHMPatch address shit", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[5];
+
+            sprintf(out, "%08x", C00Result[2]);
+
+            MessageBox("C00.bin results: Open - Read", std::string(out))();
         });
     }
 
