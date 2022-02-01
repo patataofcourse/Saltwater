@@ -2,8 +2,7 @@
 #define RHMPATCH_H
 
 namespace Megamix {
-    int* LoadC00Bin(const std::string &path="_:/rhmm/C00.bin");
-    void PatchTickflowAddresses(u64 region);
+    int LoadC00Bin(const std::string &path="_:/rhmm/C00.bin");
 }
 
 #endif
