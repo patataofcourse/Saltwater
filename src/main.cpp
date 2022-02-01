@@ -70,6 +70,7 @@ namespace CTRPluginFramework
 
         // RHMPatch recreation
         C00Result = Megamix::LoadC00Bin();
+        Megamix::PatchTickflowAddresses(region);
 
         // Patches Cheer Readers to say "It's up to you" instead of "1, 2, 3"
         u32 address = Region::CheerReadersPatch(region);
@@ -101,7 +102,7 @@ namespace CTRPluginFramework
         // Example entry
         menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
         {
-            char* out = new char[5];
+            char* out = new char[10];
 
             sprintf(out, "%d", C00Result);
 
@@ -109,17 +110,26 @@ namespace CTRPluginFramework
         });
 
         // Example entry
-        menu += new MenuEntry("Title ID", nullptr, [](MenuEntry *entry)
+        menu += new MenuEntry("RHMPatch location", nullptr, [](MenuEntry *entry)
         {
-            char* out = new char[5];
+            char* out = new char[10];
 
-            sprintf(out, "%x", region);
+            sprintf(out, "%x", Megamix::rhmpatchBuffer);
 
-            MessageBox("Title ID / region", std::string(out))();
+            MessageBox("RHMPatch location", std::string(out))();
+        });
+
+        menu += new MenuEntry("RHMPatch random bytes", nullptr, [](MenuEntry *entry){
+            char* out = new char[0x10];
+
+            sprintf(out, "%x %x %x %x", Megamix::rhmpatchBuffer[0x4F18], 
+                Megamix::rhmpatchBuffer[0x2DD8], Megamix::rhmpatchBuffer[0x1428], Megamix::rhmpatchBuffer[4]);
+
+            MessageBox("doc's c00 - 6c f2 96 dc", std::string(out))();
         });
     }
 
-    int     main(void)
+    int main(void)
     {
         PluginMenu *menu = new PluginMenu("Some thing or another", 0, 0, 1, "h");
 
