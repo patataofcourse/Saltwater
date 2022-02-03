@@ -6,7 +6,6 @@
 
 #include "Megamix.hpp"
 
-char* cheerReadersOriginal = new char[0x13];
 int C00Result;
 u32 region;
 
@@ -69,14 +68,10 @@ namespace CTRPluginFramework
         region = CTRPluginFramework::Process::GetTitleID();
 
         // RHMPatch recreation
-        C00Result = Megamix::LoadC00Bin();
-        Megamix::PatchTickflowAddresses(region);
-
-        // Patches Cheer Readers to say "It's up to you" instead of "1, 2, 3"
-        u32 address = Region::CheerReadersPatch(region);
-        u32 patchSize = 0x13;
-        char patch[patchSize] = {0x72, 0x76, 0x6c, 0x42, 0x6f, 0x6f, 0x6b, 0x4c, 0x5f, 0x6c, 0x79, 0x6c, 0x69, 0x63, 0x5f, 0x68, 0x65, 0x79, 0x00};
-        Process::Patch(address, patch, patchSize, cheerReadersOriginal);
+        C00Result = Megamix::LoadC00Bin(region);
+        if (C00Result == 0) {
+            Megamix::PatchTickflowAddresses(region);
+        }
     }
 
     // This function is called when the process exits
@@ -88,17 +83,6 @@ namespace CTRPluginFramework
 
     void    InitMenu(PluginMenu &menu)
     {
-        // Create your entries here, or elsewhere
-        // You can create your entries whenever/wherever you feel like it
-        
-        // Example entry
-        menu += new MenuEntry("Cheer Readers original value", nullptr, [](MenuEntry *entry)
-        {
-            std::string body(cheerReadersOriginal);
-
-            MessageBox("Cheer Readers original value", body)();
-        });
-
         // Example entry
         menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
         {
@@ -107,25 +91,6 @@ namespace CTRPluginFramework
             sprintf(out, "%d", C00Result);
 
             MessageBox("C00.bin result", std::string(out))();
-        });
-
-        // Example entry
-        menu += new MenuEntry("RHMPatch location", nullptr, [](MenuEntry *entry)
-        {
-            char* out = new char[10];
-
-            sprintf(out, "%x", Megamix::rhmpatchBuffer);
-
-            MessageBox("RHMPatch location", std::string(out))();
-        });
-
-        menu += new MenuEntry("RHMPatch random bytes", nullptr, [](MenuEntry *entry){
-            char* out = new char[0x10];
-
-            sprintf(out, "%x %x %x %x", Megamix::rhmpatchBuffer[0x4F18], 
-                Megamix::rhmpatchBuffer[0x2DD8], Megamix::rhmpatchBuffer[0x1428], Megamix::rhmpatchBuffer[4]);
-
-            MessageBox("doc's c00 - 6c f2 96 dc", std::string(out))();
         });
     }
 

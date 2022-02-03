@@ -7,16 +7,20 @@ namespace Region {
         US = 0x18a400,
         EU = 0x18a500,
         JP = 0x155a00,
-        K0 = 0x18a600,
+        KO = 0x18a600,
     };
 
-    u32 CheerReadersPatch(u64 region) {
+    std::string RegionCode(u32 region) {
         if (region == US) {
-            return 0x50a8d6;
+            return "US";
         } else if (region == EU) {
-            return 0x50a94a;
+            return "EU";
+        } else if (region == JP) {
+            return "JP";
+        } else if (region == KO) {
+            return "KO";
         } else {
-            return 0;
+            return "UNK";
         }
     }
 }

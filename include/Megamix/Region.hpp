@@ -10,7 +10,8 @@ namespace Region {
         K0 = 0x18a600,
     };
 
-    u32 CheerReadersPatch(u64 region);
+    std::string RegionCode(u32 region);
+
 }
 
 #endif

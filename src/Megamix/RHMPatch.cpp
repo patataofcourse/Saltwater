@@ -9,15 +9,13 @@ using std::vector;
 namespace Megamix {
     char* rhmpatchBuffer = new char[0x200000]; //Should be 2MB
 
-    int LoadC00Bin(const std::string &path="_:/spicerack/C00.bin") {
-        File file(path, File::Mode::READ);
+    int LoadC00Bin(u32 region, const std::string &path="_:/spicerack/C00.bin") {
+        File file(path + '.' + Region::RegionCode(region), File::Mode::READ);
         u32 result = file.Read(rhmpatchBuffer, 0x200000);
         return result;
     }
 
-    void PatchTickflowAddresses(u64 region) {
-        if (region != Region::US) return; //IDK if it works in EU or now, should prob try
-
+    void PatchTickflowAddresses(u32 region) {
         // Game table
         vector<u32> game_addresses = {
             0x109008, 0x22D57C, 0x22D67C, 0x22D698, 0x22D6B4, 0x22D6D0, 0x240458, 0x24CB28, 0x2553CC, 0x255578, 0x258618,
@@ -41,7 +39,5 @@ namespace Megamix {
         for (int address: gate_addresses) {
             Process::Patch(address, gate_offset);
         }
-
-        // Process::Pause();
     }
 }
