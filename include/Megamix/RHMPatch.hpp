@@ -3,7 +3,7 @@
 
 namespace Megamix {
     extern char* rhmpatchBuffer;
-    int LoadC00Bin(const std::string &path="_:/saffron/C00.bin");
+    int LoadC00Bin(const std::string &path="_:/spicerack/C00.bin");
     void PatchTickflowAddresses(u64 region);
 }
 

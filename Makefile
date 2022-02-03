@@ -10,7 +10,7 @@ include $(DEVKITARM)/3ds_rules
 CTRPFLIB	?=	$(DEVKITPRO)/libctrpf
 
 TARGET		:= 	$(notdir $(CURDIR))
-PLGINFO 	:= 	saffron.plgInfo
+PLGINFO 	:= 	saltwater.plgInfo
 
 BUILD		:= 	build
 INCLUDES	:= 	include
