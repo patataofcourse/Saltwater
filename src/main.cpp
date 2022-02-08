@@ -92,6 +92,16 @@ namespace CTRPluginFramework
 
             MessageBox("C00.bin result", std::string(out))();
         });
+
+        // Example entry
+        menu += new MenuEntry("RHMPatch location", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[10];
+
+            sprintf(out, "%x", Megamix::rhmpatchBuffer);
+
+            MessageBox("RHMPatch location", std::string(out))();
+        });
     }
 
     int main(void)

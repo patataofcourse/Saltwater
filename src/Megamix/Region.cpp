@@ -4,10 +4,10 @@
 namespace Region {
 
     enum {
+        JP = 0x155a00,
         US = 0x18a400,
         EU = 0x18a500,
-        JP = 0x155a00,
-        KO = 0x18a600,
+        KR = 0x18a600,
     };
 
     std::string RegionCode(u32 region) {
@@ -17,8 +17,8 @@ namespace Region {
             return "EU";
         } else if (region == JP) {
             return "JP";
-        } else if (region == KO) {
-            return "KO";
+        } else if (region == KR) {
+            return "KR";
         } else {
             return "UNK";
         }
