@@ -12,6 +12,9 @@ namespace Region {
 
     std::string RegionCode(u32 region);
 
+    std::vector<u32> RHMPatchGameAddresses(u32 region);
+    std::vector<u32> RHMPatchGateAddresses(u32 region);
+
 }
 
 #endif
