@@ -16,7 +16,6 @@ namespace Megamix {
     }
 
     void PatchTickflowAddresses(u32 region) {
-        if (region == Region::JP) return;
 
         // Game table
         vector<u32> game_addresses = Region::RHMPatchGameAddresses(region);
@@ -26,7 +25,8 @@ namespace Megamix {
         }
 
         // Tempo table
-        vector<u32> tempo_addresses = { 0x101C10, 0x12B3B0 }; // Stays the same for all 3 supported regions
+        vector<u32> tempo_addresses = Region::RHMPatchTempoAddresses(region); // Stays the same for all 3 supported regions
+        
         u32 tempo_offset = (u32) rhmpatchBuffer + 0x1588;
         for (int address: tempo_addresses) {
             Process::Patch(address, tempo_offset);
