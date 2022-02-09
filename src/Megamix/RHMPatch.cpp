@@ -2,6 +2,7 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix/Region.hpp"
+#include "Config.hpp"
 
 using namespace CTRPluginFramework;
 using std::vector;
@@ -15,7 +16,7 @@ namespace Megamix {
         return result;
     }
 
-    void PatchTickflowAddresses(u32 region) {
+    void PatchTickflowAddresses(u32 region, Config* config) {
 
         // Game table
         vector<u32> game_addresses = Region::RHMPatchGameAddresses(region);

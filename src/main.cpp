@@ -2,12 +2,12 @@
 #include "csvc.h"
 #include <CTRPluginFramework.hpp>
 
-#include <vector>
-
 #include "Megamix.hpp"
+#include "Config.hpp"
 
 int C00Result;
 u32 region;
+Config* config;
 
 namespace CTRPluginFramework
 {
@@ -64,13 +64,14 @@ namespace CTRPluginFramework
     {
         ToggleTouchscreenForceOn();
 
-        // Init region
+        // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
+        config = Config::FromFile("/spicerack/saltwater.cfg", region);
 
         // RHMPatch recreation
         C00Result = Megamix::LoadC00Bin(region);
         if (C00Result == 0) {
-            Megamix::PatchTickflowAddresses(region);
+            Megamix::PatchTickflowAddresses(region, config);
         }
     }
 
@@ -101,6 +102,16 @@ namespace CTRPluginFramework
             sprintf(out, "%x", Megamix::rhmpatchBuffer);
 
             MessageBox("RHMPatch location", std::string(out))();
+        });
+
+        // Example entry
+        menu += new MenuEntry("Settings", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[10];
+
+            sprintf(out, "%d/%d/%d\nobviously 1 is true and 0 is false", config->game, config->tempo, config->gate);
+
+            MessageBox("Settings (game/tempo/gate)", std::string(out))();
         });
     }
 

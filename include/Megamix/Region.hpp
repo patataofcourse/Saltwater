@@ -7,7 +7,7 @@ namespace Region {
         US = 0x18a400,
         EU = 0x18a500,
         JP = 0x155a00,
-        K0 = 0x18a600,
+        KR = 0x18a600,
     };
 
     std::string RegionCode(u32 region);
