@@ -3,11 +3,11 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
-#include "Config.hpp"
+//#include "Config.hpp"
 
 int C00Result;
 u32 region;
-Config* config;
+//Config* config;
 
 namespace CTRPluginFramework
 {
@@ -66,12 +66,13 @@ namespace CTRPluginFramework
 
         // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
-        config = Config::FromFile("/spicerack/saltwater.cfg", region);
+        //config = Config::FromFile("/spicerack/saltwater.cfg", region);
 
         // RHMPatch recreation
         C00Result = Megamix::LoadC00Bin(region);
         if (C00Result == 0) {
-            Megamix::PatchTickflowAddresses(region, config);
+            //Megamix::PatchTickflowAddresses(region, config);
+            Megamix::PatchTickflowAddresses(region);
         }
     }
 
@@ -84,7 +85,6 @@ namespace CTRPluginFramework
 
     void    InitMenu(PluginMenu &menu)
     {
-        // Example entry
         menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
         {
             char* out = new char[10];
@@ -94,7 +94,6 @@ namespace CTRPluginFramework
             MessageBox("C00.bin result", std::string(out))();
         });
 
-        // Example entry
         menu += new MenuEntry("RHMPatch location", nullptr, [](MenuEntry *entry)
         {
             char* out = new char[10];
@@ -104,7 +103,7 @@ namespace CTRPluginFramework
             MessageBox("RHMPatch location", std::string(out))();
         });
 
-        // Example entry
+        /*
         menu += new MenuEntry("Settings", nullptr, [](MenuEntry *entry)
         {
             char* out = new char[10];
@@ -113,6 +112,7 @@ namespace CTRPluginFramework
 
             MessageBox("Settings (game/tempo/gate)", std::string(out))();
         });
+        */
     }
 
     int main(void)
