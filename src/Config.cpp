@@ -9,13 +9,13 @@ struct Config {
         int data = 0;
         switch (region) {
             case Region::JP:
-                data = file[0] & 0xf0;
+                data = file[0] & 0xf0 >> 4;
                 break;
             case Region::US:
                 data = file[0] & 0x0f;
                 break;
             case Region::EU:
-                data = file[1] & 0xf0;
+                data = file[1] & 0xf0 >> 4;
                 break;
             case Region::KR:
                 data = file[1] & 0x0f;
