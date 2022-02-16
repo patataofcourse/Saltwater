@@ -26,10 +26,9 @@ Then, you want to place the Saltwater.3gx file in the `luma/plugins/TITLEID` fol
 - `000400000018a500` for Europe (Rhythm Paradise Megamix)
 - `000400000018a600` for Korea (Rhythm World: The Best +)
 
-## Step 3 - Packing the mod for your region
-(TODO)
-
-## Step 4 - Running the game
+## Step 3 - Running the game
 Just open the game as usual. Yeah, that's it!
 
 Enjoy your modded gaming!
+
+(You can also play unmodded by removing the C00 for a specific region - no need for empty C00s anymore!)
