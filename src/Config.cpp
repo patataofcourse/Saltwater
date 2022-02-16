@@ -24,7 +24,7 @@ struct Config {
                 return;
         }
         if (data & 0b1000) {
-            game, tempo, gate = false;
+            game, tempo, gate = true;
         } else {
             game = data & 0b0100;
             tempo = data & 0b0010;
