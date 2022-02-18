@@ -4,6 +4,12 @@
 #include "Megamix/Region.hpp"
 #include "Config.hpp"
 
+using CTRPluginFramework::File;
+
+Config::Config() {
+    game = false; tempo = false; gate = false;
+}
+
 Config::Config(char* file, u32 region) {
     int data = 0;
     switch (region) {
@@ -30,6 +36,22 @@ Config::Config(char* file, u32 region) {
         gate = data & 0b0001;
     }
 }
-Config* Config::FromFile(std::string fname, u32 region) {
-    return nullptr;
+Config Config::FromFile(std::string fname, u32 region) {
+    File file(fname, File::Mode::READ);
+    char* contents = new char[6];
+    int result = file.Read(contents, 6);
+    Config out;
+    if (std::string(contents).substr(0, 4) == "SCF\0") {
+        char* cfgdata = new char[2];
+        cfgdata[0] = contents[4]; cfgdata[1] = contents[5];
+        out = Config(cfgdata, region);
+        delete[] cfgdata;
+    } else {
+        char cfgdata[2] = {0,0};
+        out = Config(cfgdata, region);
+        delete[] cfgdata;
+
+    }
+    delete[] contents;
+    return out;
 }

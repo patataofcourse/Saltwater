@@ -7,7 +7,7 @@
 
 int C00Result;
 u32 region;
-Config* config;
+Config config;
 
 namespace CTRPluginFramework
 {
@@ -104,12 +104,12 @@ namespace CTRPluginFramework
             MessageBox("RHMPatch location", std::string(out))();
         });
 
-        // Example entry
-        menu += new MenuEntry("Settings", nullptr, [](MenuEntry *entry)
+
+        menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
             char* out = new char[10];
 
-            sprintf(out, "%d/%d/%d\nobviously 1 is true and 0 is false", config->game, config->tempo, config->gate);
+            sprintf(out, "%d/%d/%d\nobviously 1 is true and 0 is false", config.game, config.tempo, config.gate);
 
             MessageBox("Settings (game/tempo/gate)", std::string(out))();
         });

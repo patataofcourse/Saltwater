@@ -16,7 +16,7 @@ namespace Megamix {
         return result;
     }
 
-    void PatchTickflowAddresses(u32 region, Config* config) {
+    void PatchTickflowAddresses(u32 region, Config config) {
 
         // Game table
         vector<u32> game_addresses = Region::RHMPatchGameAddresses(region);

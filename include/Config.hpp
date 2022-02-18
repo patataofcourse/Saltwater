@@ -3,8 +3,9 @@
 
 struct Config {
     bool game, tempo, gate;
+    Config();
     Config(char* file, u32 region);
-    static Config* FromFile(std::string fname, u32 region);
+    static Config FromFile(std::string fname, u32 region);
 };
 
 #endif
