@@ -28,7 +28,7 @@ Config::Config(char* file, u32 region) {
         default:
             return;
     }
-    if (data & 0b1000) {
+    if (!(data & 0b1000)) {
         game, tempo, gate = true;
     } else {
         game = data & 0b0100;
