@@ -41,17 +41,16 @@ Config Config::FromFile(std::string fname, u32 region) {
     char* contents = new char[6];
     int result = file.Read(contents, 6);
     Config out;
-    if (std::string(contents).substr(0, 4) == "SCF\0") {
-        char* cfgdata = new char[2];
+    char* cfgdata = new char[2];
+    if (result != 0 || std::string(contents).substr(0, 4) == "SCF\0") {
         cfgdata[0] = contents[4]; cfgdata[1] = contents[5];
         out = Config(cfgdata, region);
-        delete[] cfgdata;
     } else {
-        char cfgdata[2] = {0,0};
+        cfgdata[0] = 0; cfgdata[1] = 0;
         out = Config(cfgdata, region);
-        delete[] cfgdata;
 
     }
+    delete[] cfgdata;
     delete[] contents;
     return out;
 }
