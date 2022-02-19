@@ -14,13 +14,13 @@ Config::Config(char* file, u32 region) {
     int data = 0;
     switch (region) {
         case Region::JP:
-            data = file[0] & 0xf0 >> 4;
+            data = (file[0] & 0xf0) >> 4;
             break;
         case Region::US:
             data = file[0] & 0x0f;
             break;
         case Region::EU:
-            data = file[1] & 0xf0 >> 4;
+            data = (file[1] & 0xf0) >> 4;
             break;
         case Region::KR:
             data = file[1] & 0x0f;
@@ -50,7 +50,5 @@ Config Config::FromFile(std::string fname, u32 region) {
         out = Config(cfgdata, region);
 
     }
-    delete[] cfgdata;
-    delete[] contents;
     return out;
 }

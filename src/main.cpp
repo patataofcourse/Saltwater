@@ -107,7 +107,7 @@ namespace CTRPluginFramework
 
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
-            char* out = new char[10];
+            char* out = new char[0xFF];
 
             sprintf(out, "%d/%d/%d\nobviously 1 is true and 0 is false", config.game, config.tempo, config.gate);
 
@@ -117,7 +117,7 @@ namespace CTRPluginFramework
 
     int main(void)
     {
-        PluginMenu *menu = new PluginMenu("Some thing or another", 0, 0, 1, "h");
+        PluginMenu *menu = new PluginMenu("Saltwater debug menu", 0, 1, 0, "dev");
 
         // Synnchronize the menu with frame event
         menu->SynchronizeWithFrame(true);
