@@ -19,25 +19,30 @@ namespace Megamix {
     void PatchTickflowAddresses(u32 region, Config config) {
 
         // Game table
-        vector<u32> game_addresses = Region::RHMPatchGameAddresses(region);
-        u32 game_offset = (u32) rhmpatchBuffer;
-        for (int address: game_addresses) {
-            Process::Patch(address, game_offset);
+        if (config.game){
+            vector<u32> game_addresses = Region::RHMPatchGameAddresses(region);
+            u32 game_offset = (u32) rhmpatchBuffer;
+            for (int address: game_addresses) {
+                Process::Patch(address, game_offset);
+            }
         }
 
         // Tempo table
-        vector<u32> tempo_addresses = Region::RHMPatchTempoAddresses(region); // Stays the same for all 3 supported regions
-        
-        u32 tempo_offset = (u32) rhmpatchBuffer + 0x1588;
-        for (int address: tempo_addresses) {
-            Process::Patch(address, tempo_offset);
+        if (config.tempo) {
+            vector<u32> tempo_addresses = Region::RHMPatchTempoAddresses(region);
+            u32 tempo_offset = (u32) rhmpatchBuffer + 0x1588;
+            for (int address: tempo_addresses) {
+                Process::Patch(address, tempo_offset);
+            }
         }
-
+        
         // Gate table
-        vector<u32> gate_addresses = Region::RHMPatchGateAddresses(region);
-        u32 gate_offset = (u32) rhmpatchBuffer + 0x3358;
-        for (int address: gate_addresses) {
-            Process::Patch(address, gate_offset);
+        if (config.gate) {
+            vector<u32> gate_addresses = Region::RHMPatchGateAddresses(region);
+            u32 gate_offset = (u32) rhmpatchBuffer + 0x3358;
+            for (int address: gate_addresses) {
+                Process::Patch(address, gate_offset);
+            }
         }
     }
 }
