@@ -2,11 +2,11 @@ Author: patataofcourse, RHModding
 
 Version: # Plugin version
     Major: 0
-    Minor: 0
-    Revision: 1
+    Minor: 1
+    Revision: 0
 
 Targets:
-  - 0x00155a00
+  # - 0x00155a00
   - 0x0018a400
   - 0x0018a500
   - 0x0018a600
@@ -15,4 +15,6 @@ Title: Saltwater
 
 Summary: A patch for playing Rhythm Heaven Megamix mods
 
-Description: Rhythm Heaven/Paradise Megamix patch, successor to RHMPatch
+Description: |
+  Rhythm Heaven Megamix patch, successor to RHMPatch.
+  Supports US, EU, and KR regions.
