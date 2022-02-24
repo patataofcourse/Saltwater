@@ -17,6 +17,9 @@ namespace Megamix {
     }
 
     void PatchTickflowAddresses(u32 region, Config config) {
+        if (region == Region::JP) {
+            return;
+        };
 
         // Game table
         if (config.game){
