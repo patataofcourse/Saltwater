@@ -68,13 +68,16 @@ namespace CTRPluginFramework
         region = CTRPluginFramework::Process::GetTitleID();
         config = Config::FromFile("/spicerack/saltwater.cfg", region);
 
+        /* 
         // RHMPatch recreation
         C00Result = Megamix::LoadC00Bin(region);
         if (C00Result == 0) {
             Megamix::PatchTickflowAddresses(region, config);
         }
-
-        Megamix::Hooks::test();
+        */
+    
+        if (region == Region::US)
+            Megamix::Hooks::Test();
     }
 
     // This function is called when the process exits
@@ -86,7 +89,7 @@ namespace CTRPluginFramework
 
     void    InitMenu(PluginMenu &menu)
     {
-        // Example entry
+        /*
         menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
         {
             char* out = new char[10];
@@ -96,7 +99,6 @@ namespace CTRPluginFramework
             MessageBox("C00.bin result", std::string(out))();
         });
 
-        // Example entry
         menu += new MenuEntry("RHMPatch location", nullptr, [](MenuEntry *entry)
         {
             char* out = new char[10];
@@ -105,7 +107,7 @@ namespace CTRPluginFramework
 
             MessageBox("RHMPatch location", std::string(out))();
         });
-
+        */
 
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
@@ -114,6 +116,15 @@ namespace CTRPluginFramework
             sprintf(out, "%d/%d/%d\nobviously 1 is true and 0 is false", config.game, config.tempo, config.gate);
 
             MessageBox("Settings (game/tempo/gate)", std::string(out))();
+        });
+
+        menu += new MenuEntry("Test hook results", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[0xFF];
+
+            sprintf(out, "%d/%d", Megamix::Hooks::testInt, Megamix::Hooks::result);
+
+            MessageBox("Hook test shit", std::string(out))();
         });
     }
 
