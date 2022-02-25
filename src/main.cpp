@@ -73,6 +73,8 @@ namespace CTRPluginFramework
         if (C00Result == 0) {
             Megamix::PatchTickflowAddresses(region, config);
         }
+
+        Megamix::Hooks::test();
     }
 
     // This function is called when the process exits

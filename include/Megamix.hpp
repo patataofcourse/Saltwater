@@ -3,5 +3,6 @@
 
 #include "Megamix/RHMPatch.hpp"
 #include "Megamix/Region.hpp"
+#include "Megamix/Hooks.hpp"
 
 #endif
