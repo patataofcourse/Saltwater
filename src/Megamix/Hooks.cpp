@@ -1,23 +1,30 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-using CTRPluginFramework::Hook; using CTRPluginFramework::HookResult;
+#include "rt.h"
 
-int testInt = 0;
+extern "C" {
+    int testInt = 0;
 
-static int* getTickflowOffset(int gameId) {
-    testInt = gameId;
-    return *(int**)(0x52b490 + gameId * 0x34 + 4); // original code
+    int* getAssetsOffset(int gameId) {
+        testInt = gameId;
+        return *(int**)(0x52b498 + gameId * 0x34 + 4); // original code
+    }
+}
+
+static NAKED void getAssetsOffset_wrapper() {
+    __asm__ ("\
+        .extern getAssetsOffset  \n\
+        b getAssetsOffset          \
+    ");
 }
 
 //todo: internationalize offsets
 namespace Megamix::Hooks {
-    Hook* testHook = new Hook();
-    HookResult result;
+    RT_HOOK testHook;
     
     void Test() {
-        testHook->Initialize(0x258df4, (u32)getTickflowOffset);
-        testHook->SetReturnAddress(0x258e08);
-        result = testHook->Enable();
+        rtInitHook(&testHook, 0x258df4, (u32)getAssetsOffset_wrapper);
+        rtEnableHook(&testHook);
     }
 }
