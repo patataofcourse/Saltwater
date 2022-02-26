@@ -122,7 +122,7 @@ namespace CTRPluginFramework
         {
             char* out = new char[0xFF];
 
-            sprintf(out, "%d/%d", Megamix::Hooks::testInt, Megamix::Hooks::result);
+            sprintf(out, "%d/%d", testInt, Megamix::Hooks::result);
 
             MessageBox("Hook test shit", std::string(out))();
         });

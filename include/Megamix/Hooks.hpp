@@ -3,9 +3,9 @@
 
 #include <CTRPluginFramework.hpp>
 
+extern int testInt;
 
 namespace Megamix::Hooks {
-    extern int testInt;
     extern CTRPluginFramework::HookResult result;
     void Test();
 }
