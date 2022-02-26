@@ -6,17 +6,17 @@
 int testInt = 0;
 
 extern "C" {
-    extern int* getStartOffset(int index);
+    extern int* getTickflowOffset(int index);
 }
 
-static NAKED void getStartOffset_wrapper() {
+static NAKED void getTickflowOffset_wrapper() {
     __asm__ ("\
-        .extern getStartOffset  \n\
-        b getStartOffset          \
+        .extern getTickflowOffset  \n\
+        b getTickflowOffset          \
     ");
 }
 
-int* getStartOffset(int index) {
+int* getTickflowOffset(int index) {
         testInt = index;
         if (index == 0x4A) {
             return *(int**)(0x52b498 + index * 0x34 + 4); // original code
@@ -30,7 +30,7 @@ namespace Megamix::Hooks {
     RT_HOOK testHook;
     
     void Test() {
-        rtInitHook(&testHook, 0x258df4, (u32)getStartOffset_wrapper);
+        rtInitHook(&testHook, 0x258df4, (u32)getTickflowOffset_wrapper);
         rtEnableHook(&testHook);
     }
 }
