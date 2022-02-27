@@ -4,7 +4,7 @@
 extern int testInt;
 
 namespace Megamix::Hooks {
-    void Test();
+    void TickflowHook();
 }
 
 #endif

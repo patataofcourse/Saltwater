@@ -77,7 +77,7 @@ namespace CTRPluginFramework
         */
     
         if (region == Region::US)
-            Megamix::Hooks::Test();
+            Megamix::Hooks::TickflowHook();
     }
 
     // This function is called when the process exits

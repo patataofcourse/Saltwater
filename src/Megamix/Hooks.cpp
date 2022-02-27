@@ -29,7 +29,7 @@ int* getTickflowOffset(int index) {
 namespace Megamix::Hooks {
     RT_HOOK testHook;
     
-    void Test() {
+    void TickflowHook() {
         rtInitHook(&testHook, 0x258df4, (u32)getTickflowOffset_wrapper);
         rtEnableHook(&testHook);
     }
