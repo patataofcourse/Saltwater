@@ -10,7 +10,7 @@ Config::Config() {
     game = false; tempo = false; gate = false;
 }
 
-Config::Config(char* file, u32 region) {
+Config::Config(char* file) {
     int data = 0;
     switch (region) {
         case Region::JP:
@@ -36,7 +36,7 @@ Config::Config(char* file, u32 region) {
         gate = data & 0b0001;
     }
 }
-Config Config::FromFile(std::string fname, u32 region) {
+Config Config::FromFile(std::string fname) {
     File file(fname, File::Mode::READ);
     char* contents = new char[6];
     int result = file.Read(contents, 6);
@@ -44,10 +44,10 @@ Config Config::FromFile(std::string fname, u32 region) {
     char* cfgdata = new char[2];
     if (result != 0 || std::string(contents).substr(0, 4) == "SCF\0") {
         cfgdata[0] = contents[4]; cfgdata[1] = contents[5];
-        out = Config(cfgdata, region);
+        out = Config(cfgdata);
     } else {
         cfgdata[0] = 0; cfgdata[1] = 0;
-        out = Config(cfgdata, region);
+        out = Config(cfgdata);
 
     }
     return out;

@@ -1,6 +1,8 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+u32 region;
+
 namespace Region {
 
     enum {
@@ -10,7 +12,7 @@ namespace Region {
         KR = 0x18a600,
     };
 
-    std::string RegionCode(u32 region) {
+    std::string RegionCode() {
         if (region == US) {
             return "US";
         } else if (region == EU) {
@@ -24,7 +26,7 @@ namespace Region {
         }
     }
 
-    std::vector<u32> RHMPatchGameAddresses(u32 region) {
+    std::vector<u32> RHMPatchGameAddresses() {
         if (region == US || region == EU) {
             return {
                 0x109008, 0x22D57C, 0x22D67C, 0x22D698, 0x22D6B4, 0x22D6D0, 0x240458, 0x24CB28, 0x2553CC, 0x255578, 0x258618,
@@ -45,7 +47,7 @@ namespace Region {
         }
     }
 
-    std::vector<u32> RHMPatchTempoAddresses(u32 region) {
+    std::vector<u32> RHMPatchTempoAddresses() {
         if (region == US || region == EU || region == KR) {
             return { 0x101C10, 0x12B3B0 };
         } else if (region == JP) {
@@ -55,7 +57,7 @@ namespace Region {
         }
     }
 
-    std::vector<u32> RHMPatchGateAddresses(u32 region) {
+    std::vector<u32> RHMPatchGateAddresses() {
         if (region == US || region == EU) {
             return { 0x22AE40, 0x240FB0, 0x2552D8, 0x32D5FC, 0x32D614, 0x32D62C, 0x32D644, 0x32D65C, 0x32D6B8, 0x32D770 };
         } else if (region == KR) {
