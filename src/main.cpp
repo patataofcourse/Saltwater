@@ -6,7 +6,6 @@
 #include "Config.hpp"
 
 int C00Result;
-u32 region;
 Config config;
 
 namespace CTRPluginFramework
@@ -66,12 +65,12 @@ namespace CTRPluginFramework
 
         // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
-        config = Config::FromFile("/spicerack/saltwater.cfg", region);
+        config = Config::FromFile("/spicerack/saltwater.cfg");
 
         // RHMPatch recreation
-        C00Result = Megamix::LoadC00Bin(region);
+        C00Result = Megamix::LoadC00Bin();
         if (C00Result == 0) {
-            Megamix::PatchTickflowAddresses(region, config);
+            Megamix::PatchTickflowAddresses(config);
         }
     }
 

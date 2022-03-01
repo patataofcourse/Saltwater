@@ -1,6 +1,8 @@
 #ifndef RHMREGION_H
 #define RHMREGION_H
 
+extern u32 region;
+
 namespace Region {
 
     enum {
@@ -10,11 +12,11 @@ namespace Region {
         KR = 0x18a600,
     };
 
-    std::string RegionCode(u32 region);
+    std::string RegionCode();
 
-    std::vector<u32> RHMPatchGameAddresses(u32 region);
-    std::vector<u32> RHMPatchTempoAddresses(u32 region);
-    std::vector<u32> RHMPatchGateAddresses(u32 region);
+    std::vector<u32> RHMPatchGameAddresses();
+    std::vector<u32> RHMPatchTempoAddresses();
+    std::vector<u32> RHMPatchGateAddresses();
 
 }
 
