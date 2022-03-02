@@ -8,7 +8,7 @@
 int testInt = 0;
 
 extern "C" {
-    extern int* getTickflowOffset(int index);
+    extern void* getTickflowOffset(int index);
 }
 
 static NAKED void getTickflowOffset_wrapper() {
@@ -18,12 +18,12 @@ static NAKED void getTickflowOffset_wrapper() {
     ");
 }
 
-int* getTickflowOffset(int index) {
+void* getTickflowOffset(int index) {
         testInt = index;
         if (index == 0x4A) {
-            return *(int**)(Region::GameTable() + index * 0x34 + 4); // original code
+            return *(void**)(Region::GameTable() + index * 0x34 + 4); // original code
         } else {
-            return *(int**)(Region::GameTable() + 0x4A * 0x34 + 4);  // troll
+            return *(void**)(Region::GameTable() + 0x4A * 0x34 + 4);  // troll
         }
     }
 
