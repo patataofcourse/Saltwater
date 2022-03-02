@@ -19,7 +19,7 @@ namespace Megamix {
         if (magicBuf != "BTKS")
             return -6; // Not a BTKS file
         
-        file.Read(intBuf, 4) //filesize
+        file.Read(intBuf, 4); //filesize
 
         //TODO: continue
 

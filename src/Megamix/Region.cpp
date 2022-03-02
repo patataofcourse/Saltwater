@@ -26,6 +26,8 @@ namespace Region {
         }
     }
 
+    // RHMPatch
+
     std::vector<u32> RHMPatchGameAddresses() {
         if (region == US || region == EU) {
             return {
@@ -66,6 +68,17 @@ namespace Region {
             return { 0x22c1fc, 0x242524, 0x2564cc, 0x32dfe8, 0x32e000, 0x32e018, 0x32e030, 0x32e048, 0x32e0a4, 0x32e15c };
         } else {
             return {};
+        }
+    }
+
+    // Hooks - Tickflow
+
+    u32 GameTable() {
+        switch (region) {
+            case US:
+                return 0x52b498;
+            default:
+                return 0;
         }
     }
 }

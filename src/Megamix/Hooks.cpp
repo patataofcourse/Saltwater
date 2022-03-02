@@ -3,6 +3,8 @@
 
 #include "rt.h"
 
+#include "Megamix.hpp"
+
 int testInt = 0;
 
 extern "C" {
