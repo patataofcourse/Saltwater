@@ -13,8 +13,7 @@ Megamix::BTKS btks;
 namespace CTRPluginFramework
 {
     // This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
-    static void    ToggleTouchscreenForceOn(void)
-    {
+    static void    ToggleTouchscreenForceOn(void) {
         static u32 original = 0;
         static u32 *patchAddress = nullptr;
 
@@ -61,8 +60,7 @@ namespace CTRPluginFramework
 
     // This function is called before main and before the game starts
     // Useful to do code edits safely
-    void    PatchProcess(FwkSettings &settings)
-    {
+    void    PatchProcess(FwkSettings &settings) {
         ToggleTouchscreenForceOn();
 
         // Init region and config
@@ -85,13 +83,11 @@ namespace CTRPluginFramework
 
     // This function is called when the process exits
     // Useful to save settings, undo patchs or clean up things
-    void    OnProcessExit(void)
-    {
+    void    OnProcessExit(void) {
         ToggleTouchscreenForceOn();
     }
 
-    void    InitMenu(PluginMenu &menu)
-    {
+    void    InitMenu(PluginMenu &menu) {
         /*
         menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
         {
@@ -140,8 +136,7 @@ namespace CTRPluginFramework
         });
     }
 
-    int main(void)
-    {
+    int main(void) {
         PluginMenu *menu = new PluginMenu("Saltwater debug menu", 0, 1, 0, "dev");
 
         // Synnchronize the menu with frame event
