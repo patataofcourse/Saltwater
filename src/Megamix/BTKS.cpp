@@ -18,7 +18,7 @@ namespace Megamix {
         if (magicBuf != "BTKS")
             return -6; // Not a BTKS file
         
-        result = file.Read(intBuf, 4); // Filesize - not that useful but eh
+        result = file.Read(intBuf, 4); // Filesize - not that useful rn
         if (!result) return result;
         int filesize = *intBuf;
 
@@ -36,6 +36,23 @@ namespace Megamix {
 
         // Section code! This is where things get more complicated
 
+        for (int i = 0; i < numSections; i++) {
+            result = file.Read(magicBuf, 4); // Section magic
+            if (!result) return result;
+
+            std::string magic = std::string(magicBuf);
+            if (magic == "FLOW" || magic == "PTRO" || magic == "TMPO" || magic == "STRD") {                
+                return -8; // Not implemented
+            }
+            else
+                return -9; // Unknown section
+        }
+
         return result;
+    }
+
+    void BTKS::Unload() {
+        free(tickflow);
+        free(strings);
     }
 }

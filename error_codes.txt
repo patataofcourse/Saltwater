@@ -1,0 +1,11 @@
+Error codes when loading files
+
+0 - Success
+
+--CTRPF--
+
+--Saltwater--
+-6 - Not a BTKS file
+-7 - Unsupported version/revision of the format
+-8 - Not implemented
+-9 - Unknown section type

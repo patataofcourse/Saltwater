@@ -3,8 +3,8 @@
 
 namespace Megamix {
     struct BTKS {
-        char* tickflow;
-        char* strings;
+        char* tickflow = nullptr;
+        char* strings = nullptr;
         //TODO: tempo
 
         int LoadFile(std::string filename);

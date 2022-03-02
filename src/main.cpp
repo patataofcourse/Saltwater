@@ -6,7 +6,9 @@
 #include "Config.hpp"
 
 int C00Result;
+int btksResult;
 Config config;
+Megamix::BTKS btks;
 
 namespace CTRPluginFramework
 {
@@ -75,6 +77,8 @@ namespace CTRPluginFramework
         }
         */
     
+        btksResult = btks.LoadFile("saltwater.btk");
+    
         if (region == Region::US)
             Megamix::Hooks::TickflowHook();
     }
@@ -124,6 +128,15 @@ namespace CTRPluginFramework
             sprintf(out, "%d", testInt);
 
             MessageBox("Hook test shit", std::string(out))();
+        });
+
+        menu += new MenuEntry("BTKS loader result", nullptr, [](MenuEntry *entry)
+        {
+            char* out = new char[0x10];
+
+            sprintf(out, "%d", btksResult);
+
+            MessageBox("BTKS loader result", std::string(out))();
         });
     }
 
