@@ -81,4 +81,13 @@ namespace Region {
                 return 0;
         }
     }
+
+    u32 TickflowHookFunc() {
+        switch (region) {
+            case US:
+                return 0x258df4;
+            default:
+                return 0;
+        }
+    }
 }
