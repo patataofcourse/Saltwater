@@ -3,6 +3,7 @@
 
 namespace Megamix {
     struct BTKS {
+        u32 start;
         char* tickflow = nullptr;
         char* strings = nullptr;
         //TODO: tempo

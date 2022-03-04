@@ -36,6 +36,8 @@ namespace Megamix {
 
         // Section code! This is where things get more complicated
 
+        Pointer* pointers;
+
         for (int i = 0; i < numSections; i++) {
             result = file.Read(magicBuf, 4); // Section magic
             if (result) return result;
@@ -49,11 +51,25 @@ namespace Megamix {
                 tickflow = (char*) malloc(tickflowSize);
                 result = file.Read(intBuf, 4); // Position of start sub
                 if (result) return result;
-                int startSubPos = *intBuf;
+                start = *intBuf;
                 result = file.Read(tickflow, tickflowSize); // Tickflow data
                 if (result) return result;
             }
-            else if (magic == "PTRO" || magic == "TMPO" || magic == "STRD") {                
+            // Pointer section
+            else if (magic == "PTRO") {
+                result = file.Read(intBuf, 4); // Section size
+                if (result) return result;
+                int extraBytes = *intBuf - 0x08;
+                result = file.Read(intBuf, 4); // Number of pointers
+                if (result) return result;
+                int numPointers = *intBuf;
+                extraBytes -= 5 * numPointers;
+                pointers = new Pointer[numPointers];
+                result = file.Read(pointers, 5*numPointers); // Pointer data
+                if (result) return result;
+                file.Read(nullptr, extraBytes); // Extra bytes that may be there for whatever reason
+            }
+            else if (magic == "TMPO" || magic == "STRD") {
                 return -8; // Not implemented
             }
             else
