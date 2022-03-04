@@ -46,6 +46,7 @@ namespace Megamix {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int tickflowSize = *intBuf - 0x8;
+                tickflow = (char*) malloc(tickflowSize);
                 result = file.Read(intBuf, 4); // Position of start sub
                 if (result) return result;
                 int startSubPos = *intBuf;
