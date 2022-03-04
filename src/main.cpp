@@ -78,7 +78,7 @@ namespace CTRPluginFramework
         btksResult = btks.LoadFile("saltwater.btk");
     
         if (region == Region::US)
-            Megamix::Hooks::TickflowHook();
+            Megamix::Hooks::TickflowHooks();
     }
 
     // This function is called when the process exits
@@ -144,6 +144,8 @@ namespace CTRPluginFramework
 
         // Init our menu entries & folders
         InitMenu(*menu);
+
+        //TODO: Show error messages
 
         // Launch menu and mainloop
         menu->Run();
