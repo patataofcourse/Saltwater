@@ -9,6 +9,12 @@ namespace Megamix {
 
         int LoadFile(std::string filename);
         void Unload();
+
+        private:
+            struct Pointer {
+                u32 pointerPos;
+                u8 pointerType;
+            };
     };
 }
 

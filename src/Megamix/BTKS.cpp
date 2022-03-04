@@ -14,16 +14,16 @@ namespace Megamix {
 
         //Header
         result = file.Read(magicBuf, 4); // Magic
-        if (!result) return result;
+        if (result) return result;
         if (magicBuf != "BTKS")
             return -6; // Not a BTKS file
         
         result = file.Read(intBuf, 4); // Filesize - not that useful rn
-        if (!result) return result;
+        if (result) return result;
         int filesize = *intBuf;
 
         result = file.Read(intBuf, 4); // Format version - supported: rev0
-        if (!result) return result;
+        if (result) return result;
         int version = *intBuf;
         if (version != 0)
             return -7; // Unsupported version
@@ -38,17 +38,28 @@ namespace Megamix {
 
         for (int i = 0; i < numSections; i++) {
             result = file.Read(magicBuf, 4); // Section magic
-            if (!result) return result;
-
+            if (result) return result;
             std::string magic = std::string(magicBuf);
-            if (magic == "FLOW" || magic == "PTRO" || magic == "TMPO" || magic == "STRD") {                
+            
+            // Tickflow section
+            if (magic == "FLOW") {
+                result = file.Read(intBuf, 4); // Section size
+                if (result) return result;
+                int tickflowSize = *intBuf - 0x8;
+                result = file.Read(intBuf, 4); // Position of start sub
+                if (result) return result;
+                int startSubPos = *intBuf;
+                result = file.Read(tickflow, tickflowSize); // Tickflow data
+                if (result) return result;
+            }
+            else if (magic == "PTRO" || magic == "TMPO" || magic == "STRD") {                
                 return -8; // Not implemented
             }
             else
                 return -9; // Unknown section
         }
 
-        return result;
+        return 0;
     }
 
     void BTKS::Unload() {
