@@ -36,6 +36,10 @@ namespace Megamix::Hooks {
         // rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset_wrapper);
         // rtEnableHook(&gateHook);
     }
+
+    void DisableAllHooks() {
+        //stub
+    }
 }
 
 void* getTickflowOffset(int index) {

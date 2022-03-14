@@ -5,6 +5,7 @@ extern int testInt;
 
 namespace Megamix::Hooks {
     void TickflowHooks();
+    void DisableAllHooks();
 }
 
 #endif

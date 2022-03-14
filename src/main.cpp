@@ -76,6 +76,7 @@ namespace CTRPluginFramework
     // This function is called when the process exits
     // Useful to save settings, undo patchs or clean up things
     void    OnProcessExit(void) {
+        Megamix::Hooks::DisableAllHooks();
         ToggleTouchscreenForceOn();
     }
 
@@ -110,7 +111,7 @@ namespace CTRPluginFramework
     }
 
     int main(void) {
-        PluginMenu *menu = new PluginMenu("Saltwater debug menu", 0, 1, 0, "dev");
+        PluginMenu *menu = new PluginMenu("Saltwater debug menu", 0, 1, 0, "Rhythm Heaven Megamix patch", 1);
 
         // Synnchronize the menu with frame event
         menu->SynchronizeWithFrame(true);
@@ -118,7 +119,8 @@ namespace CTRPluginFramework
         // Init our menu entries & folders
         InitMenu(*menu);
 
-        //TODO: Show error messages
+        OSD::Notify(Utils::Format("Test hook result: %d", testInt));
+        OSD::Notify(Utils::Format("BTKS loader result: %d", btksResult));
 
         // Launch menu and mainloop
         menu->Run();
