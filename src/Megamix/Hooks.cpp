@@ -38,7 +38,8 @@ namespace Megamix::Hooks {
     }
 
     void DisableAllHooks() {
-        //stub
+        rtDisableHook(&tickflowHook);
+        // rtDisableHook(&gateHook);
     }
 }
 

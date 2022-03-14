@@ -71,7 +71,7 @@ namespace Region {
         }
     }
 
-    // Hooks - Tickflow
+    // Tables and stuff
 
     u32 GameTable() {
         switch (region) {
@@ -85,6 +85,35 @@ namespace Region {
                 return 0;
         }
     }
+
+    u32 TempoTable() {
+        switch (region) {
+            case US:
+                return 0x53EF54;
+            case EU:
+            case KR:
+                return 0x53F04C;
+            case JP:
+                return 0x5324B0;
+            default:
+                return 0;
+        }
+    }
+
+    u32 GateTable() {
+        switch (region) {
+            case US:
+            case EU:
+            case KR:
+                return 0x52E488;
+            case JP:
+                return 0x525488;
+            default:
+                return 0;
+        }
+    }
+
+    // Hooks - Tickflow
 
     u32 TickflowHookFunc() {
         switch (region) {
