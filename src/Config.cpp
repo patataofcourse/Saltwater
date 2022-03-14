@@ -42,7 +42,7 @@ Config Config::FromFile(std::string fname) {
     int result = file.Read(contents, 6);
     Config out;
     char* cfgdata = new char[2];
-    if (result != 0 || std::string(contents).substr(0, 4) == "SCF\0") {
+    if (!result && std::string(contents).substr(0, 4) == "SCF\0") {
         cfgdata[0] = contents[4]; cfgdata[1] = contents[5];
         out = Config(cfgdata);
     } else {
