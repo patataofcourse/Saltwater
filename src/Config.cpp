@@ -7,46 +7,31 @@
 using CTRPluginFramework::File;
 
 Config::Config() {
-    game = false; tempo = false; gate = false;
+    loadBtks = false;
+    btksPath = "";
 }
 
 Config::Config(char* file) {
-    int data = 0;
-    switch (region) {
-        case Region::JP:
-            data = (file[0] & 0xf0) >> 4;
-            break;
-        case Region::US:
-            data = file[0] & 0x0f;
-            break;
-        case Region::EU:
-            data = (file[1] & 0xf0) >> 4;
-            break;
-        case Region::KR:
-            data = file[1] & 0x0f;
-            break;
-        default:
-            return;
-    }
-    if (!(data & 0b1000)) {
-        game, tempo, gate = true;
+    btksPath = "";
+    if (*file) {
+        loadBtks = false;
     } else {
-        game = data & 0b0100;
-        tempo = data & 0b0010;
-        gate = data & 0b0001;
+        loadBtks = true;
+        char strlen = *(file+1);
+        for (int i = 0; i < strlen; i++)
+            loadBtks += *(file+i+1);
     }
 }
+
 Config Config::FromFile(std::string fname) {
     File file(MEGAMIX_BASE_PATH + fname, File::Mode::READ);
     char* contents = new char[6];
     int result = file.Read(contents, 6);
     Config out;
-    char* cfgdata = new char[2];
-    if (!result && std::string(contents).substr(0, 4) == "SCF\0") {
-        cfgdata[0] = contents[4]; cfgdata[1] = contents[5];
-        out = Config(cfgdata);
+    if (!result && std::string(contents).substr(0, 4) == "SCF\1") {
+        out = Config(contents + 4);
     } else {
-        cfgdata[0] = 0; cfgdata[1] = 0;
+        char* cfgdata = {0};
         out = Config(cfgdata);
 
     }

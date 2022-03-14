@@ -22,30 +22,30 @@ namespace Megamix {
         };
 
         // Game table
-        if (config.game){
+        //if (config.game){
             vector<u32> game_addresses = Region::RHMPatchGameAddresses();
             u32 game_offset = (u32) rhmpatchBuffer;
             for (int address: game_addresses) {
                 Process::Patch(address, game_offset);
             }
-        }
+        //}
 
         // Tempo table
-        if (config.tempo) {
+        //if (config.tempo) {
             vector<u32> tempo_addresses = Region::RHMPatchTempoAddresses();
             u32 tempo_offset = (u32) rhmpatchBuffer + 0x1588;
             for (int address: tempo_addresses) {
                 Process::Patch(address, tempo_offset);
             }
-        }
+        //}
         
         // Gate table
-        if (config.gate) {
+        //if (config.gate) {
             vector<u32> gate_addresses = Region::RHMPatchGateAddresses();
             u32 gate_offset = (u32) rhmpatchBuffer + 0x3358;
             for (int address: gate_addresses) {
                 Process::Patch(address, gate_offset);
             }
-        }
+        //}
     }
 }

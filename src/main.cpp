@@ -86,7 +86,7 @@ namespace CTRPluginFramework
         {
             char* out = new char[0xFF];
 
-            sprintf(out, "%d/%d/%d\nobviously 1 is true and 0 is false", config.game, config.tempo, config.gate);
+            sprintf(out, "Loaded: %d\nPath: %s", config.loadBtks, config.btksPath);
 
             MessageBox("Settings (game/tempo/gate)", std::string(out))();
         });
