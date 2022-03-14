@@ -47,7 +47,7 @@ namespace Megamix {
             if (magic == "FLOW") {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
-                int tickflowSize = *intBuf - 0x8;
+                int tickflowSize = *intBuf - 0xC;
                 tickflow = (char*) malloc(tickflowSize);
                 result = file.Read(intBuf, 4); // Position of start sub
                 if (result) return result;
@@ -69,12 +69,22 @@ namespace Megamix {
                 if (result) return result;
                 file.Read(nullptr, extraBytes); // Extra bytes that may be there for whatever reason
             }
-            else if (magic == "TMPO" || magic == "STRD") {
+            else if (magic == "STRD") {
+                result = file.Read(intBuf, 4); // Section size
+                if (result) return result;
+                int dataSize = *intBuf - 0x08;
+                strings = (char*) malloc(dataSize);
+                result = file.Read(strings, dataSize);
+            }
+            else if (magic == "TMPO") {
+                //TODO
                 return -8; // Not implemented
             }
             else
                 return -9; // Unknown section
         }
+
+        //TODO: manage pointers
 
         return 0;
     }

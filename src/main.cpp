@@ -65,15 +65,7 @@ namespace CTRPluginFramework
 
         // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
-        config = Config::FromFile("/spicerack/saltwater.cfg");
-
-        /* 
-        // RHMPatch recreation
-        C00Result = Megamix::LoadC00Bin();
-        if (C00Result == 0) {
-            Megamix::PatchTickflowAddresses(config);
-        }
-        */
+        config = Config::FromFile("saltwater.cfg");
     
         btksResult = btks.LoadFile("saltwater.btk");
     
@@ -88,25 +80,6 @@ namespace CTRPluginFramework
     }
 
     void    InitMenu(PluginMenu &menu) {
-        /*
-        menu += new MenuEntry("RHMPatch load status", nullptr, [](MenuEntry *entry)
-        {
-            char* out = new char[10];
-
-            sprintf(out, "%d", C00Result);
-
-            MessageBox("C00.bin result", std::string(out))();
-        });
-
-        menu += new MenuEntry("RHMPatch location", nullptr, [](MenuEntry *entry)
-        {
-            char* out = new char[10];
-
-            sprintf(out, "%x", Megamix::rhmpatchBuffer);
-
-            MessageBox("RHMPatch location", std::string(out))();
-        });
-        */
 
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {

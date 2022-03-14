@@ -1,7 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "Megamix/Region.hpp"
+#include "Megamix.hpp"
 #include "Config.hpp"
 
 using CTRPluginFramework::File;
@@ -37,7 +37,7 @@ Config::Config(char* file) {
     }
 }
 Config Config::FromFile(std::string fname) {
-    File file(fname, File::Mode::READ);
+    File file(MEGAMIX_BASE_PATH + fname, File::Mode::READ);
     char* contents = new char[6];
     int result = file.Read(contents, 6);
     Config out;
