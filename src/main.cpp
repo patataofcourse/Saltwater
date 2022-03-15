@@ -120,7 +120,7 @@ namespace CTRPluginFramework
         InitMenu(*menu);
 
         if (btksResult) {
-            MessageBox("Error messages", Utils::Format("BTKS loader:% s", Megamix::ErrorMessage(btksResult)))();
+            MessageBox("Error messages", Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(btksResult).c_str()))();
         }
 
         // Launch menu and mainloop
