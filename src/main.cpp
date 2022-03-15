@@ -119,8 +119,9 @@ namespace CTRPluginFramework
         // Init our menu entries & folders
         InitMenu(*menu);
 
-        OSD::Notify(Utils::Format("Test hook result: %d", testInt));
-        OSD::Notify(Utils::Format("BTKS loader result: %d", btksResult));
+        if (btksResult) {
+            MessageBox("Error messages", Utils::Format("BTKS loader:% s", Megamix::ErrorMessage(btksResult)))();
+        }
 
         // Launch menu and mainloop
         menu->Run();

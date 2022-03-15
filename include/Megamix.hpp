@@ -7,5 +7,6 @@
 #include "Megamix/Region.hpp"
 #include "Megamix/Hooks.hpp"
 #include "Megamix/BTKS.hpp"
+#include "Megamix/Error.hpp"
 
 #endif
