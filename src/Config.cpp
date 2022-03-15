@@ -26,6 +26,8 @@ Config::Config(char* data, File file) {
 
 Config Config::FromFile(std::string fname) {
     File file(MEGAMIX_BASE_PATH + fname, File::Mode::READ);
+    if (file.GetSize() < 6)
+        return Config();
     char* contents = new char[6];
     int result = file.Read(contents, 6);
     if (!result && std::string(contents).substr(0, 4) == "SCF\1") {
