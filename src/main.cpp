@@ -86,7 +86,7 @@ namespace CTRPluginFramework
         {
             char* out = new char[0xFF];
 
-            sprintf(out, "Loaded: %d\nPath: %s", config.loadBtks, config.btksPath);
+            sprintf(out, "Loaded: %d\nPath: %s", config.loadBtks, config.btksPath.c_str());
 
             MessageBox("Settings (game/tempo/gate)", std::string(out))();
         });

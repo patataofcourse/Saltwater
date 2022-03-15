@@ -15,7 +15,7 @@ namespace Megamix {
         //Header
         result = file.Read(magicBuf, 4); // Magic
         if (result) return result;
-        if (magicBuf != "BTKS")
+        if (!strcmp(magicBuf,"BTKS"))
             return -6; // Not a BTKS file
         
         result = file.Read(intBuf, 4); // Filesize - not that useful rn
