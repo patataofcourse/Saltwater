@@ -84,11 +84,8 @@ namespace CTRPluginFramework
 
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
-            char* out = new char[0xFF];
 
-            sprintf(out, "Loaded: %d\nPath: %s", config.loadBtks, config.btksPath.c_str());
-
-            MessageBox("Settings (game/tempo/gate)", std::string(out))();
+            MessageBox("Settings", Utils::Format("Loaded: %d\nPath: %s", config.loadBtks, config.btksPath.c_str()))();
         });
 
         menu += new MenuEntry("Test hook results", nullptr, [](MenuEntry *entry)
