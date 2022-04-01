@@ -117,10 +117,13 @@ namespace Region {
 
     u32 TickflowHookFunc() {
         switch (region) {
+            case JP:
+                return 0x25a1b4;
             case US:
-            //case EU: //UNCONFIRMED
-            //case KR: //UNCONFIRMED
+            case EU:
                 return 0x258df4;
+            case KR:
+                return 0x258dcc;
             default:
                 return 0;
         }
@@ -128,8 +131,13 @@ namespace Region {
 
     u32 GateHookFunc() {
         switch (region) {
+            case JP:
+                return 0x242510;
             case US:
+            case EU:
                 return 0x240f9c;
+            case KR:
+                return 0x240f74;
             default:
                 return 0;
         }
