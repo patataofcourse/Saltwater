@@ -19,7 +19,10 @@ namespace Region {
     std::vector<u32> RHMPatchGateAddresses();
 
     u32 GameTable();
+    u32 TempoTable();
+    u32 GateTable();
     u32 TickflowHookFunc();
+    u32 GateHookFunc();
 }
 
 #endif

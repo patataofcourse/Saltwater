@@ -33,13 +33,13 @@ namespace Megamix::Hooks {
     void TickflowHooks() {
         rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset_wrapper);
         rtEnableHook(&tickflowHook);
-        // rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset_wrapper);
-        // rtEnableHook(&gateHook);
+        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset_wrapper);
+        rtEnableHook(&gateHook);
     }
 
     void DisableAllHooks() {
         rtDisableHook(&tickflowHook);
-        // rtDisableHook(&gateHook);
+        rtDisableHook(&gateHook);
     }
 }
 
