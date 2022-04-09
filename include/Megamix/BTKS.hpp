@@ -2,10 +2,6 @@
 #define MEGAMIX_BTKS_H
 
 namespace Megamix {
-    private:
-        static char[0x100000] tickflow;
-
-    public:
     struct BTKS {
         u32 start;
         bool loaded = false;

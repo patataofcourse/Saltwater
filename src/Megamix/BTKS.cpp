@@ -106,8 +106,7 @@ namespace Megamix {
         start = (u32)tickflow + start;
         loaded = true;
 
-        return (int)tickflow;
-        //return 0;
+        return 0;
     }
 
     void BTKS::Unload() {
