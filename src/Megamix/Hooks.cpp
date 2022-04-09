@@ -5,8 +5,6 @@
 
 #include "Megamix.hpp"
 
-int testInt = 0;
-
 extern "C" {
     extern void* getTickflowOffset(int index);
     extern void* getGateTickflowOffset(int index);
@@ -44,7 +42,6 @@ namespace Megamix::Hooks {
 }
 
 void* getTickflowOffset(int index) {
-    testInt = index;
     if (index == 0x50 && Megamix::btks.loaded) {
         return (void**)(Megamix::btks.start);
     } else {
@@ -53,6 +50,5 @@ void* getTickflowOffset(int index) {
 }
 
 void* getGateTickflowOffset(int index) {
-    testInt = index + 0x100;
     return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
 }

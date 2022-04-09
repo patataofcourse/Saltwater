@@ -86,24 +86,7 @@ namespace CTRPluginFramework
 
             MessageBox("Settings", Utils::Format("Loaded: %d\nPath: %s", config.loadBtks, config.btksPath.c_str()))();
         });
-
-        menu += new MenuEntry("Test hook results", nullptr, [](MenuEntry *entry)
-        {
-            char* out = new char[0xFF];
-
-            sprintf(out, "%d", testInt);
-
-            MessageBox("Hook test shit", std::string(out))();
-        });
-
-        menu += new MenuEntry("BTKS loader result", nullptr, [](MenuEntry *entry)
-        {
-            char* out = new char[0x10];
-
-            sprintf(out, "%d", btksResult);
-
-            MessageBox("BTKS loader result", std::string(out))();
-        });
+        
     }
 
     int main(void) {
