@@ -33,7 +33,7 @@ namespace Megamix {
         // Since the only supported version is rev0 we can expect it to always be that
 
         result = file.Read(intBuf, 4); // Number of sections - expected: 3 or 4
-        if (!result) return result;
+        if (result) return result;
         int numSections = *intBuf;
 
         // Section code! This is where things get more complicated
@@ -47,7 +47,7 @@ namespace Megamix {
             std::string magic = std::string(magicBuf);
             
             // Tickflow section
-            if (magic == "FLOW") {
+            if (magic.compare("FLOW")) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int tickflowSize = *intBuf - 0xC;
@@ -57,11 +57,12 @@ namespace Megamix {
                 start = *intBuf;
                 if (tickflowSize > 0x100000)
                     return -12; //file too big
+                tickflow = (char*) malloc(tickflowSize);
                 result = file.Read(tickflow, tickflowSize); // Tickflow data
                 if (result) return result;
             }
             // Pointer section
-            else if (magic == "PTRO") {
+            else if (magic.compare("PTRO")) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int extraBytes = *intBuf - 0x08;
@@ -74,20 +75,21 @@ namespace Megamix {
                 if (result) return result;
                 file.Read(nullptr, extraBytes); // Extra bytes that may be there for whatever reason
             }
-            else if (magic == "STRD") {
+            else if (magic.compare("STRD")) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
-                int dataSize = *intBuf - 0x08;
-                if (dataSize > 0x100000)
+                int stringSize = *intBuf - 0x08;
+                if (stringSize > 0x80000)
                     return -12; //file too big
-                result = file.Read(strings, dataSize);
+                strings = (char*) malloc(stringSize);
+                result = file.Read(strings, stringSize);
             }
-            else if (magic == "TMPO") {
+            else if (magic.compare("TMPO")) {
                 //TODO
                 return -8; // Not implemented
             }
             else
-                return -9; // Unknown section
+                return (int)magic[0];//-9; // Unknown section
         }
 
         if (tickflow == nullptr) {

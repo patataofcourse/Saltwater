@@ -5,8 +5,8 @@ namespace Megamix {
     struct BTKS {
         u32 start;
         bool loaded = false;
-        char* tickflow = new char[0x100000];
-        char* strings = new char[0x100000];
+        char* tickflow = nullptr;
+        char* strings = nullptr;
         //TODO: tempo
 
         int LoadFile(std::string filename);

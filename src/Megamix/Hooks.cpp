@@ -45,9 +45,11 @@ namespace Megamix::Hooks {
 
 void* getTickflowOffset(int index) {
     testInt = index;
-    if (index == 0x50) {
-        CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("%#0X %0X %d", Megamix::btks.start, (u32)Megamix::btks.tickflow, (u32)Megamix::btks.strings, Megamix::btks.loaded))();
-        return (void**)(Megamix::btks.start);
+    if (index == 0x50 && Megamix::btks.loaded) {
+        if (CTRPluginFramework::Process::CheckAddress(Megamix::btks.start))
+            return (void**)(Megamix::btks.start);
+        else
+            return 0;
     } else {
         return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
     }
