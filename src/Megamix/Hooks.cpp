@@ -45,14 +45,15 @@ namespace Megamix::Hooks {
 
 void* getTickflowOffset(int index) {
     testInt = index;
-    if (index == 0x4A) {
-        return *(void**)(Region::GameTable() + index * 0x34 + 4); // original code
+    if (index == 0x50 && Megamix::btks.loaded) {
+        CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("%#0X %0X", Megamix::btks.start, (u32)Megamix::btks.tickflow, (u32)Megamix::btks.strings))();
+        return *(void**)(Megamix::btks.start);
     } else {
-        return *(void**)(Region::GameTable() + 0x4A * 0x34 + 4);  // troll
+        return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
     }
 }
 
 void* getGateTickflowOffset(int index) {
     testInt = index + 0x100;
-    return *(void**)(Region::GameTable() + 0x4A * 0x34 + 4); // still sumo lmao
+    return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
 }

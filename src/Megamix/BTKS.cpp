@@ -6,6 +6,8 @@
 using CTRPluginFramework::File;
 
 namespace Megamix {
+    BTKS btks;
+
     int BTKS::LoadFile(const std::string filename) {
         File file(MEGAMIX_BASE_PATH + filename, File::Mode::READ);
         u32 result;
@@ -36,7 +38,8 @@ namespace Megamix {
 
         // Section code! This is where things get more complicated
 
-        Pointer* pointers;
+        Pointer* pointers = nullptr;
+        int numPointers = 0;
 
         for (int i = 0; i < numSections; i++) {
             result = file.Read(magicBuf, 4); // Section magic
@@ -48,10 +51,12 @@ namespace Megamix {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int tickflowSize = *intBuf - 0xC;
-                tickflow = (char*) malloc(tickflowSize);
+                tickflow = new char[tickflowSize];
                 result = file.Read(intBuf, 4); // Position of start sub
                 if (result) return result;
                 start = *intBuf;
+                if (tickflowSize > 0x100000)
+                    return -12; //file too big
                 result = file.Read(tickflow, tickflowSize); // Tickflow data
                 if (result) return result;
             }
@@ -62,7 +67,7 @@ namespace Megamix {
                 int extraBytes = *intBuf - 0x08;
                 result = file.Read(intBuf, 4); // Number of pointers
                 if (result) return result;
-                int numPointers = *intBuf;
+                numPointers = *intBuf;
                 extraBytes -= 5 * numPointers;
                 pointers = new Pointer[numPointers];
                 result = file.Read(pointers, 5*numPointers); // Pointer data
@@ -73,7 +78,8 @@ namespace Megamix {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int dataSize = *intBuf - 0x08;
-                strings = (char*) malloc(dataSize);
+                if (dataSize > 0x100000)
+                    return -12; //file too big
                 result = file.Read(strings, dataSize);
             }
             else if (magic == "TMPO") {
@@ -84,13 +90,27 @@ namespace Megamix {
                 return -9; // Unknown section
         }
 
-        //TODO: manage pointers
+        if (tickflow == nullptr) {
+            return -11; //missing required section
+        }
 
-        return 0;
+        for (int i = 0; i < numPointers; i++) {
+            Pointer pointer = pointers[i];
+            if (pointer.pointerType == 0)
+                *(u32*)(tickflow + pointer.pointerPos) += (u32)(strings);
+            else if (pointer.pointerType == 1)
+                *(u32*)(tickflow + pointer.pointerPos) += (u32)(tickflow); 
+            else
+                return -10; //unknown pointer type
+        }
+        start = (u32)tickflow + start;
+        loaded = true;
+
+        return (int)tickflow;
+        //return 0;
     }
 
     void BTKS::Unload() {
-        free(tickflow);
-        free(strings);
+        loaded = false;
     }
 }

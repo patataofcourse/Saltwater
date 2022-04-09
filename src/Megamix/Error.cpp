@@ -31,6 +31,10 @@ namespace Megamix {
                 return "Not implemented";
             case -9:
                 return "Unknown BTKS section type";
+            case -10:
+                return "Unknown BTKS pointer type";
+            case -11:
+                return "Missing BTKS section";
             default:
                 return "Unknown error code";
         }

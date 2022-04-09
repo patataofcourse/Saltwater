@@ -2,10 +2,15 @@
 #define MEGAMIX_BTKS_H
 
 namespace Megamix {
+    private:
+        static char[0x100000] tickflow;
+
+    public:
     struct BTKS {
         u32 start;
-        char* tickflow = nullptr;
-        char* strings = nullptr;
+        bool loaded = false;
+        char* tickflow = new char[0x100000];
+        char* strings = new char[0x100000];
         //TODO: tempo
 
         int LoadFile(std::string filename);
@@ -17,6 +22,8 @@ namespace Megamix {
                 u8 pointerType;
             };
     };
+
+    extern BTKS btks;
 }
 
 #endif

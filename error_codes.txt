@@ -9,3 +9,5 @@ Error codes when loading files
 -7 - Unsupported version/revision of the format
 -8 - Not implemented
 -9 - Unknown section type
+-10 - Unknown pointer type
+-11 - Missing required section

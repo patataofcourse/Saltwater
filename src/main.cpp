@@ -8,7 +8,7 @@
 int C00Result;
 int btksResult;
 Config config;
-Megamix::BTKS btks;
+using Megamix::btks;
 
 namespace CTRPluginFramework
 {
