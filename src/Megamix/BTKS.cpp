@@ -72,8 +72,10 @@ namespace Megamix {
                 numPointers = *intBuf;
                 extraBytes -= 5 * numPointers;
                 pointers = new Pointer[numPointers];
-                result = file.Read(pointers, 5*numPointers); // Pointer data
-                if (result) return result;
+                for (int i = 0; i < numPointers; i++) {
+                    result = file.Read(&pointers[i], 5); // Pointer data
+                    if (result) return result;
+                }
                 file.Read(nullptr, extraBytes); // Extra bytes that may be there for whatever reason
             }
             else if (!strcmp(magicBuf, "STRD")) {
@@ -97,7 +99,7 @@ namespace Megamix {
         if (tickflow == nullptr || strings == nullptr) {
             return -11; //missing required section
         }
-        
+
         for (int i = 0; i < numPointers; i++) {
             Pointer pointer = pointers[i];
             if (pointer.pointerType == 0)
