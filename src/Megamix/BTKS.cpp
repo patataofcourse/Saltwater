@@ -44,10 +44,9 @@ namespace Megamix {
         for (int i = 0; i < numSections; i++) {
             result = file.Read(magicBuf, 4); // Section magic
             if (result) return result;
-            std::string magic = std::string(magicBuf);
             
             // Tickflow section
-            if (magic.compare("FLOW") == 0) {
+            if (!strcmp(magicBuf, "FLOW")) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 tickflowSize = *intBuf - 0xC;
@@ -62,7 +61,7 @@ namespace Megamix {
                 if (result) return result;
             }
             // Pointer section
-            else if (magic.compare("PTRO") == 0) {
+            else if (!strcmp(magicBuf, "PTRO")) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int extraBytes = *intBuf - 0x08;
@@ -75,7 +74,7 @@ namespace Megamix {
                 if (result) return result;
                 file.Read(nullptr, extraBytes); // Extra bytes that may be there for whatever reason
             }
-            else if (magic.compare("STRD") == 0) {
+            else if (!strcmp(magicBuf, "STRD")) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 stringSize = *intBuf - 0x08;
@@ -84,12 +83,12 @@ namespace Megamix {
                 strings = (char*) malloc(stringSize);
                 result = file.Read(strings, stringSize);
             }
-            else if (magic.compare("TMPO") == 0) {
+            else if (!strcmp(magicBuf, "TMPO")) {
                 //TODO
                 return -8; // Not implemented
             }
             else
-                return (int)magic[0];//-9; // Unknown section
+                return -9; // Unknown section
         }
 
         if (tickflow == nullptr || strings == nullptr) {
