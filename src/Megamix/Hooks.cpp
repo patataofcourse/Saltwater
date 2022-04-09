@@ -46,10 +46,11 @@ namespace Megamix::Hooks {
 void* getTickflowOffset(int index) {
     testInt = index;
     if (index == 0x50 && Megamix::btks.loaded) {
-        if (CTRPluginFramework::Process::CheckAddress(Megamix::btks.start))
-            return (void**)(Megamix::btks.start);
-        else
-            return 0;
+        u32& tickflowSize = Megamix::btks.tickflowSize;
+        u32& stringSize = Megamix::btks.stringSize;
+        CTRPluginFramework::Process::CheckRegion((u32)Megamix::btks.tickflow, tickflowSize);
+        CTRPluginFramework::Process::CheckRegion((u32)Megamix::btks.strings, stringSize);
+        return (void**)(Megamix::btks.start);
     } else {
         return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
     }

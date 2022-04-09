@@ -11,3 +11,4 @@ Error codes when loading files
 -9 - Unknown section type
 -10 - Unknown pointer type
 -11 - Missing required section
+-12 - File too big

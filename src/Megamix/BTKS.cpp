@@ -47,10 +47,10 @@ namespace Megamix {
             std::string magic = std::string(magicBuf);
             
             // Tickflow section
-            if (magic.compare("FLOW")) {
+            if (magic.compare("FLOW") == 0) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
-                int tickflowSize = *intBuf - 0xC;
+                tickflowSize = *intBuf - 0xC;
                 tickflow = new char[tickflowSize];
                 result = file.Read(intBuf, 4); // Position of start sub
                 if (result) return result;
@@ -62,7 +62,7 @@ namespace Megamix {
                 if (result) return result;
             }
             // Pointer section
-            else if (magic.compare("PTRO")) {
+            else if (magic.compare("PTRO") == 0) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
                 int extraBytes = *intBuf - 0x08;
@@ -75,16 +75,16 @@ namespace Megamix {
                 if (result) return result;
                 file.Read(nullptr, extraBytes); // Extra bytes that may be there for whatever reason
             }
-            else if (magic.compare("STRD")) {
+            else if (magic.compare("STRD") == 0) {
                 result = file.Read(intBuf, 4); // Section size
                 if (result) return result;
-                int stringSize = *intBuf - 0x08;
+                stringSize = *intBuf - 0x08;
                 if (stringSize > 0x80000)
                     return -12; //file too big
                 strings = (char*) malloc(stringSize);
                 result = file.Read(strings, stringSize);
             }
-            else if (magic.compare("TMPO")) {
+            else if (magic.compare("TMPO") == 0) {
                 //TODO
                 return -8; // Not implemented
             }
@@ -92,7 +92,7 @@ namespace Megamix {
                 return (int)magic[0];//-9; // Unknown section
         }
 
-        if (tickflow == nullptr) {
+        if (tickflow == nullptr || strings == nullptr) {
             return -11; //missing required section
         }
 

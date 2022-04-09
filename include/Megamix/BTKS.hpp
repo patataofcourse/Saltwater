@@ -7,6 +7,8 @@ namespace Megamix {
         bool loaded = false;
         char* tickflow = nullptr;
         char* strings = nullptr;
+        u32 tickflowSize;
+        u32 stringSize;
         //TODO: tempo
 
         int LoadFile(std::string filename);

@@ -35,6 +35,8 @@ namespace Megamix {
                 return "Unknown BTKS pointer type";
             case -11:
                 return "Missing BTKS section";
+            case -12:
+                return "File does not fit on memory";
             default:
                 return "Unknown error code";
         }
