@@ -11,15 +11,17 @@ namespace Megamix {
     int BTKS::LoadFile(const std::string filename) {
         File file(MEGAMIX_BASE_PATH + filename, File::Mode::READ);
         u32 result;
-        char* magicBuf = new char[4];
+        char* magicBuf = new char[8];
+        magicBuf[4] = 0; // terminator
         u32* intBuf = new u32[1];
 
         //Header
         result = file.Read(magicBuf, 4); // Magic
         if (result) return result;
-        if (!strcmp(magicBuf,"BTKS"))
+        if (strcmp(magicBuf,"BTKS")) {
             return -6; // Not a BTKS file
-        
+        }
+
         result = file.Read(intBuf, 4); // Filesize - not that useful rn
         if (result) return result;
         int filesize = *intBuf;
@@ -87,20 +89,21 @@ namespace Megamix {
                 //TODO
                 return -8; // Not implemented
             }
-            else
+            else {
                 return -9; // Unknown section
+            }
         }
 
         if (tickflow == nullptr || strings == nullptr) {
             return -11; //missing required section
         }
-
+        
         for (int i = 0; i < numPointers; i++) {
             Pointer pointer = pointers[i];
             if (pointer.pointerType == 0)
-                *(u32*)(tickflow + pointer.pointerPos) += (u32)(strings);
+                *(u32*)((u32)tickflow + pointer.pointerPos) += (u32)(strings);
             else if (pointer.pointerType == 1)
-                *(u32*)(tickflow + pointer.pointerPos) += (u32)(tickflow); 
+                *(u32*)((u32)tickflow + pointer.pointerPos) += (u32)(tickflow); 
             else
                 return -10; //unknown pointer type
         }
