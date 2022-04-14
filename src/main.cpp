@@ -84,7 +84,7 @@ namespace CTRPluginFramework
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
 
-            MessageBox("Settings", Utils::Format("Loaded: %d\nPath: %s", config.loadBtks, config.btksPath.c_str()))();
+            MessageBox("Settings", Utils::Format(""))();
         });
         
     }

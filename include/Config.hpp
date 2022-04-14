@@ -5,12 +5,15 @@
 #include <CTRPluginFramework.hpp>
 
 #include <string>
+#include <map>
 
 struct Config {
-    bool loadBtks;
-    std::string btksPath;
+    typedef std::map<u16, std::string> map;
+
+    map tickflows;
+
     Config();
-    Config(char* file, CTRPluginFramework::File);
+    Config(map map);
     static Config FromFile(std::string fname);
 };
 

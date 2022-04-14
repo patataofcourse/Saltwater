@@ -4,24 +4,12 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
+#include <map>
+
 using CTRPluginFramework::File;
 
 Config::Config() {
-    loadBtks = false;
-    btksPath = "";
-}
-
-Config::Config(char* data, File file) {
-    if (*data) {
-        btksPath = "";
-        loadBtks = false;
-    } else {
-        loadBtks = true;
-        char strlen = *(data+1);
-        char* buffer = new char[strlen];
-        file.Read(buffer, strlen);
-        btksPath = std::string(buffer);
-    }
+    tickflows = {};
 }
 
 Config Config::FromFile(std::string fname) {
@@ -30,7 +18,7 @@ Config Config::FromFile(std::string fname) {
     int result = file.Read(contents, 6);
     if (result || file.GetSize() < 6) return Config();
     if (result == 0 && std::string(contents).substr(0, 4) == "SCF\1") {
-        return Config(contents + 4, file);
+        //TODO
     }
     return Config();
 }
