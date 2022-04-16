@@ -65,7 +65,7 @@ namespace CTRPluginFramework
 
         // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
-        config = Config::FromFile("saltwater.cfg");
+        config = Config::FromFile(MEGAMIX_CONFIG_PATH);
     
         btksResult = btks.LoadFile("saltwater.btk");
     
@@ -84,7 +84,7 @@ namespace CTRPluginFramework
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
 
-            MessageBox("Settings", Utils::Format(""))();
+            MessageBox("Settings", Utils::Format("Config btks map is%s empty", config.tickflows.empty()? "": " NOT"))();
         });
         
     }
