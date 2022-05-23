@@ -6,7 +6,6 @@
 #include "Config.hpp"
 
 int C00Result;
-int btksResult;
 Config config;
 using Megamix::btks;
 
@@ -67,8 +66,6 @@ namespace CTRPluginFramework
         region = CTRPluginFramework::Process::GetTitleID();
         config = Config::FromFile(MEGAMIX_CONFIG_PATH);
     
-        btksResult = btks.LoadFile("saltwater.btk");
-    
         Megamix::Hooks::TickflowHooks();
     }
 
@@ -84,7 +81,7 @@ namespace CTRPluginFramework
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
 
-            MessageBox("Settings", Utils::Format("Config btks map is%s empty", config.tickflows.empty()? "": " NOT"))();
+            MessageBox("Settings", Utils::Format("Config btks map is%s empty", config.tickflows.empty()? "": " not"))();
         });
         
     }
@@ -98,9 +95,9 @@ namespace CTRPluginFramework
         // Init our menu entries & folders
         InitMenu(*menu);
 
-        if (btksResult) {
+        /*if (btksResult) {
             MessageBox("Error messages", Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(btksResult).c_str()))();
-        }
+        }*/
         
 
         // Launch menu and mainloop

@@ -28,12 +28,15 @@ Config Config::FromFile(std::string fname) {
             result = file.Read(index, 2);
             if (result) return Config();
             if (*index == 0xC000) break;
+            
             u16* strlen = 0;
             result = file.Read(index, 2);
             if (result) return Config();
+            
             char* str = new char[*strlen];
             result = file.Read(str, *strlen);
             if (result) return Config();
+            
             tfmap[*index] = std::string(str);
         }
         return Config(tfmap);

@@ -17,4 +17,6 @@ struct Config {
     static Config FromFile(std::string fname);
 };
 
+extern Config config;
+
 #endif

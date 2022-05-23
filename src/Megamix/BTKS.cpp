@@ -117,5 +117,7 @@ namespace Megamix {
 
     void BTKS::Unload() {
         loaded = false;
+        delete[] tickflow;
+        delete[] strings;
     }
 }

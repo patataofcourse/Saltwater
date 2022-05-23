@@ -4,6 +4,7 @@
 #include "rt.h"
 
 #include "Megamix.hpp"
+#include "Config.hpp"
 
 extern "C" {
     extern void* getTickflowOffset(int index);
@@ -42,7 +43,7 @@ namespace Megamix::Hooks {
 }
 
 void* getTickflowOffset(int index) {
-    if (index == 0x50 && Megamix::btks.loaded) {
+    if (config.tickflows.contains(index)) {
         return (void**)(Megamix::btks.start);
     } else {
         return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
