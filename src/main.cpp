@@ -5,8 +5,7 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
-int C00Result;
-Config config;
+Config* config;
 using Megamix::btks;
 
 namespace CTRPluginFramework
@@ -74,6 +73,7 @@ namespace CTRPluginFramework
     void    OnProcessExit(void) {
         Megamix::Hooks::DisableAllHooks();
         ToggleTouchscreenForceOn();
+        delete config;
     }
 
     void    InitMenu(PluginMenu &menu) {
@@ -81,7 +81,11 @@ namespace CTRPluginFramework
         menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
         {
 
-            MessageBox("Settings", Utils::Format("Config btks map is%s empty", config.tickflows.empty()? "": " not"))();
+            MessageBox("Settings", Utils::Format(
+                "Config btks map is%s empty and%s loaded",
+                config->tickflows.empty()? "": " not",
+                config->has_map? "": " not"
+            ))();
         });
         
     }

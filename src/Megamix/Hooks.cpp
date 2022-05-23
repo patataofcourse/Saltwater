@@ -43,7 +43,7 @@ namespace Megamix::Hooks {
 }
 
 void* getTickflowOffset(int index) {
-    if (config.tickflows.contains(index)) {
+    if (config->tickflows.contains(index)) {
         return (void**)(Megamix::btks.start);
     } else {
         return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code

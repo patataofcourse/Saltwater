@@ -11,12 +11,13 @@ struct Config {
     typedef std::map<u16, std::string> map;
 
     map tickflows;
+    bool has_map = false;
 
     Config();
     Config(map map);
-    static Config FromFile(std::string fname);
+    static Config* FromFile(std::string fname);
 };
 
-extern Config config;
+extern Config* config;
 
 #endif
