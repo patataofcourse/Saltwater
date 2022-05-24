@@ -16,7 +16,6 @@ Config::Config() {
 
 Config::Config(map tf) {
     tickflows = tf;
-    has_map = true;
 }
 
 Config* Config::FromFile(std::string fname) {

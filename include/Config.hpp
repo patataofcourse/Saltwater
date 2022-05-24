@@ -11,7 +11,6 @@ struct Config {
     typedef std::map<u16, std::string> map;
 
     map tickflows;
-    bool has_map = false;
 
     Config();
     Config(map map);

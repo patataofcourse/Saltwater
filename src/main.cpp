@@ -82,9 +82,9 @@ namespace CTRPluginFramework
         {
 
             MessageBox("Settings", Utils::Format(
-                "Config btks map is%s empty and%s loaded\nResult: %d",
+                "Config btks map is%s empty\nResult: %s / %d",
                 config->tickflows.empty()? "": " not",
-                config->has_map? "": " not",
+                config->tickflows[1],
                 configResult
             ))();
         });
