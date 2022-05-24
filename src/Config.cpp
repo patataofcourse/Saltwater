@@ -24,16 +24,16 @@ Config* Config::FromFile(std::string fname) {
     char* contents = new char[4];
     configResult = file.Read(contents, 4);
     if (configResult || file.GetSize() < 4) return new Config();
-    if (configResult == 0 && std::string(contents) == "SCF\2") {
+    if (configResult == 0 && strcmp(contents, "SCF\2")) {
         map tfmap = {};
         while (true) {
-            u16* index = 0;
+            u16* index = new u16;
             configResult = file.Read(index, 2);
             if (configResult) return new Config();
             if (*index == 0xC000) break;
             
-            u16* strlen = 0;
-            configResult = file.Read(index, 2);
+            u16* strlen = new u16;
+            configResult = file.Read(strlen, 2);
             if (configResult) return new Config();
             
             char* str = new char[*strlen];
