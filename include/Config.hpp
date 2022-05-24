@@ -19,5 +19,6 @@ struct Config {
 };
 
 extern Config* config;
+extern int configResult;
 
 #endif

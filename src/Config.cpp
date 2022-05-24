@@ -8,6 +8,8 @@
 
 using CTRPluginFramework::File;
 
+int configResult;
+
 Config::Config() {
     tickflows = {};
 }
@@ -20,23 +22,23 @@ Config::Config(map tf) {
 Config* Config::FromFile(std::string fname) {
     File file(fname, File::Mode::READ);
     char* contents = new char[4];
-    int result = file.Read(contents, 4);
-    if (result || file.GetSize() < 4) return new Config();
-    if (result == 0 && std::string(contents) == "SCF\2") {
+    configResult = file.Read(contents, 4);
+    if (configResult || file.GetSize() < 4) return new Config();
+    if (configResult == 0 && std::string(contents) == "SCF\2") {
         map tfmap = {};
         while (true) {
             u16* index = 0;
-            result = file.Read(index, 2);
-            if (result) return new Config();
+            configResult = file.Read(index, 2);
+            if (configResult) return new Config();
             if (*index == 0xC000) break;
             
             u16* strlen = 0;
-            result = file.Read(index, 2);
-            if (result) return new Config();
+            configResult = file.Read(index, 2);
+            if (configResult) return new Config();
             
             char* str = new char[*strlen];
-            result = file.Read(str, *strlen);
-            if (result) return new Config();
+            configResult = file.Read(str, *strlen);
+            if (configResult) return new Config();
             
             tfmap[*index] = std::string(str);
         }
