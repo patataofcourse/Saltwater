@@ -9,7 +9,8 @@ namespace Megamix {
     BTKS btks;
 
     int BTKS::LoadFile(const std::string filename) {
-        File file(MEGAMIX_BASE_PATH + filename, File::Mode::READ);
+        this->Unload();
+        File file(MEGAMIX_MODS_PATH + filename + ".btk", File::Mode::READ);
         u32 result;
         char* magicBuf = new char[8];
         magicBuf[4] = 0; // terminator

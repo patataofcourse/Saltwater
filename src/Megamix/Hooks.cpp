@@ -44,12 +44,26 @@ namespace Megamix::Hooks {
 
 void* getTickflowOffset(int index) {
     if (config->tickflows.contains(index)) {
-        return (void**)(Megamix::btks.start);
+        int result = Megamix::btks.LoadFile(config->tickflows[index]);
+        if (result) {
+            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();
+            return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
+        }
+        return (void*)(Megamix::btks.start);
     } else {
         return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
     }
 }
 
 void* getGateTickflowOffset(int index) {
-    return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
+    if (config->tickflows.contains(index + 0x100)) {
+        int result = Megamix::btks.LoadFile(config->tickflows[index + 0x100]);
+        if (result) {
+            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();    
+            return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
+        }
+        return (void*)(Megamix::btks.start);
+    } else {
+        return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
+    }
 }
