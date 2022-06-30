@@ -28,10 +28,10 @@ namespace Megamix {
         if (result) return result;
         int filesize = *intBuf;
 
-        result = file.Read(intBuf, 4); // Format version - supported: rev0
+        result = file.Read(intBuf, 4); // Format version - supported: rev1
         if (result) return result;
         int version = *intBuf;
-        if (version != 0)
+        if (version != 1)
             return -7; // Unsupported version
         
         // Since the only supported version is rev0 we can expect it to always be that
