@@ -35,9 +35,10 @@ Config* Config::FromFile(std::string fname) {
             configResult = file.Read(strlen, 2);
             if (configResult) return new Config();
             
-            char* str = new char[*strlen];
+            char* str = new char[*strlen + 1];
             configResult = file.Read(str, *strlen);
             if (configResult) return new Config();
+            str[*strlen] = 0;
             
             tfmap[*index] = std::string(str);
         }

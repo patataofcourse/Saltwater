@@ -5,6 +5,8 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
+#include "Stuff.hpp"
+
 Config* config;
 using Megamix::btks;
 
@@ -82,11 +84,16 @@ namespace CTRPluginFramework
         {
 
             MessageBox("Settings", Utils::Format(
-                "Config btks map is%s empty\nResult: %s / %d",
+                "Config btks map is%s empty\nResult: %d",
                 config->tickflows.empty()? "": " not",
-                config->tickflows[1],
                 configResult
             ))();
+        });
+
+        menu += new MenuEntry("Map contents", nullptr, [](MenuEntry *entry)
+        {
+
+            MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
         });
         
     }

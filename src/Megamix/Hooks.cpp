@@ -59,7 +59,7 @@ void* getGateTickflowOffset(int index) {
     if (config->tickflows.contains(index + 0x100)) {
         int result = Megamix::btks.LoadFile(config->tickflows[index + 0x100]);
         if (result) {
-            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();    
+            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s\n%s", Megamix::ErrorMessage(result).c_str(), config->tickflows[index+0x100]))();    
             return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
         }
         return (void*)(Megamix::btks.start);
