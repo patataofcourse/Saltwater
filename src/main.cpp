@@ -84,16 +84,21 @@ namespace CTRPluginFramework
         {
 
             MessageBox("Settings", Utils::Format(
-                "Config btks map is%s empty\nResult: %d",
-                config->tickflows.empty()? "": " not",
+                "Result: %d",
                 configResult
             ))();
         });
 
-        menu += new MenuEntry("Map contents", nullptr, [](MenuEntry *entry)
+        menu += new MenuEntry("Tickflow contents", nullptr, [](MenuEntry *entry)
         {
 
             MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
+        });
+
+        menu += new MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](MenuEntry *entry)
+        {
+
+            MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
         });
         
     }
@@ -106,11 +111,6 @@ namespace CTRPluginFramework
 
         // Init our menu entries & folders
         InitMenu(*menu);
-
-        /*if (btksResult) {
-            MessageBox("Error messages", Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(btksResult).c_str()))();
-        }*/
-        
 
         // Launch menu and mainloop
         menu->Run();

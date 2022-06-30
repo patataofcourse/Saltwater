@@ -1,5 +1,6 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
+#include <map>
 
 #include "Megamix.hpp"
 
@@ -89,7 +90,39 @@ namespace Megamix {
                 result = file.Read(strings, stringSize);
             }
             else if (!strcmp(magicBuf, "TMPO")) {
-                //TODO
+                result = file.Read(intBuf, 4); // Section size
+                if (result) return result;
+                int extraBytes = *intBuf - 0xC;
+                result = file.Read(intBuf, 4);
+                if (result) return result;
+                u32 tempoAmount = *intBuf;
+
+                tempos = std::map<u32, TempoData*>();
+
+                for (u32 i = 0; i < tempoAmount; i++) {
+                    result = file.Read(intBuf, 4);
+                    if (result) return result;
+                    u32 id = *intBuf;
+                    result = file.Read(intBuf, 4);
+                    if (result) return result;
+                    u32 dataSize = *intBuf;
+                    TempoData* data = new TempoData[dataSize];
+                    for (u32 i = 0; i < dataSize; i++) {
+                        float* floatBuf = new float;
+                        result = file.Read(floatBuf, 4);
+                        if (result) return result;
+                        data[i].beats = *floatBuf;
+                        result = file.Read(intBuf, 4);
+                        if (result) return result;
+                        data[i].time = *intBuf;
+                        result = file.Read(intBuf, 4);
+                        if (result) return result;
+                        data[i].loop_val = *intBuf;
+                    }
+                    
+                    tempos[id] = data;
+                }
+
                 return -8; // Not implemented
             }
             else {
@@ -120,5 +153,6 @@ namespace Megamix {
         loaded = false;
         delete[] tickflow;
         delete[] strings;
+        tempos = std::map<u32, TempoData*>();
     }
 }
