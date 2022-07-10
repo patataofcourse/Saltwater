@@ -14,7 +14,7 @@ If you want to build mods, you'll need a specific fork of Tickompiler for the pa
 * Nanquitas for the Luma3DS plugin loader, CTRPF, and the template
 * PabloMK7 for CTRPF, the template, CTGP-7 (which inspired this project), and a LOT of support (ty)
 * NeoBeo for RHMPatch
-* 141sh1 for his help with reverse-engineering
+* EstexNT for his help with reverse-engineering
 * Everyone who's cheered on and helped with testing, thank you so much, everyone <3
 
 ###### RHMPatch was released in 2017 guys it's kinda outdated
