@@ -72,7 +72,7 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L $(dir)/lib)
 all: $(BUILD)
 
 release: RELEASE = 1
-release: $(BUILD)
+release: clean $(BUILD)
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
