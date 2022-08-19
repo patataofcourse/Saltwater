@@ -10,6 +10,8 @@
 Config* config;
 using Megamix::btks;
 
+const char* version = VERSION;
+
 namespace CTRPluginFramework
 {
     // This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
@@ -104,7 +106,13 @@ namespace CTRPluginFramework
     }
 
     int main(void) {
-        PluginMenu *menu = new PluginMenu("Saltwater debug menu", 0, 1, 0, "Rhythm Heaven Megamix patch", 1);
+        #ifdef RELEASE
+
+        Process::WaitForExit();
+
+        #else
+
+        PluginMenu *menu = new PluginMenu("Saltwater debug menu", VERSION, 1);
 
         // Synnchronize the menu with frame event
         menu->SynchronizeWithFrame(true);
@@ -116,6 +124,8 @@ namespace CTRPluginFramework
         menu->Run();
 
         delete menu;
+
+        #endif
 
         // Exit plugin
         return (0);

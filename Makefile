@@ -12,9 +12,11 @@ CTRPFLIB	?=	$(DEVKITPRO)/libctrpf
 TARGET		:= 	$(notdir $(CURDIR))
 PLGINFO 	:= 	saltwater.plgInfo
 
-BUILD		:= 	build
+BUILD 		:= 	build
 INCLUDES	:= 	include
 SOURCES 	:= 	src src/Megamix
+
+RELEASE		?= 0
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -24,7 +26,11 @@ ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 CFLAGS		:=	$(ARCH) -Os -W -mword-relocations \
 				-fomit-frame-pointer -ffunction-sections -fno-strict-aliasing
 
-CFLAGS		+=	$(INCLUDE) -D__3DS__
+CFLAGS		+=	$(INCLUDE) -D__3DS__ -DCOMMIT="$(shell git show --format='%h' --no-patch)"
+
+ifneq ($(RELEASE), 0)
+CFLAGS		+= -DRELEASE
+endif
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 
@@ -65,9 +71,12 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L $(dir)/lib)
 #---------------------------------------------------------------------------------
 all: $(BUILD)
 
+release: RELEASE = 1
+release: $(BUILD)
+
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $@ -f $(CURDIR)/Makefile RELEASE=$(RELEASE)
 
 #---------------------------------------------------------------------------------
 clean:
