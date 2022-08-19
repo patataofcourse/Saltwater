@@ -10,5 +10,6 @@
 #include "Megamix/Hooks.hpp"
 #include "Megamix/BTKS.hpp"
 #include "Megamix/Error.hpp"
+#include "Megamix/Types.hpp"
 
 #endif

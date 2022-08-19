@@ -142,4 +142,24 @@ namespace Region {
                 return 0;
         }
     }
+
+    // Hooks - Tempo
+
+    u32 StrmTempoHookFunc() {
+        switch (region) {
+            case US:
+                return 0x2763c8;
+            default:
+                return 0;
+        }
+    }
+
+    u32 SeqTempoHookFunc() {
+        switch (region) {
+            case US:
+                return 0x276424;
+            default:
+                return 0;
+        }
+    }
 }
