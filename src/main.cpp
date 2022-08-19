@@ -112,7 +112,7 @@ namespace CTRPluginFramework
 
         #else
 
-        PluginMenu *menu = new PluginMenu("Saltwater debug menu", VERSION, 1);
+        PluginMenu *menu = new PluginMenu(Utils::Format("Saltwater %s debug", VERSION), "", 1);
 
         // Synnchronize the menu with frame event
         menu->SynchronizeWithFrame(true);
