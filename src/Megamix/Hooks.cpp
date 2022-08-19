@@ -44,7 +44,7 @@ namespace Megamix::Hooks {
         rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset_wrapper);
         rtEnableHook(&gateHook);
         rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm_wrapper);
-        rtEnableHook(&tempoStrmHook);
+        //rtEnableHook(&tempoStrmHook);
     }
 
     void DisableAllHooks() {
@@ -57,32 +57,30 @@ namespace Megamix::Hooks {
 void* getTickflowOffset(int index) {
     if (config->tickflows.contains(index)) {
         int result = Megamix::btks.LoadFile(config->tickflows[index]);
-        if (result) {
+        if (!result) {
+            return (void*)(Megamix::btks.start);
+        } else {
             CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();
-            return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
         }
-        return (void*)(Megamix::btks.start);
-    } else {
-        return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
     }
+    return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
 }
 
 void* getGateTickflowOffset(int index) {
     if (config->tickflows.contains(index + 0x100)) {
         int result = Megamix::btks.LoadFile(config->tickflows[index + 0x100]);
-        if (result) {
+        if (!result) {
+            return (void*)(Megamix::btks.start);
+        } else {
             CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s\n%s", Megamix::ErrorMessage(result).c_str(), config->tickflows[index+0x100]))();    
-            return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
         }
-        return (void*)(Megamix::btks.start);
-    } else {
-        return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
     }
+    return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
 }
 
 void* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
     if (Megamix::btks.tempos.contains(id)) {
-        return 0; //TODO: still need a bunch more stuff before this
+        return (void*)4; //TODO: still need a bunch more stuff before this
     } else { // Original code
         for (s32 low = 0, high = this_->numberTempos; low <= high;) {
             s32 current_num = (low + high) / 2;
