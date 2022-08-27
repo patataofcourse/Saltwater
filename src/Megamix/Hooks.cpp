@@ -11,34 +11,7 @@ extern "C" {
     extern void* getGateTickflowOffset(int index);
     extern void* getTempoStrm(Megamix::CSoundManager* this_, u32 id);
     extern void* getTempoSeq(Megamix::CSoundManager* this_, u32 id);
-}
-
-static NAKED void getTickflowOffset_wrapper() {
-    __asm__ ("\
-        .extern getTickflowOffset  \n\
-        b getTickflowOffset          \
-    ");
-}
-
-static NAKED void getGateTickflowOffset_wrapper() {
-    __asm__ ("\
-        .extern getGateTickflowOffset \n\
-        b getGateTickflowOffset         \
-    ");
-}
-
-static NAKED void getTempoStrm_wrapper() {
-    __asm__ ("\
-        .extern getTempoStrm \n\
-        b getTempoStrm         \
-    ");
-}
-
-static NAKED void getTempoSeq_wrapper() {
-    __asm__ ("\
-        .extern getTempoSeq \n\
-        b getTempoSeq         \
-    ");
+    extern void* getTempoAll(Megamix::CSoundManager* this_, u32 id);
 }
 
 namespace Megamix::Hooks {
@@ -46,16 +19,22 @@ namespace Megamix::Hooks {
     RT_HOOK gateHook;
     RT_HOOK tempoStrmHook;
     RT_HOOK tempoSeqHook;
+    RT_HOOK tempoAllHook;
     
     void TickflowHooks() {
-        rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset_wrapper);
+        rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
-        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset_wrapper);
+        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset);
         rtEnableHook(&gateHook);
-        rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm_wrapper);
+    }
+
+    void TempoHooks() {
+        rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm);
         rtEnableHook(&tempoStrmHook);
-        rtInitHook(&tempoSeqHook, Region::SeqTempoHookFunc(), (u32)getTempoSeq_wrapper);
+        rtInitHook(&tempoSeqHook, Region::SeqTempoHookFunc(), (u32)getTempoSeq);
         rtEnableHook(&tempoSeqHook);
+        rtInitHook(&tempoAllHook, Region::AllTempoHookFunc(), (u32)getTempoAll);
+        rtEnableHook(&tempoAllHook);
     }
 
     void DisableAllHooks() {
@@ -63,6 +42,7 @@ namespace Megamix::Hooks {
         rtDisableHook(&gateHook);
         rtDisableHook(&tempoStrmHook);
         rtDisableHook(&tempoSeqHook);
+        rtDisableHook(&tempoAllHook);
     }
 }
 
@@ -115,6 +95,19 @@ void* getTempoSeq(Megamix::CSoundManager* this_, u32 id) {
             if (current->id > id) high = current_num - 1;
             if (current->id < id) low = current_num + 1;
             if (current->id == id) return current->tempo;
+        }
+        return 0;
+    }
+}
+
+void* getTempoAll(Megamix::CSoundManager* this_, u32 id) {
+    if (Megamix::btks.tempos.contains(id)) {
+        return (void*)0xC; //TODO: still need a bunch more stuff before this
+    } else { // Original code
+        for (int i = 0; i < this_->numberTempos; i++) {
+            Megamix::TempoTable* current = &this_->tempoTable[i];
+            if (current->id1 == id || current->id2 == id)
+                return current;
         }
         return 0;
     }

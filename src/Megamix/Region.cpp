@@ -162,4 +162,13 @@ namespace Region {
                 return 0;
         }
     }
+
+    u32 AllTempoHookFunc() {
+        switch (region) {
+            case US:
+                return 0x203c08;
+            default:
+                return 0;
+        }
+    }
 }

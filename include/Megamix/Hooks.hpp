@@ -3,6 +3,7 @@
 
 namespace Megamix::Hooks {
     void TickflowHooks();
+    void TempoHooks();
     void DisableAllHooks();
 }
 

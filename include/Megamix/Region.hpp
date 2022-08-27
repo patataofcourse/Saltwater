@@ -27,6 +27,7 @@ namespace Region {
 
     u32 StrmTempoHookFunc();
     u32 SeqTempoHookFunc();
+    u32 AllTempoHookFunc();
 }
 
 #endif

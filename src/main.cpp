@@ -70,6 +70,9 @@ namespace CTRPluginFramework
         config = Config::FromFile(MEGAMIX_CONFIG_PATH);
     
         Megamix::Hooks::TickflowHooks();
+
+        if (region != Region::US)
+            Megamix::Hooks::TempoHooks();
     }
 
     // This function is called when the process exits

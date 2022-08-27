@@ -2,7 +2,13 @@
 #define RHMTYPES_H
 
 namespace Megamix {
-    typedef u32 TempoTable[4];
+    typedef u32 Tempo;
+
+    struct TempoTable {
+        u32 id1;
+        u32 id2;
+        Tempo* pos;
+    };
 
     struct SM_TempoTable {
         u32 id;
