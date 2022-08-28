@@ -109,6 +109,12 @@ namespace CTRPluginFramework
     }
 
     int main(void) {
+
+        // re-enable rhmpatch if needed
+        if (*(bool*)CTRPluginFramework::FwkSettings::Get().Header->config) {
+            File::Rename("/luma/titles/000400000018A400/_code.ips", "/luma/titles/000400000018A400/code.ips");
+        }
+
         #ifdef RELEASE
 
         Process::WaitForExit();
