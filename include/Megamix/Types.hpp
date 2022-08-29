@@ -2,7 +2,12 @@
 #define RHMTYPES_H
 
 namespace Megamix {
-    typedef u32 Tempo;
+    struct Tempo {
+        float beats;
+        u32 time;
+        u16 flag8;
+        u16 flagA;
+    };
 
     struct TempoTable {
         u32 id1;

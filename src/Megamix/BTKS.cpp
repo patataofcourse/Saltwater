@@ -28,17 +28,31 @@ namespace Megamix {
         if (result) return result;
         int filesize = *intBuf;
 
-        result = file.Read(intBuf, 4); // Format version - supported: rev1
+        result = file.Read(intBuf, 4); // Format version - supported: rev2
         if (result) return result;
         int version = *intBuf;
-        if (version != 1)
+        if (version != 2)
             return -7; // Unsupported version
         
-        // Since the only supported version is rev0 we can expect it to always be that
+        // Since the only supported version is rev2 we can expect it to always be that
+
+        result = file.Read(intBuf, 4); // Header size - expected: 0x18
+        if (result) return result;
+        int headerEnd = *intBuf;
 
         result = file.Read(intBuf, 4); // Number of sections - expected: 3 or 4
         if (result) return result;
         int numSections = *intBuf;
+
+        result = file.Read(intBuf, 4); // Tickflow format - supported: 0 (US/EU/KR)
+        if (result) return result;
+        if (!(region == Region::JP != result == 0))
+            return -13; // Unsupported Tickflow format
+
+        // Seek to end of header
+
+        result = file.Seek(headerEnd);
+        if (result) return result;
 
         // Section code! This is where things get more complicated
 
@@ -97,8 +111,6 @@ namespace Megamix {
                 if (result) return result;
                 u32 tempoAmount = *intBuf;
 
-                tempos = std::map<u32, TempoData*>();
-
                 for (u32 i = 0; i < tempoAmount; i++) {
                     result = file.Read(intBuf, 4);
                     if (result) return result;
@@ -106,7 +118,10 @@ namespace Megamix {
                     result = file.Read(intBuf, 4);
                     if (result) return result;
                     u32 dataSize = *intBuf;
-                    TempoData* data = new TempoData[dataSize];
+                    result = file.Read(intBuf, 4);
+                    if (result) return result;
+                    bool is_streamed = *(bool*)intBuf;
+                    Tempo* data = new Tempo[dataSize];
                     for (u32 i = 0; i < dataSize; i++) {
                         float* floatBuf = new float;
                         result = file.Read(floatBuf, 4);
@@ -117,10 +132,24 @@ namespace Megamix {
                         data[i].time = *intBuf;
                         result = file.Read(intBuf, 4);
                         if (result) return result;
-                        data[i].loop_val = *intBuf;
+                        data[i].flag8 = ((u16*)*intBuf)[0];
+                        data[i].flagA = ((u16*)*intBuf)[1];
                     }
                     
+                    if (is_streamed && data->flag8 != 1) {
+                        u32 time = data->time;
+                        float beats = data->beats;
+                        u32 time_added = time + 2000;
+                        data->beats = (float)time_added * beats / (float)time;
+                        data->time = time_added;
+                    }
+
                     tempos[id] = data;
+
+                    if (is_streamed)
+                        tempos_strm[id] = data;
+                    else
+                        tempos_seq[id] = data;
                 }
 
                 return -8; // Not implemented
@@ -153,6 +182,11 @@ namespace Megamix {
         loaded = false;
         delete[] tickflow;
         delete[] strings;
-        tempos = std::map<u32, TempoData*>();
+        for (auto tempo: tempos) {
+            delete tempo.second;
+        }
+        tempos.clear();
+        tempos_seq.clear();
+        tempos_strm.clear();
     }
 }

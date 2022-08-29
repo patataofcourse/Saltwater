@@ -15,7 +15,7 @@ namespace Stuff {
         return out;
     }
 
-    static inline std::string TempoMapToString(std::map<u32, BTKS::TempoData*> in) {
+    static inline std::string TempoMapToString(std::map<u32, Megamix::Tempo*> in) {
 
         std::string out = "{";
         for (auto item = in.cbegin(); item != in.cend(); ++item) {

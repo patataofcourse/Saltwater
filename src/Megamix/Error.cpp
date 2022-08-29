@@ -37,6 +37,8 @@ namespace Megamix {
                 return "Missing BTKS section";
             case -12:
                 return "File does not fit on memory";
+            case -13:
+                return "Unsupported Tickflow format for this game and version";
             default:
                 return "Unknown error code";
         }

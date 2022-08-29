@@ -2,6 +2,7 @@
 #define MEGAMIX_BTKS_H
 
 #include <map>
+#include "Megamix.hpp"
 
 namespace Megamix {
     struct BTKS {
@@ -12,17 +13,13 @@ namespace Megamix {
             };
 
         public:
-            struct TempoData {
-                float beats;
-                u32 time;
-                u32 loop_val;
-            };
-
             u32 start;
             bool loaded = false;
             char* tickflow = nullptr;
             char* strings = nullptr;
-            std::map<u32, TempoData*> tempos = std::map<u32, TempoData*>();
+            std::map<u32, Tempo*> tempos = std::map<u32, Tempo*>();
+            std::map<u32, Tempo*> tempos_seq = std::map<u32, Tempo*>();
+            std::map<u32, Tempo*> tempos_strm = std::map<u32, Tempo*>();
             u32 tickflowSize;
             u32 stringSize;
 
