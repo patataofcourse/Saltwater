@@ -50,8 +50,7 @@ namespace Megamix {
             return -13; // Unsupported Tickflow format
 
         // Seek to end of header
-
-        result = file.Seek(headerEnd);
+        result = file.Seek(headerEnd, File::SeekPos::SET);
         if (result) return result;
 
         // Section code! This is where things get more complicated
