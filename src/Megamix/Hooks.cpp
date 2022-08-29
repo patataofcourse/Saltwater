@@ -81,6 +81,7 @@ void* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
             if (current->id < id) low = current_num + 1;
             if (current->id == id) return current->tempo;
         }
+        return (void*)4;
         return 0;
     }
 }
@@ -96,6 +97,7 @@ void* getTempoSeq(Megamix::CSoundManager* this_, u32 id) {
             if (current->id < id) low = current_num + 1;
             if (current->id == id) return current->tempo;
         }
+        return (void*)8;
         return 0;
     }
 }

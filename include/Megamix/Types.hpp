@@ -12,6 +12,8 @@ namespace Megamix {
     struct TempoTable {
         u32 id1;
         u32 id2;
+        u8 unk8;
+        u16 unkA;
         Tempo* pos;
     };
 
