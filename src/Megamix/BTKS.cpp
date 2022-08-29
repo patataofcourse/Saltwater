@@ -150,8 +150,7 @@ namespace Megamix {
                     else
                         tempos_seq[id] = data;
                 }
-
-                return -8; // Not implemented
+                
             }
             else {
                 return -9; // Unknown section
