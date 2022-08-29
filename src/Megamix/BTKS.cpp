@@ -131,8 +131,8 @@ namespace Megamix {
                         data[i].time = *intBuf;
                         result = file.Read(intBuf, 4);
                         if (result) return result;
-                        data[i].flag8 = ((u16*)*intBuf)[0];
-                        data[i].flagA = ((u16*)*intBuf)[1];
+                        data[i].flag8 = ((u16*)intBuf)[0];
+                        data[i].flagA = ((u16*)intBuf)[1];
                     }
                     
                     if (is_streamed && data->flag8 != 1) {
