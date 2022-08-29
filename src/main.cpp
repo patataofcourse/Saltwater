@@ -71,7 +71,7 @@ namespace CTRPluginFramework
     
         Megamix::Hooks::TickflowHooks();
 
-        if (region != Region::US)
+        if (region == Region::US)
             Megamix::Hooks::TempoHooks();
     }
 

@@ -18,8 +18,6 @@ namespace Megamix {
             char* tickflow = nullptr;
             char* strings = nullptr;
             std::map<u32, Tempo*> tempos = std::map<u32, Tempo*>();
-            std::map<u32, Tempo*> tempos_seq = std::map<u32, Tempo*>();
-            std::map<u32, Tempo*> tempos_strm = std::map<u32, Tempo*>();
             u32 tickflowSize;
             u32 stringSize;
 

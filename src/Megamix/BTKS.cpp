@@ -144,13 +144,8 @@ namespace Megamix {
                     }
 
                     tempos[id] = data;
-
-                    if (is_streamed)
-                        tempos_strm[id] = data;
-                    else
-                        tempos_seq[id] = data;
                 }
-                
+
             }
             else {
                 return -9; // Unknown section
@@ -184,7 +179,5 @@ namespace Megamix {
             delete tempo.second;
         }
         tempos.clear();
-        tempos_seq.clear();
-        tempos_strm.clear();
     }
 }
