@@ -148,7 +148,10 @@ namespace Region {
     u32 StrmTempoHookFunc() {
         switch (region) {
             case US:
+            case EU:
                 return 0x276424;
+            case KR:
+                return 0x2763fc;
             default:
                 return 0;
         }
@@ -157,7 +160,10 @@ namespace Region {
     u32 SeqTempoHookFunc() {
         switch (region) {
             case US:
+            case EU:
                 return 0x2763c8;
+            case KR:
+                return 0x2763a0;
             default:
                 return 0;
         }
@@ -166,6 +172,8 @@ namespace Region {
     u32 AllTempoHookFunc() {
         switch (region) {
             case US:
+            case EU:
+            case KR:
                 return 0x203c08;
             default:
                 return 0;
