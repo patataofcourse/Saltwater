@@ -143,7 +143,14 @@ namespace Megamix {
                         data->time = time_added;
                     }
 
-                    tempos[id] = data;
+                    TempoTable* tempo = new TempoTable;
+
+                    tempo->id1 = tempo->id2 = id;
+                    tempo->unk8 = (u8)is_streamed;
+                    tempo->unkA = 0x7D00; //seems to always be this?
+                    tempo->pos = data;
+
+                    tempos[id] = tempo;
                 }
 
             }
@@ -175,9 +182,13 @@ namespace Megamix {
         loaded = false;
         delete[] tickflow;
         delete[] strings;
+        
+        //this may not be required? but just in case
         for (auto tempo: tempos) {
+            delete[] tempo.second->pos;
             delete tempo.second;
         }
+
         tempos.clear();
     }
 }

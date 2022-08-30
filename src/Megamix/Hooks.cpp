@@ -6,12 +6,14 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
+using Megamix::TempoTable;
+
 extern "C" {
     extern void* getTickflowOffset(int index);
     extern void* getGateTickflowOffset(int index);
-    extern void* getTempoStrm(Megamix::CSoundManager* this_, u32 id);
-    extern void* getTempoSeq(Megamix::CSoundManager* this_, u32 id);
-    extern void* getTempoAll(Megamix::CSoundManager* this_, u32 id);
+    extern TempoTable* getTempoStrm(Megamix::CSoundManager* this_, u32 id);
+    extern TempoTable* getTempoSeq(Megamix::CSoundManager* this_, u32 id);
+    extern TempoTable* getTempoAll(Megamix::CSoundManager* this_, u32 id);
 }
 
 namespace Megamix::Hooks {
@@ -70,9 +72,9 @@ void* getGateTickflowOffset(int index) {
     return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
 }
 
-void* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
+TempoTable* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
     if (Megamix::btks.tempos.contains(id)) {
-        return (void*)4; //TODO: still need a bunch more stuff before this
+        return Megamix::btks.tempos[id];
     } else { // Original code
         for (s32 low = 0, high = this_->numberTempos; low <= high;) {
             s32 current_num = (low + high) / 2;
@@ -81,14 +83,13 @@ void* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
             if (current->id < id) low = current_num + 1;
             if (current->id == id) return current->tempo;
         }
-        return (void*)4;
         return 0;
     }
 }
 
-void* getTempoSeq(Megamix::CSoundManager* this_, u32 id) {
+TempoTable* getTempoSeq(Megamix::CSoundManager* this_, u32 id) {
     if (Megamix::btks.tempos.contains(id)) {
-        return (void*)8; //TODO: still need a bunch more stuff before this
+        return Megamix::btks.tempos[id];
     } else { // Original code
         for (s32 low = 0, high = this_->numberTempos; low <= high;) {
             s32 current_num = (low + high) / 2;
@@ -97,14 +98,13 @@ void* getTempoSeq(Megamix::CSoundManager* this_, u32 id) {
             if (current->id < id) low = current_num + 1;
             if (current->id == id) return current->tempo;
         }
-        return (void*)8;
         return 0;
     }
 }
 
-void* getTempoAll(Megamix::CSoundManager* this_, u32 id) {
+TempoTable* getTempoAll(Megamix::CSoundManager* this_, u32 id) {
     if (Megamix::btks.tempos.contains(id)) {
-        return (void*)0xC; //TODO: still need a bunch more stuff before this
+        return Megamix::btks.tempos[id];
     } else { // Original code
         for (int i = 0; i < this_->numberTempos; i++) {
             Megamix::TempoTable* current = &this_->tempoTable[i];
