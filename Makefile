@@ -26,7 +26,7 @@ ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 CFLAGS		:=	$(ARCH) -Os -W -mword-relocations \
 				-fomit-frame-pointer -ffunction-sections -fno-strict-aliasing
 
-CFLAGS		+=	$(INCLUDE) -D__3DS__ -DCOMMIT="$(shell git show --format='%h' --no-patch)"
+CFLAGS		+=	$(INCLUDE) -D__3DS__ -DCOMMIT="$(shell git show --format='%h' --no-patch || echo 'nogit')"
 
 ifneq ($(RELEASE), 0)
 CFLAGS		+= -DRELEASE

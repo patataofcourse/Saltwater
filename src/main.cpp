@@ -65,12 +65,13 @@ namespace CTRPluginFramework
     void    PatchProcess(FwkSettings &settings) {
         ToggleTouchscreenForceOn();
 
+        //Process::exceptionCallback = Megamix::CrashHandler;
+
         // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
         config = Config::FromFile(MEGAMIX_CONFIG_PATH);
     
         Megamix::Hooks::TickflowHooks();
-
         if (region != Region::JP)
             Megamix::Hooks::TempoHooks();
     }

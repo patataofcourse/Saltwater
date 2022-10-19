@@ -143,6 +143,14 @@ namespace Region {
         }
     }
 
+    u32 GatePracHookFunc() {
+        //TODO
+        switch (region) {
+            default:
+                return 0;
+        }
+    }
+
     // Hooks - Tempo
 
     u32 StrmTempoHookFunc() {

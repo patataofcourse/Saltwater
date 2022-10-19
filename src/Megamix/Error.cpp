@@ -5,6 +5,9 @@
 
 #include "Megamix.hpp"
 
+using CTRPluginFramework::Process;
+using CTRPluginFramework::Utils;
+
 //TODO: add enum
 namespace Megamix {
     std::string ErrorMessage(int code) {
@@ -41,6 +44,50 @@ namespace Megamix {
                 return "Unsupported Tickflow format for this game and version";
             default:
                 return "Unknown error code";
+        }
+    }
+
+    Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+        //TODO
+    }
+
+    std::string MemSection(u32 far) {
+        if (far < 0x00100000) {
+            return "NULL";
+        //TODO: game sections
+        /*
+        } else if (far < Region::TextEnd()) {
+            return "TEXT";
+        } else if (far < Region::RodataEnd()) {
+            return "RODA";
+        } else if (far < Region::DataEnd()) {
+            return "DATA";
+        */
+        } else if (far < 0x04000000) {
+            // return "BSSO";
+            return "CODE";
+        } else if (far >= 0x06000000 && far < 0x07000000) {
+            return "SLWM";
+        //TODO: Saltwater sections
+        } else if (far < 0x08000000) {
+            return "SLWT";
+        } else if (far < 0x10000000) {
+            return "MMEM";
+        } else if (far < 0x14000000) {
+            return "SMEM";
+        } else if (far < 0x18000000) {
+            return "LINE";
+        } else if (far >= 0x1E800000 && far < 0x1F000000) {
+            return "NMEM";
+        } else {
+            return "UNKN";
+        }
+    }
+
+    std::string CrashCode(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+        switch (info->type) {
+            case ERRF_EXCEPTION_PREFETCH_ABORT:
+                return Utils::Format("0-%02d-%s-");
         }
     }
 }
