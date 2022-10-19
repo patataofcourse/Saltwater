@@ -85,17 +85,19 @@ namespace Megamix {
     }
 
     std::string CrashCode(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-        u32 fsr_status = (info->fsr & 0xf) + ((info->fsr >> 10) & 1) * 0x10;
+        u32 fsr_status = (info->fsr & 0xf);
         switch (info->type) {
             case ERRF_EXCEPTION_PREFETCH_ABORT:
-                return Utils::Format("0-%02d-%s-%08X", fsr_status, MemSection(regs->pc), regs->pc);case ERRF_EXCEPTION_PREFETCH_ABORT:
+                return Utils::Format("0-%02d-%s-%08X", fsr_status, MemSection(regs->pc), regs->pc);
             case ERRF_EXCEPTION_DATA_ABORT:
+                fsr_status += ((info->fsr >> 10) & 1) * 0x10;
                 return Utils::Format("1-%02d-%s-%07X-%08X", fsr_status , MemSection(info->far), regs->pc, info->far);
             case ERRF_EXCEPTION_VFP:
-                u32 fpsr_status = info->fpsr & 0xf;
-                return Utils::Format("2-%02d-%07X", fsr_status, fpsr_status, regs->pc);
+                return Utils::Format("2-%07X", regs->pc);
             case ERRF_EXCEPTION_UNDEFINED:
                 return Utils::Format("3-%07X", fsr_status , MemSection(info->far), regs->pc);
+            default:
+                return "";
         }
     }
 }
