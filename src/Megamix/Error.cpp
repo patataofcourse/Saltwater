@@ -31,6 +31,7 @@ namespace Megamix {
                 return "Invalid argument on file reading";
             case -5:
                 return "Unexpected error on file reading";
+            
             // Saltwater / BTKS errors
             case -6:
                 return "Not a BTKS file";
@@ -97,7 +98,7 @@ namespace Megamix {
             case ERRF_EXCEPTION_VFP:
                 return Utils::Format("2-%07X", regs->pc);
             case ERRF_EXCEPTION_UNDEFINED:
-                return Utils::Format("3-%07X", fsr_status , MemSection(info->far), regs->pc);
+                return Utils::Format("3-%07X", regs->pc);
             default:
                 return "INVALID";
         }
