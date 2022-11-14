@@ -10,6 +10,8 @@ namespace Megamix {
     std::string ErrorMessage(int code);
 
     Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* exception, CpuRegisters* regs);
+
+    extern u8 errorImg[];
 }
 
 #endif

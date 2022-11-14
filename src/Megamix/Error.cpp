@@ -7,9 +7,15 @@
 
 using CTRPluginFramework::Process;
 using CTRPluginFramework::Utils;
+using CTRPluginFramework::Screen;
+using CTRPluginFramework::Color;
+using CTRPluginFramework::Controller;
+using CTRPluginFramework::Key;
 
 //TODO: add enum
 namespace Megamix {
+    u8 errorImg[] = {};
+
     std::string ErrorMessage(int code) {
         switch (code) {
             // CTRPF errors
@@ -45,10 +51,6 @@ namespace Megamix {
             default:
                 return "Unknown error code";
         }
-    }
-
-    Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-        //TODO
     }
 
     std::string MemSection(u32 far) {
@@ -97,7 +99,35 @@ namespace Megamix {
             case ERRF_EXCEPTION_UNDEFINED:
                 return Utils::Format("3-%07X", fsr_status , MemSection(info->far), regs->pc);
             default:
-                return "";
+                return "INVALID";
         }
+    }
+
+    Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+        Process::Pause();
+        Screen screen = CTRPluginFramework::OSD::GetTopScreen();
+        u32 posY = 20;
+        screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
+
+        posY = screen.Draw("Oh, no!", 20, posY);
+        posY = screen.Draw(Utils::Format("Error %s", CrashCode(info, regs)), 20, posY);
+        posY += 10;
+        posY = screen.Draw("Something went wrong!", 20, posY);
+        posY = screen.Draw("But don't panic, report the error to the SpiceRack", 20, posY);
+        posY = screen.Draw("Discord server (discord.gg/######)",20, posY);
+        
+        //"Oh no!"
+        //"Error %s"
+        //"Something went wrong!\nBut don't panic, report the error to the\n SpiceRack Discord server (%s)"
+        //"Crash dumped to %s"
+        
+        while (true) {
+            Controller::Update();
+            if (Controller::GetKeysPressed() & Key::A)
+                break;
+            gspWaitForVBlank();
+        }
+
+        return Process::ExceptionCallbackState::EXCB_REBOOT;
     }
 }

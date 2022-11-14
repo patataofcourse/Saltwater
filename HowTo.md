@@ -4,7 +4,7 @@
 You can check whether you have it or not by opening the Rosalina menu (L + Select + Down). If an option there is 
 "Plugin Loader"., you already have the version we need; skip to Step 2. Otherwise, you can get it from:
 
-* [The GitHub releases page](https://github.com/Nanquitas/Luma3DS/releases/tag/v10.2.1). You'll need to replace your current boot.firm.
+* [The GitHub releases page](https://github.com/Nanquitas/Luma3DS/releases/latest). You'll need to replace your current boot.firm.
 * UniversalUpdater: it can be found very easily by searching "Nanquitas" (the author of the fork)
 
 ![](img/UniversalUpdater.png)

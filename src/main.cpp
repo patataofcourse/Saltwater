@@ -65,7 +65,7 @@ namespace CTRPluginFramework
     void    PatchProcess(FwkSettings &settings) {
         ToggleTouchscreenForceOn();
 
-        //Process::exceptionCallback = Megamix::CrashHandler;
+        Process::exceptionCallback = Megamix::CrashHandler;
 
         // Init region and config
         region = CTRPluginFramework::Process::GetTitleID();
