@@ -6,7 +6,7 @@ Version: # Plugin version
     Revision: 0
 
 Targets:
-  - 0x00155a00
+  # - 0x00155a00
   - 0x0018a400
   - 0x0018a500
   - 0x0018a600
@@ -18,3 +18,5 @@ Summary: A patch for playing Rhythm Heaven Megamix mods
 Description: |
   Rhythm Heaven Megamix patch, successor to RHMPatch.
   Supports US, EU, and KR regions.
+
+Compatibility: Any

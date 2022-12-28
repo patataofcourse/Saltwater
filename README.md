@@ -6,9 +6,21 @@ This tool is part of the **SpiceRack** project, which aims to create more advanc
 Join the RHModding server for information and support regarding modding Rhythm Heaven games in general: https://discord.com/invite/ps4rq53
 
 ## How to use
-Check [HowTo.md](HowTo.md) for information on how to install the plugin and load mods. **MODS FOR SALTWATER NEED TO BE COMPILED SPECIFICALLY FOR SALTWATER**
+Don't use Saltwater on its own, you'll need [Barista](https://github.com/patataofcourse/Barista) as well!
 
-If you want to build mods, you'll need a specific fork of Tickompiler for the packing step, which you can find [here](https://github.com/patataofcourse/Tickompiler/releases/latest)
+(WIP)
+
+## Building
+You'll need the following:
+
+- devKitARM, latest
+- libctru, latest
+- CTR Plugin Framework (libctrpf) v0.7.4
+- 3gxtool v1.1
+
+The first two can be gotten through [dkP pacman](https://devkitpro.org/wiki/devkitPro_pacman) (install `3ds-dev`), and the last two can be gotten from [Nanquitas' Discord server](https://discord.gg/z4ZMh27). Links to the GitLab releases will be included in this readme soon.
+
+Run `make` to build the plugin.
 
 ## Credits
 * Nanquitas for the Luma3DS plugin loader, CTRPF, and the template
