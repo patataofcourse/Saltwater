@@ -12,132 +12,133 @@ using Megamix::btks;
 
 const char* version = VERSION;
 
-namespace CTRPluginFramework
-{
-    // This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
-    static void    ToggleTouchscreenForceOn(void) {
-        static u32 original = 0;
-        static u32 *patchAddress = nullptr;
+// tired of typing these names
+namespace ctrpf = CTRPluginFramework;
+namespace CTRPluginFramework {
+    void PatchProcess(FwkSettings &settings);
+    void OnProcessExit(void);
+    int main(void);
+}
 
-        if (patchAddress && original)
-        {
-            *patchAddress = original;
-            return;
-        }
+// This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
+static void ToggleTouchscreenForceOn(void) {
+    static u32 original = 0;
+    static u32 *patchAddress = nullptr;
 
-        static const std::vector<u32> pattern =
-        {
-            0xE59F10C0, 0xE5840004, 0xE5841000, 0xE5DD0000,
-            0xE5C40008, 0xE28DD03C, 0xE8BD80F0, 0xE5D51001,
-            0xE1D400D4, 0xE3510003, 0x159F0034, 0x1A000003
-        };
-
-        Result  res;
-        Handle  processHandle;
-        s64     textTotalSize = 0;
-        s64     startAddress = 0;
-        u32 *   found;
-
-        if (R_FAILED(svcOpenProcess(&processHandle, 16)))
-            return;
-
-        svcGetProcessInfo(&textTotalSize, processHandle, 0x10002);
-        svcGetProcessInfo(&startAddress, processHandle, 0x10005);
-        if(R_FAILED(svcMapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, processHandle, (u32)startAddress, textTotalSize)))
-            goto exit;
-
-        found = (u32 *)Utils::Search<u32>(0x14000000, (u32)textTotalSize, pattern);
-
-        if (found != nullptr)
-        {
-            original = found[13];
-            patchAddress = (u32 *)PA_FROM_VA((found + 13));
-            found[13] = 0xE1A00000;
-        }
-
-        svcUnmapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, textTotalSize);
-        exit:
-        svcCloseHandle(processHandle);
+    if (patchAddress && original)
+    {
+        *patchAddress = original;
+        return;
     }
 
-    // This function is called before main and before the game starts
-    // Useful to do code edits safely
-    void    PatchProcess(FwkSettings &settings) {
-        ToggleTouchscreenForceOn();
+    static const std::vector<u32> pattern =
+    {
+        0xE59F10C0, 0xE5840004, 0xE5841000, 0xE5DD0000,
+        0xE5C40008, 0xE28DD03C, 0xE8BD80F0, 0xE5D51001,
+        0xE1D400D4, 0xE3510003, 0x159F0034, 0x1A000003
+    };
 
-        //Process::exceptionCallback = Megamix::CrashHandler;
+    Result  res;
+    Handle  processHandle;
+    s64     textTotalSize = 0;
+    s64     startAddress = 0;
+    u32 *   found;
 
-        // Init region and config
-        region = CTRPluginFramework::Process::GetTitleID();
-        config = Config::FromFile(MEGAMIX_CONFIG_PATH);
+    if (R_FAILED(svcOpenProcess(&processHandle, 16)))
+        return;
+
+    svcGetProcessInfo(&textTotalSize, processHandle, 0x10002);
+    svcGetProcessInfo(&startAddress, processHandle, 0x10005);
+    if(R_FAILED(svcMapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, processHandle, (u32)startAddress, textTotalSize)))
+        goto exit;
+
+    found = (u32 *)Utils::Search<u32>(0x14000000, (u32)textTotalSize, pattern);
+
+    if (found != nullptr)
+    {
+        original = found[13];
+        patchAddress = (u32 *)PA_FROM_VA((found + 13));
+        found[13] = 0xE1A00000;
+    }
+
+    svcUnmapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, textTotalSize);
+    exit:
+    svcCloseHandle(processHandle);
+}
+
+// This function is called before main and before the game starts
+// Useful to do code edits safely
+void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
+    ToggleTouchscreenForceOn();
+
+    //Process::exceptionCallback = Megamix::CrashHandler;
+
+    // Init region and config
+    region = ctrpf::Process::GetTitleID();
+    config = Config::FromFile(MEGAMIX_CONFIG_PATH);
+
+    Megamix::Hooks::TickflowHooks();
+    if (region != Region::JP)
+        Megamix::Hooks::TempoHooks();
+}
+
+// This function is called when the process exits
+// Useful to save settings, undo patchs or clean up things
+void ctrpf::OnProcessExit(void) {
+    Megamix::Hooks::DisableAllHooks();
+    ToggleTouchscreenForceOn();
+    delete config;
+}
+
+#ifndef RELEASE
+void InitMenu(ctrpf::PluginMenu &menu) {
+
+    menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry *entry) {
+        ctrpf::MessageBox("Settings", Utils::Format(
+            "Result: %d",
+            configResult
+        ))();
+    });
+
+    menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry *entry) {
+        ctrpf::MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
+    });
+
+    menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry *entry) {
+        ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
+    });
     
-        Megamix::Hooks::TickflowHooks();
-        if (region != Region::JP)
-            Megamix::Hooks::TempoHooks();
+}
+#endif
+
+int ctrpf::main(void) {
+
+    // re-enable rhmpatch if needed
+    if (*(bool*)ctrpf::FwkSettings::Get().Header->config) {
+        File::Rename("/luma/titles/000400000018A400/_code.ips", "/luma/titles/000400000018A400/code.ips");
     }
 
-    // This function is called when the process exits
-    // Useful to save settings, undo patchs or clean up things
-    void    OnProcessExit(void) {
-        Megamix::Hooks::DisableAllHooks();
-        ToggleTouchscreenForceOn();
-        delete config;
-    }
+    #ifdef RELEASE
 
-    void    InitMenu(PluginMenu &menu) {
+    Process::WaitForExit();
 
-        menu += new MenuEntry("Config values", nullptr, [](MenuEntry *entry)
-        {
+    #else
 
-            MessageBox("Settings", Utils::Format(
-                "Result: %d",
-                configResult
-            ))();
-        });
+    PluginMenu *menu = new PluginMenu(Utils::Format("Saltwater %s debug", VERSION), "", 1);
 
-        menu += new MenuEntry("Tickflow contents", nullptr, [](MenuEntry *entry)
-        {
+    // Synnchronize the menu with frame event
+    menu->SynchronizeWithFrame(true);
 
-            MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
-        });
+    // Init our menu entries & folders
+    InitMenu(*menu);
 
-        menu += new MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](MenuEntry *entry)
-        {
+    // Launch menu and mainloop
+    menu->Run();
 
-            MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
-        });
-        
-    }
+    delete menu;
 
-    int main(void) {
+    #endif
 
-        // re-enable rhmpatch if needed
-        if (*(bool*)CTRPluginFramework::FwkSettings::Get().Header->config) {
-            File::Rename("/luma/titles/000400000018A400/_code.ips", "/luma/titles/000400000018A400/code.ips");
-        }
-
-        #ifdef RELEASE
-
-        Process::WaitForExit();
-
-        #else
-
-        PluginMenu *menu = new PluginMenu(Utils::Format("Saltwater %s debug", VERSION), "", 1);
-
-        // Synnchronize the menu with frame event
-        menu->SynchronizeWithFrame(true);
-
-        // Init our menu entries & folders
-        InitMenu(*menu);
-
-        // Launch menu and mainloop
-        menu->Run();
-
-        delete menu;
-
-        #endif
-
-        // Exit plugin
-        return (0);
-    }
+    // Exit plugin
+    return (0);
 }
