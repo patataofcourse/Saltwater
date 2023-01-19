@@ -109,11 +109,15 @@ void InitMenu(ctrpf::PluginMenu &menu) {
     menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry *entry) {
         ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
     });
+
+    menu += new ctrpf::MenuEntry("Force a crash", nullptr, [](ctrpf::MenuEntry *entry) {
+        ((void(*)(void))nullptr)();
+    });
 }
 #endif
 
 int ctrpf::main(void) {
-    
+
 #ifdef RELEASE
     Process::WaitForExit();
 #else

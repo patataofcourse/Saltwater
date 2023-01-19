@@ -96,7 +96,7 @@ namespace Megamix {
                 return Utils::Format("0-%02d-%s-%08X", fsr_status, MemSection(regs->pc), regs->pc);
             case ERRF_EXCEPTION_DATA_ABORT:
                 fsr_status += ((info->fsr >> 10) & 1) * 0x10;
-                return Utils::Format("1-%02d-%s-%07X-%08X", fsr_status , MemSection(info->far), regs->pc, info->far);
+                return Utils::Format("1-%02d-%s-%07X-%08X", fsr_status, MemSection(info->far), regs->pc, info->far);
             case ERRF_EXCEPTION_VFP:
                 return Utils::Format("2-%07X", regs->pc);
             case ERRF_EXCEPTION_UNDEFINED:
@@ -107,28 +107,83 @@ namespace Megamix {
     }
 
     static bool first = true;
+    static bool full_info = false;
+    static std::string dump_location = "";
 
-    Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-        if (first) {
-            first = false;
+    namespace ErrorScreen {
+        void InfoScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
-            u32 posY = 20;
-            screen.fade(0.3);
+            screen.Fade(0.3);
             screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 
+            u32 posY = 20;
             posY = screen.Draw("Oh, no!", 20, posY, Color(255, 0, 0));
-            posY = screen.Draw(Utils::Format("Error %s", CrashCode(info, regs).c_str()), 20, posY);
+            posY = screen.Draw(Utils::Format("Error %s", CrashCode(info, regs).c_str()), 20, posY, Color(255, 127, 127));
             posY += 10;
             posY = screen.Draw("Something went wrong!", 20, posY);
             posY = screen.Draw("But don't panic, report the error to the SpiceRack", 20, posY);
             posY = screen.Draw("Discord server (discord.gg/xAKFPaERRG)", 20, posY);
+            posY += 10;
+            
+            if (dump_location != "") {
+                posY = screen.Draw(std::string("Crash dumped to ").append(dump_location), 20, posY);
+                posY += 10;
+            } else {
+                posY = screen.Draw("> Press A to dump crash (WIP)", 20, posY);
+            }
+            posY = screen.Draw("> Press B to return to the home menu", 20, posY);
+            posY = screen.Draw("> Press Y to see dev info (WIP)", 20, posY);
+            
             OSD::SwapBuffers();
+        }
+
+        void DevScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+            Screen screen = OSD::GetTopScreen();
+            screen.Fade(0.3);
+            screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
+
+            u32 posY = 20;
+
+            posY = screen.Draw("Debug info", 20, posY);
+            posY = screen.Draw(Utils::Format("@ %08x -> %08x (@ PC -> LR)", regs->pc, regs->lr), 20, posY);
+            posY = screen.Draw(Utils::Format("Exception type %d", info->type), 20, posY);
+            posY += 10;
+            posY = screen.Draw("Call stack goes here", 20, posY);
+
+            if (dump_location != "") {
+                posY = screen.Draw(std::string("Crash dumped to ").append(dump_location), 20, posY);
+                posY += 10;
+            } else {
+                posY = screen.Draw("> Press A to dump crash (WIP)", 20, posY);
+            }
+            posY = screen.Draw("> Press B to return to the home menu", 20, posY);
+            posY = screen.Draw("> Press Y to go back", 20, posY);
+
+            OSD::SwapBuffers();
+
+        }
+    }
+
+    Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+        if (first) {
+            first = false;
+            if (full_info) {
+                ErrorScreen::DevScreen(info, regs);
+            } else {
+                ErrorScreen::InfoScreen(info, regs);
+            }
         }
         
         Controller::Update();
-        if (Controller::IsKeyDown(Key::A))
+       if (Controller::IsKeyPressed(Key::B)) {
             return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
-        else
+        } else {
+            if (Controller::IsKeyPressed(Key::A)) {
+            } else if (Controller::IsKeyPressed(Key::Y)) {
+                first = true;
+                full_info = !full_info;
+            }
             return Process::ExceptionCallbackState::EXCB_LOOP;
+        }
     }
 }
