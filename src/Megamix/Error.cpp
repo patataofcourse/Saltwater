@@ -108,12 +108,16 @@ namespace Megamix {
 
     static bool first = true;
     static bool full_info = false;
+    static bool faded = false;
     static std::string dump_location = "";
 
     namespace ErrorScreen {
         void InfoScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
-            screen.Fade(0.3);
+            if (!faded) {
+                screen.Fade(0.3);
+                faded = true;
+            }
             screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 
             u32 posY = 20;
@@ -139,7 +143,10 @@ namespace Megamix {
 
         void DevScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
-            screen.Fade(0.3);
+            if (!faded) {
+                screen.Fade(0.3);
+                faded = true;
+            }
             screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 
             u32 posY = 20;
