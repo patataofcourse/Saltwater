@@ -113,6 +113,7 @@ namespace Megamix {
             first = false;
             Screen screen = OSD::GetTopScreen();
             u32 posY = 20;
+            screen.fade(0.3);
             screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 
             posY = screen.Draw("Oh, no!", 20, posY, Color(255, 0, 0));
