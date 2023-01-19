@@ -95,6 +95,7 @@ name_table = int.from_bytes(plugin.read(4), "little")
 symbols = []
 
 for n in range(num_symbols):
+    print(f"\rReading symbols ({n}/{num_symbols})", end="")
     plugin.seek(symbols_offset + 0xc * n)
     address = int.from_bytes(plugin.read(4), "little")
     size = int.from_bytes(plugin.read(2), "little")
@@ -114,6 +115,8 @@ for n in range(num_symbols):
         continue
 
     symbols.append((address, size, flags, name))
+
+print(f"\rReading symbols ({num_symbols}/{num_symbols})")
 
 for symbol in symbols:
     address, size, flags, name = symbol[0], symbol[1], symbol[2], symbol[3]

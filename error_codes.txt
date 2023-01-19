@@ -2,7 +2,11 @@ Error codes when loading files
 
 0 - Success
 
+--Result--
+Typical libctru bitfields for the Result type
+
 --CTRPF--
+-1 - 
 
 --Saltwater--
 -6 - Not a BTKS file

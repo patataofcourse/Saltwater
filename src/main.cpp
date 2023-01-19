@@ -20,7 +20,8 @@ namespace CTRPluginFramework {
     int main(void);
 }
 
-// This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
+// This patches the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
+// TODO: maybe move this somewhere else?
 static void ToggleTouchscreenForceOn(void) {
     static u32 original = 0;
     static u32 *patchAddress = nullptr;
@@ -71,28 +72,29 @@ static void ToggleTouchscreenForceOn(void) {
 void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     ToggleTouchscreenForceOn();
 
+    // Crash handler (WIP)
     //Process::exceptionCallback = Megamix::CrashHandler;
 
     // Init region and config
     region = ctrpf::Process::GetTitleID();
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
+    // Start hooks
     Megamix::Hooks::TickflowHooks();
-    if (region != Region::JP)
+    if (region != Region::JP) //TODO
         Megamix::Hooks::TempoHooks();
 }
 
 // This function is called when the process exits
 // Useful to save settings, undo patchs or clean up things
 void ctrpf::OnProcessExit(void) {
-    Megamix::Hooks::DisableAllHooks();
+    Megamix::Hooks::DisableAllHooks(); // Probably not needed, but still
     ToggleTouchscreenForceOn();
     delete config;
 }
 
 #ifndef RELEASE
 void InitMenu(ctrpf::PluginMenu &menu) {
-
     menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry *entry) {
         ctrpf::MessageBox("Settings", Utils::Format(
             "Result: %d",
@@ -107,23 +109,14 @@ void InitMenu(ctrpf::PluginMenu &menu) {
     menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry *entry) {
         ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
     });
-    
 }
 #endif
 
-int ctrpf::main(void) {
+int ctrpf::main(void) {    
 
-    // re-enable rhmpatch if needed
-    if (*(bool*)ctrpf::FwkSettings::Get().Header->config) {
-        File::Rename("/luma/titles/000400000018A400/_code.ips", "/luma/titles/000400000018A400/code.ips");
-    }
-
-    #ifdef RELEASE
-
+#ifdef RELEASE
     Process::WaitForExit();
-
-    #else
-
+#else
     PluginMenu *menu = new PluginMenu(Utils::Format("Saltwater %s debug", VERSION), "", 1);
 
     // Synnchronize the menu with frame event
@@ -136,9 +129,7 @@ int ctrpf::main(void) {
     menu->Run();
 
     delete menu;
+#endif
 
-    #endif
-
-    // Exit plugin
-    return (0);
+    return 0;
 }
