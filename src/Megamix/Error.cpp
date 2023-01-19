@@ -11,6 +11,7 @@ using CTRPluginFramework::Screen;
 using CTRPluginFramework::Color;
 using CTRPluginFramework::Controller;
 using CTRPluginFramework::Key;
+using CTRPluginFramework::OSD;
 
 //TODO: add enum
 namespace Megamix {
@@ -55,7 +56,7 @@ namespace Megamix {
         }
     }
 
-    std::string MemSection(u32 far) {
+    const char* MemSection(u32 far) {
         if (far < 0x00100000) {
             return "NULL";
         //TODO: game sections
@@ -105,31 +106,28 @@ namespace Megamix {
         }
     }
 
+    static bool first = true;
+
     Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-        Process::Pause();
-        Screen screen = CTRPluginFramework::OSD::GetTopScreen();
-        u32 posY = 20;
-        screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
+        if (first) {
+            first = false;
+            Screen screen = OSD::GetTopScreen();
+            u32 posY = 20;
+            screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 
-        posY = screen.Draw("Oh, no!", 20, posY);
-        posY = screen.Draw(Utils::Format("Error %s", CrashCode(info, regs)), 20, posY);
-        posY += 10;
-        posY = screen.Draw("Something went wrong!", 20, posY);
-        posY = screen.Draw("But don't panic, report the error to the SpiceRack", 20, posY);
-        posY = screen.Draw("Discord server (discord.gg/######)",20, posY);
-        
-        //"Oh no!"
-        //"Error %s"
-        //"Something went wrong!\nBut don't panic, report the error to the\n SpiceRack Discord server (%s)"
-        //"Crash dumped to %s"
-        
-        while (true) {
-            Controller::Update();
-            if (Controller::GetKeysPressed() & Key::A)
-                break;
-            gspWaitForVBlank();
+            posY = screen.Draw("Oh, no!", 20, posY, Color(255, 0, 0));
+            posY = screen.Draw(Utils::Format("Error %s", CrashCode(info, regs).c_str()), 20, posY);
+            posY += 10;
+            posY = screen.Draw("Something went wrong!", 20, posY);
+            posY = screen.Draw("But don't panic, report the error to the SpiceRack", 20, posY);
+            posY = screen.Draw("Discord server (discord.gg/xAKFPaERRG)", 20, posY);
+            OSD::SwapBuffers();
         }
-
-        return Process::ExceptionCallbackState::EXCB_REBOOT;
+        
+        Controller::Update();
+        if (Controller::IsKeyDown(Key::A))
+            return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
+        else
+            return Process::ExceptionCallbackState::EXCB_LOOP;
     }
 }

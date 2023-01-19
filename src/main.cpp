@@ -73,7 +73,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     ToggleTouchscreenForceOn();
 
     // Crash handler (WIP)
-    //Process::exceptionCallback = Megamix::CrashHandler;
+    Process::exceptionCallback = Megamix::CrashHandler;
 
     // Init region and config
     region = ctrpf::Process::GetTitleID();
@@ -112,8 +112,8 @@ void InitMenu(ctrpf::PluginMenu &menu) {
 }
 #endif
 
-int ctrpf::main(void) {    
-
+int ctrpf::main(void) {
+    
 #ifdef RELEASE
     Process::WaitForExit();
 #else

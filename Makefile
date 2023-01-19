@@ -14,7 +14,7 @@ PLGINFO 	:= 	saltwater.plgInfo
 
 BUILD 		:= 	build
 INCLUDES	:= 	include
-SOURCES 	:= 	src src/Megamix
+SOURCES 	:= 	src src/Megamix #src/Helpers
 
 RELEASE		?= 0
 
