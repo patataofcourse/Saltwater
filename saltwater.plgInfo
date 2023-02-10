@@ -6,7 +6,8 @@ Version: # Plugin version
     Revision: 0
 
 Targets:
-  # - 0x00155a00
+  # don't remove JP from here!
+  - 0x00155a00
   - 0x0018a400
   - 0x0018a500
   - 0x0018a600

@@ -11,6 +11,7 @@ using Megamix::TempoTable;
 extern "C" {
     extern void* getTickflowOffset(int index);
     extern void* getGateTickflowOffset(int index);
+    extern void* getGatePracticeTickflowOffset(int index);
     extern TempoTable* getTempoStrm(Megamix::CSoundManager* this_, u32 id);
     extern TempoTable* getTempoSeq(Megamix::CSoundManager* this_, u32 id);
     extern TempoTable* getTempoAll(Megamix::CSoundManager* this_, u32 id);
@@ -19,6 +20,8 @@ extern "C" {
 namespace Megamix::Hooks {
     RT_HOOK tickflowHook;
     RT_HOOK gateHook;
+    RT_HOOK gatePracHook;
+
     RT_HOOK tempoStrmHook;
     RT_HOOK tempoSeqHook;
     RT_HOOK tempoAllHook;
@@ -28,6 +31,8 @@ namespace Megamix::Hooks {
         rtEnableHook(&tickflowHook);
         rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset);
         rtEnableHook(&gateHook);
+        rtInitHook(&gatePracHook, Region::GatePracHookFunc(), (u32)getGatePracticeTickflowOffset);
+        rtEnableHook(&gatePracHook);
     }
 
     void TempoHooks() {
@@ -70,6 +75,18 @@ void* getGateTickflowOffset(int index) {
         }
     }
     return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
+}
+
+void* getGatePracticeTickflowOffset(int index) {
+    if (config->tickflows.contains((index >> 2) + 0x110)) {
+        int result = Megamix::btks.LoadFile(config->tickflows[(index >> 2) + 0x110]);
+        if (!result) {
+            return (void*)(Megamix::btks.start);
+        } else {
+            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();    
+        }
+    }
+    return *(void**)(Region::GateTable() + index * 0x24 + 8); // og code
 }
 
 TempoTable* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {

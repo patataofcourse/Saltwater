@@ -143,10 +143,6 @@ namespace Megamix {
 
         void DevScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
-            if (!faded) {
-                screen.Fade(0.3);
-                faded = true;
-            }
             screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 
             u32 posY = 20;
@@ -156,6 +152,7 @@ namespace Megamix {
             posY = screen.Draw(Utils::Format("Exception type %d", info->type), 20, posY);
             posY += 10;
             posY = screen.Draw("Call stack goes here", 20, posY);
+            posY += 10;
 
             if (dump_location != "") {
                 posY = screen.Draw(std::string("Crash dumped to ").append(dump_location), 20, posY);
@@ -186,6 +183,8 @@ namespace Megamix {
             return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
         } else {
             if (Controller::IsKeyPressed(Key::A)) {
+                // todo: export actual crash instead of just going to luma
+                return Process::ExceptionCallbackState::EXCB_DEFAULT_HANDLER;
             } else if (Controller::IsKeyPressed(Key::Y)) {
                 first = true;
                 full_info = !full_info;

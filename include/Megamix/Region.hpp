@@ -24,6 +24,7 @@ namespace Region {
     
     u32 TickflowHookFunc();
     u32 GateHookFunc();
+    u32 GatePracHookFunc();
 
     u32 StrmTempoHookFunc();
     u32 SeqTempoHookFunc();

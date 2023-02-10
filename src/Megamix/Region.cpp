@@ -144,8 +144,13 @@ namespace Region {
     }
 
     u32 GatePracHookFunc() {
-        //TODO
         switch (region) {
+            case JP:
+                return 0x32e01c;
+            case US:
+            case EU:
+            case KR:
+                return 0x32d630;
             default:
                 return 0;
         }
@@ -155,6 +160,7 @@ namespace Region {
 
     u32 StrmTempoHookFunc() {
         switch (region) {
+            // can't seem to find a JP equivalent?
             case US:
             case EU:
                 return 0x276424;
@@ -167,6 +173,7 @@ namespace Region {
 
     u32 SeqTempoHookFunc() {
         switch (region) {
+            // can't seem to find a JP equivalent?
             case US:
             case EU:
                 return 0x2763c8;
@@ -179,6 +186,9 @@ namespace Region {
 
     u32 AllTempoHookFunc() {
         switch (region) {
+            case JP:
+                // TODO: this function combines getTempoFromTable and US' func_0024f47c, adapt the hook
+                return 0x25098c;
             case US:
             case EU:
             case KR:
