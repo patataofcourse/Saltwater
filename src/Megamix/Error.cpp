@@ -56,7 +56,7 @@ namespace Megamix {
         }
     }
 
-    const char* MemSection(u32 far) {
+    static const char* MemSection(u32 far) {
         if (far < 0x00100000) {
             return "NULL";
         //TODO: game sections
@@ -89,7 +89,7 @@ namespace Megamix {
         }
     }
 
-    std::string CrashCode(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+    static std::string CrashCode(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
         u32 fsr_status = (info->fsr & 0xf);
         switch (info->type) {
             case ERRF_EXCEPTION_PREFETCH_ABORT:
@@ -112,7 +112,7 @@ namespace Megamix {
     static std::string dump_location = "";
 
     namespace ErrorScreen {
-        void InfoScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+        static void InfoScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
             if (!faded) {
                 screen.Fade(0.3);
@@ -141,7 +141,7 @@ namespace Megamix {
             OSD::SwapBuffers();
         }
 
-        void DevScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+        static void DevScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
             screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
 

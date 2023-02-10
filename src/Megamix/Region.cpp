@@ -1,18 +1,27 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-u32 region;
+#include "Megamix.hpp"
+
+u8 region;
 
 namespace Region {
+    u8 FromCode(u32 code) {
+        switch (code) {
+            case 0x155a00:
+                return JP;
+            case 0x18a400:
+                return US;
+            case 0x18a500:
+                return EU;
+            case 0x18a600:
+                return KR;
+            default:
+                return UNK;
+        }
+    }
 
-    enum {
-        JP = 0x155a00,
-        US = 0x18a400,
-        EU = 0x18a500,
-        KR = 0x18a600,
-    };
-
-    std::string RegionCode() {
+    std::string Name() {
         switch (region) {
             case US: return "US";
             case EU: return "EU";

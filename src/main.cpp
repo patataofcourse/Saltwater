@@ -76,7 +76,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     Process::exceptionCallback = Megamix::CrashHandler;
 
     // Init region and config
-    region = ctrpf::Process::GetTitleID();
+    region = Region::FromCode(ctrpf::Process::GetTitleID());
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
     // Start hooks

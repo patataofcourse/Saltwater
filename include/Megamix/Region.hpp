@@ -1,18 +1,20 @@
 #ifndef RHMREGION_H
 #define RHMREGION_H
 
-extern u32 region;
+extern u8 region;
 
 namespace Region {
 
     enum {
-        JP = 0x155a00,
-        US = 0x18a400,
-        EU = 0x18a500,
-        KR = 0x18a600,
+        JP,
+        US,
+        EU,
+        KR,
+        UNK,
     };
 
-    std::string RegionCode();
+    u8 FromCode(u32 code);
+    std::string Name();
 
     std::vector<u32> RHMPatchGameAddresses();
     std::vector<u32> RHMPatchTempoAddresses();
