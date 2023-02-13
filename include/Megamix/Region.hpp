@@ -31,6 +31,11 @@ namespace Region {
     u32 StrmTempoHookFunc();
     u32 SeqTempoHookFunc();
     u32 AllTempoHookFunc();
+
+    u32 TextEnd();
+    u32 RodataEnd();
+    u32 DataEnd();
+    u32 BssEnd();
 }
 
 #endif

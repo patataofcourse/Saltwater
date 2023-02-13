@@ -72,7 +72,12 @@ static void ToggleTouchscreenForceOn(void) {
 void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     ToggleTouchscreenForceOn();
 
-    // Crash handler (WIP)
+    // Move back RHMPatch to where it was
+    if (*(bool*)ctrpf::FwkSettings::Header->config) {
+        ctrpf::File::Rename("/luma/titles/000400000018a400/_code.ips", "/luma/titles/000400000018a400/code.ips");
+    }
+
+    // Crash handler
     Process::exceptionCallback = Megamix::CrashHandler;
 
     // Init region and config
