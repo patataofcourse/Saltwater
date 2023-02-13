@@ -112,6 +112,48 @@ namespace Megamix {
     static std::string dump_location = "";
 
     namespace ErrorScreen {
+        static CrashInfo GetCrashData(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
+            CrashInfo crash;
+            crash.info.type = CrashType::Extended;
+            crash.info.region = region;
+            crash.info.excType = info->type;
+
+            #ifdef RELEASE
+            crash.info.release = true;
+            crash.info.version.ver.major = VERSION_MAJOR;
+            crash.info.version.ver.minor = VERSION_MINOR;
+            crash.info.version.ver.patch = VERSION_PATCH;
+            #else
+            crash.info.release = false;
+            crash.info.version.commit = COMMIT_NUM;
+            #endif
+
+            crash.info.pc = regs->pc;
+            crash.info.lr = regs->lr;
+            crash.info.cpsr = regs->cpsr;
+
+            switch (info->type) {
+                case ERRF_EXCEPTION_PREFETCH_ABORT:
+                case ERRF_EXCEPTION_DATA_ABORT:
+                    crash.info.statusRegisterA = info->fsr;
+                    crash.info.statusRegisterB = info->far;
+                    break;
+                case ERRF_EXCEPTION_VFP:
+                    crash.info.statusRegisterA = info->fpexc;
+                    crash.info.statusRegisterB = info->fpinst;
+            }
+
+            // TODO: get call stack
+
+            for (int i = 0; i < 13; i++)
+                crash.registers[i] = regs->r[i];
+            crash.registers[13] = regs->sp;
+
+            // TODO: get stack dump
+
+            return crash;
+        }
+
         static void InfoScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             Screen screen = OSD::GetTopScreen();
             if (!faded) {

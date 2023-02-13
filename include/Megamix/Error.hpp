@@ -4,6 +4,8 @@
 #include <string>
 #include <CTRPluginFramework.hpp>
 
+#define CALL_STACK_SIZE 5
+
 using CTRPluginFramework::Process;
 
 namespace Megamix {
@@ -39,14 +41,15 @@ namespace Megamix {
         u32 statusRegisterA; // IFSR, DFSR, FPEXC
         u32 statusRegisterB; // FAR, FPINST
 
-        u32 callStack[6];
+        u32 callStack[CALL_STACK_SIZE];
     };
 
     struct CrashInfo {
         ShortCrashInfo info;
 
+        u32 registers[14];
         u32 stackLength;
-        u8 stackDump[0];
+        u8 stackDump[0x100];
     };
 }
 
