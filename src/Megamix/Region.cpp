@@ -206,4 +206,51 @@ namespace Region {
                 return 0;
         }
     }
+
+    // Code sections
+
+    u32 TextEnd() {
+        return 0x39a000;
+    }
+
+    u32 RodataEnd() {
+        switch (region) {
+            case JP:
+                return 0x518000;
+            case US:
+            case EU:
+            case KR:
+                return 0x521000;
+            default:
+                return 0;
+        }
+    }
+
+    u32 DataEnd() {
+        switch (region) {
+            case JP:
+                return 0x540754;
+            case US:
+                return 0x54f074;
+            case EU:
+                return 0x54f16c;
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    u32 BssEnd() {
+        switch (region) {
+            case JP:
+                return 0x5ce1f0;
+            case US:
+                return 0x5dc2f0;
+            case EU:
+            case KR:
+                return 0x5dc2f0;
+            default:
+                return 0;
+        }
+    }
 }

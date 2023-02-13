@@ -59,18 +59,14 @@ namespace Megamix {
     static const char* MemSection(u32 far) {
         if (far < 0x00100000) {
             return "NULL";
-        //TODO: game sections
-        /*
         } else if (far < Region::TextEnd()) {
             return "TEXT";
         } else if (far < Region::RodataEnd()) {
             return "RODA";
         } else if (far < Region::DataEnd()) {
             return "DATA";
-        */
-        } else if (far < 0x04000000) {
-            // return "BSSO";
-            return "CODE";
+        } else if (far < Region::BssEnd()) {
+            return "BSSO";
         } else if (far >= 0x06000000 && far < 0x07000000) {
             return "SLWM";
         //TODO: Saltwater sections
@@ -221,7 +217,7 @@ namespace Megamix {
         }
         
         Controller::Update();
-       if (Controller::IsKeyPressed(Key::B)) {
+        if (Controller::IsKeyPressed(Key::B)) {
             return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
         } else {
             if (Controller::IsKeyPressed(Key::A)) {
