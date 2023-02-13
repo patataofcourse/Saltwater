@@ -14,6 +14,7 @@ using CTRPluginFramework::Key;
 using CTRPluginFramework::OSD;
 
 //TODO: add enum
+//TODO: exceptions?
 namespace Megamix {
     u8 errorImg[] = {};
 
