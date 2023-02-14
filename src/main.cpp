@@ -72,13 +72,16 @@ static void ToggleTouchscreenForceOn(void) {
 void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     ToggleTouchscreenForceOn();
 
-    // Move back RHMPatch to where it was
-    if (*(bool*)ctrpf::FwkSettings::Header->config) {
-        ctrpf::File::Rename("/luma/titles/000400000018a400/_code.ips", "/luma/titles/000400000018a400/code.ips");
-    }
-
     // Crash handler
     Process::exceptionCallback = Megamix::CrashHandler;
+
+    // Move back RHMPatch to where it was
+    if (*(bool*)ctrpf::FwkSettings::Header->config) {
+        ctrpf::File::Rename(
+            "/luma/titles/00040000 0018a400/code.old.ips",
+            "/luma/titles/00040000 0018a400/code.ips"
+        );
+    }
 
     // Init region and config
     region = Region::FromCode(ctrpf::Process::GetTitleID());
