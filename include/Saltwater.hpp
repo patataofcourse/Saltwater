@@ -1,6 +1,10 @@
 #ifndef SALTWATER_H
 #define SALTWATER_H
 
+#include <3ds.h>
+
+// Saltwater version
+
 #define STR(X) #X
 #define STRC(X) STR(X)
 
@@ -21,5 +25,14 @@
 #define COMMIT_NUM HEX(COMMIT)
 
 #endif
+
+// Params struct
+
+struct SaltwaterParams {
+    u16 barista;
+    bool rhmpatch;
+    bool plgldr;
+    u32 null[31];
+};
 
 #endif

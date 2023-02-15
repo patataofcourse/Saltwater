@@ -1,6 +1,8 @@
 #include <3ds.h>
-#include "csvc.h"
 #include <CTRPluginFramework.hpp>
+
+#include "csvc.h"
+#include "external/plgldr.h"
 
 #include "Megamix.hpp"
 #include "Config.hpp"
@@ -11,6 +13,8 @@ Config* config;
 using Megamix::btks;
 
 const char* version = VERSION;
+
+static SaltwaterParams params;
 
 // tired of typing these names
 namespace ctrpf = CTRPluginFramework;
@@ -75,12 +79,25 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     // Crash handler
     Process::exceptionCallback = Megamix::CrashHandler;
 
-    // Move back RHMPatch to where it was
-    if (*(bool*)ctrpf::FwkSettings::Header->config) {
+    // le params :D
+    params = *(SaltwaterParams*)ctrpf::FwkSettings::Header->config;
+
+    if (params.barista != 0xD06) {
+        ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!");
+        Process::ReturnToHomeMenu();
+    }
+    if (params.rhmpatch) {
+        // move RHMPatch back to where it was
         ctrpf::File::Rename(
             "/luma/titles/00040000 0018a400/code.old.ips",
             "/luma/titles/00040000 0018a400/code.ips"
         );
+    }
+    if (params.plgldr) {
+        // disable plugin loader
+        plgLdrInit();
+        PLGLDR__SetPluginLoaderState(false);
+        plgLdrExit(); 
     }
 
     // Init region and config

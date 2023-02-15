@@ -1,7 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "rt.h"
+#include "external/rt.h"
 
 #include "Megamix.hpp"
 #include "Config.hpp"

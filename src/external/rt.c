@@ -1,5 +1,5 @@
 #include "3ds.h"
-#include "rt.h"
+#include "external/rt.h"
 #include <string.h>
 
 Handle hCurrentProcess = 0;
