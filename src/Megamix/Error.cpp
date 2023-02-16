@@ -103,10 +103,12 @@ namespace Megamix {
         }
     }
 
-    static bool first = true;
+    static bool render = true;
+    static bool dumped = false;
     static bool full_info = false;
     static bool faded = false;
     static std::string dump_location = "";
+    static CrashInfo crash;
 
     namespace ErrorScreen {
         static CrashInfo GetCrashData(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
@@ -141,6 +143,8 @@ namespace Megamix {
             }
 
             // TODO: get call stack
+            for (int i = 0; i < CALL_STACK_SIZE; i++)
+                crash.info.callStack[i] = 0x100 + i;
 
             for (int i = 0; i < 13; i++)
                 crash.registers[i] = regs->r[i];
@@ -189,9 +193,18 @@ namespace Megamix {
             posY = screen.Draw("Debug info", 20, posY);
             posY = screen.Draw(Utils::Format("@ %08x -> %08x (@ PC -> LR)", regs->pc, regs->lr), 20, posY);
             posY = screen.Draw(Utils::Format("Exception type %d", info->type), 20, posY);
+            
             posY += 10;
-            posY = screen.Draw("Call stack goes here", 20, posY);
+            
+            posY = screen.Draw("Call stack:", 20, posY);
+            for (int i = 0; i < CALL_STACK_SIZE; i++) {
+                posY = screen.Draw(Utils::Format(" - %08x", crash.info.callStack), 20, posY);
+            }
+
             posY += 10;
+
+            posY = screen.Draw(Utils::Format("r0 = %08x    r1 = %08x", crash.registers[0], crash.registers[1]), 20, posY);
+            posY = screen.Draw(Utils::Format("r2 = %08x    r3 = %08x", crash.registers[2], crash.registers[3]), 20, posY);
 
             if (dump_location != "") {
                 posY = screen.Draw(std::string("Crash dumped to ").append(dump_location), 20, posY);
@@ -208,8 +221,13 @@ namespace Megamix {
     }
 
     Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-        if (first) {
-            first = false;
+        if (!dumped) {
+            crash = ErrorScreen::GetCrashData(info, regs);
+            dumped = true;
+        }
+        
+        if (render) {
+            render = false;
             if (full_info) {
                 ErrorScreen::DevScreen(info, regs);
             } else {
@@ -225,7 +243,7 @@ namespace Megamix {
                 // todo: export actual crash instead of just going to luma
                 return Process::ExceptionCallbackState::EXCB_DEFAULT_HANDLER;
             } else if (Controller::IsKeyPressed(Key::Y)) {
-                first = true;
+                render = true;
                 full_info = !full_info;
             }
             return Process::ExceptionCallbackState::EXCB_LOOP;
