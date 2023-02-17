@@ -12,6 +12,8 @@ using CTRPluginFramework::Color;
 using CTRPluginFramework::Controller;
 using CTRPluginFramework::Key;
 using CTRPluginFramework::OSD;
+using CTRPluginFramework::File;
+using CTRPluginFramework::Directory;
 
 //TODO: add enum
 //TODO: exceptions?
@@ -107,8 +109,10 @@ namespace Megamix {
     static bool dumped = false;
     static bool full_info = false;
     static bool faded = false;
-    static std::string dump_location = "";
+
+    static std::string dump_location = ""; // also serves as error message if dump_error is true
     static CrashInfo crash;
+    static bool dump_error = false;
 
     namespace ErrorScreen {
         static CrashInfo GetCrashData(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
@@ -207,10 +211,13 @@ namespace Megamix {
             posY = screen.Draw(Utils::Format("r2 = %08x    r3 = %08x", crash.registers[2], crash.registers[3]), 20, posY);
 
             if (dump_location != "") {
-                posY = screen.Draw(std::string("Crash dumped to ").append(dump_location), 20, posY);
+                if (dump_error)
+                    posY = screen.Draw(std::string("Error while saving dump: ").append(dump_location), 20, posY);
+                else
+                    posY = screen.Draw(std::string("Crash dump saved to ").append(dump_location), 20, posY);
                 posY += 10;
             } else {
-                posY = screen.Draw("> Press A to dump crash (WIP)", 20, posY);
+                posY = screen.Draw("> Press A to dump crash", 20, posY);
             }
             posY = screen.Draw("> Press B to return to the home menu", 20, posY);
             posY = screen.Draw("> Press Y to go back", 20, posY);
@@ -218,6 +225,39 @@ namespace Megamix {
             OSD::SwapBuffers();
 
         }
+    }
+
+    static int SaveCrashDump() {
+        int res = 0;
+
+        if (!Directory::IsExists(MEGAMIX_CRASH_PATH))
+            res = Directory::Create(MEGAMIX_CRASH_PATH);
+
+        if (res) return res;
+
+        int num = 0;
+        for (;; num++) {
+            if (!File::Exists(Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num)))
+                break;
+        }
+
+        File file;
+        
+        res = File::Open(file, Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num), File::WRITE);
+        if (res) return res;
+
+        res = file.Write("SELCRAH\0", 8);
+        if (res) return res;
+
+        res = file.Write(&crash, sizeof(crash));
+        if (res) return res;
+
+        res = file.Close();
+        if (res) return res;
+
+        dump_location = Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num);
+
+        return 0;
     }
 
     Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
@@ -238,10 +278,16 @@ namespace Megamix {
         Controller::Update();
         if (Controller::IsKeyPressed(Key::B)) {
             return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
+        } else if (Controller::IsKeyPressed(Key::X)) {
+            //TODO: remove this, it's just for testing
+            return Process::ExceptionCallbackState::EXCB_DEFAULT_HANDLER;
         } else {
-            if (Controller::IsKeyPressed(Key::A)) {
-                // todo: export actual crash instead of just going to luma
-                return Process::ExceptionCallbackState::EXCB_DEFAULT_HANDLER;
+            if (Controller::IsKeyPressed(Key::A) && dump_location == "") {
+                int result = SaveCrashDump();
+                if (result != 0) {
+                    dump_error = true;
+                    dump_location = ErrorMessage(result);
+                }
             } else if (Controller::IsKeyPressed(Key::Y)) {
                 render = true;
                 full_info = !full_info;
