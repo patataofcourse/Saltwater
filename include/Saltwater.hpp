@@ -27,12 +27,13 @@
 #endif
 
 // Params struct
-
-struct SaltwaterParams {
-    u16 barista;
-    bool rhmpatch;
-    bool plgldr;
-    u32 null[31];
-};
+extern "C" {
+    struct SaltwaterParams {
+        u16 barista;
+        bool rhmpatch;
+        bool plgldr;
+        u32 null[31];
+    };
+}
 
 #endif

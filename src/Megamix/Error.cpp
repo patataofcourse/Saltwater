@@ -202,7 +202,7 @@ namespace Megamix {
             
             posY = screen.Draw("Call stack:", 20, posY);
             for (int i = 0; i < CALL_STACK_SIZE; i++) {
-                posY = screen.Draw(Utils::Format(" - %08x", crash.info.callStack), 20, posY);
+                posY = screen.Draw(Utils::Format(" - %08x", crash.info.callStack[i]), 20, posY);
             }
 
             posY += 10;
