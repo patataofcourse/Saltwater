@@ -55,7 +55,7 @@ namespace Megamix {
                 return "Unsupported Tickflow format for this game and version";
             
             default:
-                return "Unknown error code";
+                return Utils::Format("Unknown error code %08x", code);
         }
     }
 
@@ -177,7 +177,10 @@ namespace Megamix {
             posY += 10;
             
             if (dump_location != "") {
-                posY = screen.Draw(std::string("Crash dumped to ").append(dump_location), 20, posY);
+                if (dump_error)
+                    posY = screen.Draw(std::string("Error while saving dump: ").append(dump_location), 20, posY);
+                else
+                    posY = screen.Draw(std::string("Crash dump saved to ").append(dump_location), 20, posY);
                 posY += 10;
             } else {
                 posY = screen.Draw("> Press A to dump crash (WIP)", 20, posY);
@@ -236,14 +239,17 @@ namespace Megamix {
         if (res) return res;
 
         int num = 0;
+        std::string path;
         for (;; num++) {
-            if (!File::Exists(Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num)))
+            path = Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num);
+            if (!File::Exists(path))
                 break;
         }
 
         File file;
-        
-        res = File::Open(file, Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num), File::WRITE);
+        res = File::Create(path);
+
+        res = File::Open(file, path, File::WRITE);
         if (res) return res;
 
         res = file.Write("SELCRAH\0", 8);
@@ -255,7 +261,7 @@ namespace Megamix {
         res = file.Close();
         if (res) return res;
 
-        dump_location = Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num);
+        dump_location = path;
 
         return 0;
     }
@@ -288,6 +294,7 @@ namespace Megamix {
                     dump_error = true;
                     dump_location = ErrorMessage(result);
                 }
+                render = true;
             } else if (Controller::IsKeyPressed(Key::Y)) {
                 render = true;
                 full_info = !full_info;
