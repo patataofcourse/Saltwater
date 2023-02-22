@@ -82,10 +82,6 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     // le params :D
     params = *(SaltwaterParams*)ctrpf::FwkSettings::Header->config;
 
-    if (params.barista != 0xD06) {
-        ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!");
-        Process::ReturnToHomeMenu();
-    }
     if (params.rhmpatch) {
         // move RHMPatch back to where it was
         ctrpf::File::Rename(
@@ -142,6 +138,10 @@ void InitMenu(ctrpf::PluginMenu &menu) {
 #endif
 
 int ctrpf::main(void) {
+    if (params.barista != 0xD06) {
+        ctrpf::MessageBox("Barista not used!", Utils::Format("You must run Saltwater from the Barista launcher! %x", params.barista))();
+        Process::ReturnToHomeMenu();
+    }
 
 #ifdef RELEASE
     Process::WaitForExit();
