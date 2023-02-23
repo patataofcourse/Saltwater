@@ -72,7 +72,7 @@ namespace Megamix {
             return "BSSO";
         } else if (far >= 0x06000000 && far < 0x07000000) {
             return "SLWM";
-        //TODO: Saltwater sections
+        // TODO: Saltwater sections
         } else if (far < 0x08000000) {
             return "SLWT";
         } else if (far < 0x10000000) {
@@ -146,15 +146,24 @@ namespace Megamix {
                     crash.info.statusRegisterB = info->fpinst;
             }
 
-            // TODO: get call stack
-            for (int i = 0; i < CALL_STACK_SIZE; i++)
-                crash.info.callStack[i] = 0x100 + i;
-
             for (int i = 0; i < 13; i++)
                 crash.registers[i] = regs->r[i];
             crash.registers[13] = regs->sp;
 
-            // TODO: get stack dump
+            // FIXME: this is unsustainable
+            const u8* pluginStackEnd = (u8*)0x0708f878 + 0x1000;
+
+            u8* stack = (u8*)regs->sp;
+            u32 stack_len = (u32)stack >= 0x06000000
+                ? (u32)pluginStackEnd - (u32)stack
+                : 0x01000000 - (u32)stack;
+            crash.stackLength = stack_len < 0x100 ? stack_len : 0x100;
+
+            memcpy(crash.stackDump, stack, stack_len);
+
+            // TODO: get call stack
+            for (int i = 0; i < CALL_STACK_SIZE; i++)
+                crash.info.callStack[i] = 0x100 + i;
 
             return crash;
         }
@@ -284,9 +293,6 @@ namespace Megamix {
         Controller::Update();
         if (Controller::IsKeyPressed(Key::B)) {
             return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
-        } else if (Controller::IsKeyPressed(Key::X)) {
-            //TODO: remove this, it's just for testing
-            return Process::ExceptionCallbackState::EXCB_DEFAULT_HANDLER;
         } else {
             if (Controller::IsKeyPressed(Key::A) && dump_location == "") {
                 int result = SaveCrashDump();

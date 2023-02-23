@@ -139,7 +139,7 @@ void InitMenu(ctrpf::PluginMenu &menu) {
 
 int ctrpf::main(void) {
     if (params.barista != 0xD06) {
-        ctrpf::MessageBox("Barista not used!", Utils::Format("You must run Saltwater from the Barista launcher! %x", params.barista))();
+        ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();
         Process::ReturnToHomeMenu();
     }
 
