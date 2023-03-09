@@ -150,12 +150,9 @@ namespace Megamix {
                 crash.registers[i] = regs->r[i];
             crash.registers[13] = regs->sp;
 
-            // FIXME: this is unsustainable
-            const u8* pluginStackEnd = (u8*)0x0708f878 + 0x1000;
-
             u8* stack = (u8*)regs->sp;
             u32 stack_len = (u32)stack >= 0x06000000
-                ? (u32)pluginStackEnd - (u32)stack
+                ? 0x100 // (u32)pluginStackEnd - (u32)stack --- no autodetect for now
                 : 0x01000000 - (u32)stack;
             crash.stackLength = stack_len < 0x100 ? stack_len : 0x100;
 
