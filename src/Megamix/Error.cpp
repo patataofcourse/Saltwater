@@ -72,7 +72,7 @@ namespace Megamix {
             return "BSSO";
         } else if (far >= 0x06000000 && far < 0x07000000) {
             return "SLWM";
-        // TODO: Saltwater sections
+        // TODO: Saltwater sections - _TEXT_END for text, add other linker symbols
         } else if (far < 0x08000000) {
             return "SLWT";
         } else if (far < 0x10000000) {
@@ -159,8 +159,17 @@ namespace Megamix {
             memcpy(crash.stackDump, stack, stack_len);
 
             // TODO: get call stack
-            for (int i = 0; i < CALL_STACK_SIZE; i++)
-                crash.info.callStack[i] = 0x100 + i;
+            u32 stack_offset = 0;
+            for (int i = 0; i < CALL_STACK_SIZE; i++) {
+                while ((u32)stack >= 0x06000000 || (u32)(stack + stack_offset) < 0x01000000) {
+                    u32 val = *(u32*)(regs->sp + stack_offset);
+                    if ((val >= 0x0010000 && val < Region::TextEnd() || (val >= (u32)_start && val < _TEXT_END))) {
+                        crash.callStack[i] = val;
+                        break;
+                    }
+                    stack_offset += 4;
+                }
+            }
 
             return crash;
         }

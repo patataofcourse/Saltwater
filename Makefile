@@ -23,8 +23,8 @@ RELEASE		?= 0
 #---------------------------------------------------------------------------------
 ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS		:=	$(ARCH) -Os -W -mword-relocations \
-				-fomit-frame-pointer -ffunction-sections -fno-strict-aliasing
+CFLAGS		:=	$(ARCH) -Os -W -mword-relocations -fomit-frame-pointer \
+				-ffunction-sections -fno-strict-aliasing -flto
 
 CFLAGS		+=	$(INCLUDE) -D__3DS__ -DCOMMIT="$(shell git show --format='%h' --no-patch || echo 'nogit')"
 

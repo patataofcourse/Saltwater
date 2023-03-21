@@ -131,8 +131,12 @@ void InitMenu(ctrpf::PluginMenu &menu) {
         ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry *entry) {
         ((void(*)(void))nullptr)();
+    });
+
+    menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry *entry) {
+        *(int*)nullptr = 100;
     });
 }
 #endif

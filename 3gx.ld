@@ -39,6 +39,8 @@ SECTIONS
 		. = ALIGN(4);
 	} : code
 
+	_TEXT_END = .;
+
 	/* =========== RODATA section =========== */
 
 	.rodata ALIGN(0x4) :
