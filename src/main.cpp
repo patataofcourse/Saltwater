@@ -85,8 +85,8 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     if (params.rhmpatch) {
         // move RHMPatch back to where it was
         ctrpf::File::Rename(
-            "/luma/titles/00040000 0018a400/code.old.ips",
-            "/luma/titles/00040000 0018a400/code.ips"
+            "/luma/titles/000400000018a400/code.old.ips",
+            "/luma/titles/000400000018a400/code.ips"
         );
     }
     if (params.plgldr) {

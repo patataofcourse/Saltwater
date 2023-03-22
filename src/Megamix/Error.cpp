@@ -15,6 +15,9 @@ using CTRPluginFramework::OSD;
 using CTRPluginFramework::File;
 using CTRPluginFramework::Directory;
 
+extern const u32 _TEXT_END;
+extern const u32 _start;
+
 //TODO: add enum
 //TODO: exceptions?
 namespace Megamix {
@@ -164,7 +167,7 @@ namespace Megamix {
                 while ((u32)stack >= 0x06000000 || (u32)(stack + stack_offset) < 0x01000000) {
                     u32 val = *(u32*)(regs->sp + stack_offset);
                     if ((val >= 0x0010000 && val < Region::TextEnd() || (val >= (u32)_start && val < _TEXT_END))) {
-                        crash.callStack[i] = val;
+                        crash.info.callStack[i] = val;
                         break;
                     }
                     stack_offset += 4;
