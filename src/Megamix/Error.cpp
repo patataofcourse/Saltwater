@@ -168,6 +168,7 @@ namespace Megamix {
                     u32 val = *(u32*)(regs->sp + stack_offset);
                     if ((val >= 0x0010000 && val < Region::TextEnd() || (val >= (u32)_start && val < _TEXT_END))) {
                         crash.info.callStack[i] = val;
+                        stack_offset += 4;
                         break;
                     }
                     stack_offset += 4;
