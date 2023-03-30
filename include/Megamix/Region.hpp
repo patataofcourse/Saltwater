@@ -36,6 +36,8 @@ namespace Region {
     u32 RodataEnd();
     u32 DataEnd();
     u32 BssEnd();
+
+    std::vector<u32> RetryRemixLocs();
 }
 
 #endif

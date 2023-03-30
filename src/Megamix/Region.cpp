@@ -253,4 +253,18 @@ namespace Region {
                 return 0;
         }
     }
+
+    // RHMPatch's retry remix sub patch locations
+    std::vector<u32> RetryRemixLocs() {
+        switch (region) {
+            case JP:
+                return {0x19a180, 0x16485c, 0x1f8e78};
+            case US:
+            case EU:
+            case KR:
+                return {0x198c9c, 0x16302c, 0x1f7f84};
+            default:
+                return {};
+        }
+    }
 }

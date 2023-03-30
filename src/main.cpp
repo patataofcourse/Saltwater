@@ -100,6 +100,11 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     region = Region::FromCode(ctrpf::Process::GetTitleID());
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
+    // Remix retry sub patch
+    for (auto loc : Region::RetryRemixLocs()){
+        Process::Patch(loc, 0xE3A0200E); // mov r2, #0xE
+    }
+
     // Start hooks
     Megamix::Hooks::TickflowHooks();
     if (region != Region::JP) //TODO: find out how to make the hooks JP-compatible
