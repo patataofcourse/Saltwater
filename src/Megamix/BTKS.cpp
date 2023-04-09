@@ -5,12 +5,14 @@
 #include "Megamix.hpp"
 
 using CTRPluginFramework::File;
+using CTRPluginFramework::OSD;
 
 namespace Megamix {
     BTKS btks;
 
     int BTKS::LoadFile(const std::string filename) {
         this->Unload();
+        OSD::Notify("Loading BTKS file...");
         File file(MEGAMIX_MODS_PATH + filename + ".btk", File::Mode::READ);
         u32 result;
         char* magicBuf = new char[8];
@@ -174,6 +176,8 @@ namespace Megamix {
         }
         start = (u32)tickflow + start;
         loaded = true;
+
+        OSD::Notify("Tickflow loaded!");
 
         return 0;
     }

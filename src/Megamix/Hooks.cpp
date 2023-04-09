@@ -6,6 +6,8 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
+using CTRPluginFramework::OSD;
+
 using Megamix::TempoTable;
 
 extern "C" {
@@ -59,7 +61,7 @@ void* getTickflowOffset(int index) {
         if (!result) {
             return (void*)(Megamix::btks.start);
         } else {
-            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();
+            OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
         }
     }
     return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
@@ -71,7 +73,7 @@ void* getGateTickflowOffset(int index) {
         if (!result) {
             return (void*)(Megamix::btks.start);
         } else {
-            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();    
+            OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
         }
     }
     return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
@@ -83,7 +85,7 @@ void* getGatePracticeTickflowOffset(int index) {
         if (!result) {
             return (void*)(Megamix::btks.start);
         } else {
-            CTRPluginFramework::MessageBox("Error messages", CTRPluginFramework::Utils::Format("BTKS loader: %s", Megamix::ErrorMessage(result).c_str()))();    
+            OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
         }
     }
     return *(void**)(Region::GateTable() + index * 0x24 + 8); // og code

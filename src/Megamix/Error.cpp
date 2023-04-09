@@ -29,11 +29,11 @@ namespace Megamix {
             case 0:
                 return "No errors!";
             case -1:
-                return "Invalid path for file";
+                return "Invalid path";
             case -2:
-                return "File not open, are you sure it exists?";
+                return "File not found";
             case -3:
-                return "The mode passed when opened the file doesn't allow this operation";
+                return "Internal file error -3";
             case -4:
                 return "Invalid argument on file reading";
             case -5:
@@ -51,11 +51,11 @@ namespace Megamix {
             case -10:
                 return "Unknown BTKS pointer type";
             case -11:
-                return "Missing BTKS section";
+                return "Missing section in BTKS";
             case -12:
-                return "File does not fit on memory";
+                return "Out of memory";
             case -13:
-                return "Unsupported Tickflow format for this game and version";
+                return "Unsupported Tickflow format";
             
             default:
                 return Utils::Format("Unknown error code %08x", code);
