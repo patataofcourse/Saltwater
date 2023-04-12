@@ -18,6 +18,32 @@ SOURCES 	:= 	src src/Megamix src/external #src/Helpers
 
 RELEASE		?= 0
 
+FLATPAK 	:= 0
+BARISTA_DIR	?= ../Barista/Barista
+
+# Assume flatpak
+ifeq ($(shell which citra 2> /dev/null || true),)
+	FLATPAK		:= 1
+endif
+
+ifeq ($(OS),Windows_NT)
+	CITRA_DIR	:= $(APPDATA)/Citra/sdmc
+else
+	ifeq ($(shell uname -s),Linux)
+		ifeq ($(FLATPAK),1)
+			CITRA_DIR := ~/.var/app/org.citra_emu.citra/data/citra-emu/sdmc
+		else
+			CITRA_DIR := ~/.local/share/citra-emu/sdmc
+		endif
+	else
+		ifeq ($(shell uname -s), macOS)
+			CITRA_DIR := "~/Library/Application Support/Citra/sdmc"
+		else
+			CITRA :=
+		endif
+	endif
+endif
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -66,7 +92,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I $(CURDIR)/$(dir) ) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L $(dir)/lib)
 
-.PHONY: $(BUILD) clean all
+.PHONY: $(BUILD) clean all test
 
 #---------------------------------------------------------------------------------
 all: $(BUILD)
@@ -84,6 +110,13 @@ clean:
 	@rm -fr $(BUILD) $(OUTPUT).3gx $(OUTPUT).elf
 
 re: clean all
+
+#---------------------------------------------------------------------------------
+
+test: all
+	@cp $(OUTPUT).3gx $(CITRA_DIR)/spicerack/bin/
+	@make -C $(BARISTA_DIR) test
+	
 
 #---------------------------------------------------------------------------------
 
