@@ -119,7 +119,7 @@ for n in range(num_symbols):
 print(f"\rReading symbols ({num_symbols}/{num_symbols})")
 
 for symbol in symbols:
-    address, size, flags, name = symbol[0], symbol[1], symbol[2], symbol[3]
+    address, size, flags, name = symbol
     symfile.write(f"{hex8(address)} {hex8(size) if size != 0 else '----------'} {name}\n")
 
 symfile.close()
