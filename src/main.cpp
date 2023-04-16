@@ -107,10 +107,10 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
 
     // Start hooks
     Megamix::Hooks::TickflowHooks();
+    Megamix::Hooks::RegionHooks();
     if (region != Region::JP) {
         //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
-        Megamix::Hooks::RegionHooks();
     }
 }
 

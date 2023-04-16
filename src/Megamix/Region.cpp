@@ -275,9 +275,21 @@ namespace Region {
             case EU:
             case KR:
                 return 0x28c070;
-                return 0x28c070;
-                return 0x28c070;
             default: // this function doesn't exist in JP afaik
+                return 0;
+
+        }
+    }
+
+    u32 RegionOtherHookFunc() {
+        switch (region) {
+            case JP:
+                return 0x11932c;
+            case US:
+            case EU:
+            case KR:
+                return 0x28c070;
+            default:
                 return 0;
 
         }

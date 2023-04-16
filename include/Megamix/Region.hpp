@@ -39,8 +39,8 @@ namespace Region {
 
     std::vector<u32> RetryRemixLocs();
 
-
     u32 RegionFSHookFunc();
+    u32 RegionOtherHookFunc();
 }
 
 #endif

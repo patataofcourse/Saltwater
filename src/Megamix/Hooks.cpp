@@ -20,6 +20,7 @@ namespace Megamix::Hooks {
     RT_HOOK tempoAllHook;
     
     RT_HOOK regionFSHook;
+    RT_HOOK regionOtherHook;
 
     void* getTickflowOffset(int index) {
         if (config->tickflows.contains(index)) {
@@ -100,7 +101,7 @@ namespace Megamix::Hooks {
         }
     }
 
-    uint getRegion() {
+    u32 getRegion() {
         //TODO: handle JP region / JP langpack
         return region;
     }
@@ -124,7 +125,12 @@ namespace Megamix::Hooks {
     }
 
     void RegionHooks() {
-        rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegion);
+        if (region != Region::JP){
+            rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegion);
+            rtEnableHook(&regionFSHook);
+        }
+        rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegion);
+        rtEnableHook(&regionOtherHook);
     }
 
     void DisableAllHooks() {
@@ -133,5 +139,7 @@ namespace Megamix::Hooks {
         rtDisableHook(&tempoStrmHook);
         rtDisableHook(&tempoSeqHook);
         rtDisableHook(&tempoAllHook);
+        rtDisableHook(&regionFSHook);
+        //rtDisableHook(&regionOtherHook);
     }
 }
