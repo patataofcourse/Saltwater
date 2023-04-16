@@ -7,7 +7,6 @@
 #include "Config.hpp"
 
 using CTRPluginFramework::OSD;
-using CTRPluginFramework::Utils;
 
 using Megamix::TempoTable;
 
@@ -101,9 +100,9 @@ namespace Megamix::Hooks {
         }
     }
 
-    u32 getRegion() {
+    uint getRegion() {
         //TODO: handle JP region / JP langpack
-        return (u32)region;
+        return region;
     }
 
     void TickflowHooks() {

@@ -16,8 +16,6 @@ const char* version = VERSION;
 
 static SaltwaterParams params;
 
-static LightEvent patchingFinished;
-
 // tired of typing these names
 namespace ctrpf = CTRPluginFramework;
 namespace CTRPluginFramework {
@@ -76,7 +74,6 @@ static void ToggleTouchscreenForceOn(void) {
 // This function is called before main and before the game starts
 // Useful to do code edits safely
 void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
-    LightEvent_Init(&patchingFinished, RESET_ONESHOT);
     ToggleTouchscreenForceOn();
 
     // Crash handler
@@ -158,7 +155,9 @@ int ctrpf::main(void) {
         Process::ReturnToHomeMenu();
     }
 
-#ifndef RELEASE
+#ifdef RELEASE
+    Process::WaitForExit();
+#else
     PluginMenu *menu = new PluginMenu(Utils::Format("Saltwater %s debug", VERSION), "", 1);
 
     // Synnchronize the menu with frame event
@@ -166,13 +165,7 @@ int ctrpf::main(void) {
 
     // Init our menu entries & folders
     InitMenu(*menu);
-#endif
 
-    LightEvent_Wait(&patchingFinished);
-
-#ifdef RELEASE
-    Process::WaitForExit();
-#else
     // Launch menu and mainloop
     menu->Run();
 
