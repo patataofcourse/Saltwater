@@ -6,10 +6,10 @@ extern u8 region;
 namespace Region {
 
     enum {
-        JP,
-        US,
-        EU,
-        KR,
+        JP = 0,
+        US = 1,
+        EU = 2,
+        KR = 3,
         UNK,
     };
 

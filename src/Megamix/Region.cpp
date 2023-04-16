@@ -275,8 +275,6 @@ namespace Region {
             case EU:
             case KR:
                 return 0x28c070;
-                return 0x28c070;
-                return 0x28c070;
             default: // this function doesn't exist in JP afaik
                 return 0;
 
