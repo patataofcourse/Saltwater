@@ -97,7 +97,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     }
 
     // Init region and config
-    region = Region::FromCode(ctrpf::Process::GetTitleID());
+    region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: what if US code in JP?
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
     // Remix retry sub patch
@@ -107,8 +107,11 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
 
     // Start hooks
     Megamix::Hooks::TickflowHooks();
-    if (region != Region::JP) //TODO: find out how to make the hooks JP-compatible
+    if (region != Region::JP) {
+        //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
+        Megamix::Hooks::RegionHooks();
+    }
 }
 
 // This function is called when the process exits
