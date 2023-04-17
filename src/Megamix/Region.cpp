@@ -288,7 +288,7 @@ namespace Region {
             case US:
             case EU:
             case KR:
-                return 0x28c070;
+                return 0x119560;
             default:
                 return 0;
 
