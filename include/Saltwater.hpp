@@ -32,8 +32,11 @@ extern "C" {
         u16 barista;
         bool rhmpatch;
         bool plgldr;
-        u32 null[31];
+        bool mod_loaded_msg;
+        u32 null[30];
     };
 }
+
+extern SaltwaterParams params;
 
 #endif

@@ -14,7 +14,7 @@ using Megamix::btks;
 
 const char* version = VERSION;
 
-static SaltwaterParams params;
+SaltwaterParams params;
 
 // tired of typing these names
 namespace ctrpf = CTRPluginFramework;
