@@ -1,3 +1,7 @@
 build
 *.3gx
 *.elf
+
+.vscode
+.cache
+compile_commands.json
