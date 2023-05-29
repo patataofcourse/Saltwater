@@ -1,6 +1,8 @@
 #ifndef RHMTYPES_H
 #define RHMTYPES_H
 
+#include "types.h"
+
 namespace Megamix {
     struct Tempo {
         float beats;

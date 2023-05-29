@@ -2,7 +2,7 @@
 #define MEGAMIX_BTKS_H
 
 #include <map>
-#include "Megamix.hpp"
+#include "Megamix/Types.hpp"
 
 namespace Megamix {
     struct BTKS {

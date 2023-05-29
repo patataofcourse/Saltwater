@@ -1,6 +1,10 @@
 #ifndef RHMREGION_H
 #define RHMREGION_H
 
+#include <vector>
+
+#include "types.h"
+
 extern u8 region;
 
 namespace Region {
