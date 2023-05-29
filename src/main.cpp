@@ -112,6 +112,10 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
         //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
     }
+
+    if (region == Region::US) {
+        Megamix::Patches::PatchMuseumExtraRows();
+    }
 }
 
 // This function is called when the process exits

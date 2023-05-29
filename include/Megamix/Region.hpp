@@ -2,6 +2,7 @@
 #define RHMREGION_H
 
 #include <vector>
+#include <string>
 
 #include "types.h"
 
@@ -24,10 +25,17 @@ namespace Region {
     std::vector<u32> RHMPatchTempoAddresses();
     std::vector<u32> RHMPatchGateAddresses();
 
+    std::vector<u32> MuseumRowsInfoAddresses();
+    std::vector<u32> MuseumRowsColorsAddresses();
+    // TODO: maybe make this into MuseumRowsCmps that returns a
+    // map of int -> vector<u8> other regions might use different registers
+    std::vector<u32> MuseumRowsR1Cmps();
+    std::vector<u32> MuseumRowsR8Cmps();
+
     u32 GameTable();
     u32 TempoTable();
     u32 GateTable();
-    
+
     u32 TickflowHookFunc();
     u32 GateHookFunc();
     u32 GatePracHookFunc();
