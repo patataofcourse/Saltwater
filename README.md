@@ -6,19 +6,22 @@ This tool is part of the **SpiceRack** project, which aims to create more advanc
 Join the RHModding server for information and support regarding modding Rhythm Heaven games in general: https://discord.com/invite/ps4rq53
 
 ## How to use
-Don't use Saltwater on its own, you'll need [Barista](https://github.com/patataofcourse/Barista) as well!
-
-(WIP)
+todo
+<!--
+The following guides explain how to install Saltwater and Barista:
+    - Hardware: https://patataofcourse.github.io/spicerack-guide/
+    - Citra: https://patataofcourse.github.io/spicerack-guide/citra.html
+-->
 
 ## Building
 You'll need the following:
 
-- devKitARM, latest
-- libctru, latest
-- CTR Plugin Framework (libctrpf) v0.7.4
-- 3gxtool v1.1
+- devKitARM
+- libctru
+- libctrpf (CTRPluginFramework)
+- 3gxtool
 
-The first two can be gotten through [dkP pacman](https://devkitpro.org/wiki/devkitPro_pacman) (install `3ds-dev`), and the last two can be gotten from [Nanquitas' Discord server](https://discord.gg/z4ZMh27). Links to the GitLab releases will be included in this readme soon.
+To install them, you'll need [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), with the [ThePixellizerOSS package database](https://gitlab.com/thepixellizeross/ctrpluginframework#adding-package-database).
 
 Run `make` to build the plugin.
 
