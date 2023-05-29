@@ -12,6 +12,7 @@
 #include "Saltwater.hpp"
 #include "Megamix/Region.hpp"
 #include "Megamix/Hooks.hpp"
+#include "Megamix/Patches.hpp"
 #include "Megamix/BTKS.hpp"
 #include "Megamix/Error.hpp"
 #include "Megamix/Types.hpp"
