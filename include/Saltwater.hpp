@@ -33,6 +33,7 @@ extern "C" {
         bool rhmpatch;
         bool plgldr;
         bool mod_loaded_msg;
+        bool extra_rows;
         u32 null[30];
     };
 }
