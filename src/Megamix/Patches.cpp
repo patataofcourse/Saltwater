@@ -107,7 +107,7 @@ namespace Megamix::Patches {
         }
 
         u32 compare_r8_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, MuseumRowCount);
+            make_cmp_immediate_instruction(8, MuseumRowCount);
 
         for (auto address : Region::MuseumRowsR8Cmps()) {
             Process::Patch(address, compare_r8_instruction);
