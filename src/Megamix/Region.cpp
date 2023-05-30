@@ -38,8 +38,8 @@ namespace Region {
             case US:
             case EU:
                 return {
-                    0x109008, 0x22D57C, 0x22D67C, 0x22D698, 0x22D6B4, 0x22D6D0, 0x240458, 0x24CB28, 0x2553CC, 0x255578, 0x258618,
-                    0x258E0C, 0x32D434, 0x32D450, 0x32D470, 0x32D4C8, 0x32D548, 0x32D5B0, 0x32D5E8
+                    0x109008, 0x22d57c, 0x22d67c, 0x22d698, 0x22d6b4, 0x22d6d0, 0x240458, 0x24cb28, 0x2553cc, 0x255578, 0x258618,
+                    0x258e0c, 0x32d434, 0x32d450, 0x32d470, 0x32d4c8, 0x32d548, 0x32d5b0, 0x32d5e8
                 };
             case KR:
                 return {
@@ -71,7 +71,7 @@ namespace Region {
         switch (region) {
             case US:
             case EU:
-                return { 0x22AE40, 0x240FB0, 0x2552D8, 0x32D5FC, 0x32D614, 0x32D62C, 0x32D644, 0x32D65C, 0x32D6B8, 0x32D770 };
+                return { 0x22ae40, 0x240fb0, 0x2552d8, 0x32d5fc, 0x32d614, 0x32d62c, 0x32d644, 0x32d65c, 0x32d6b8, 0x32d770 };
             case KR:
                 return { 0x22ae18, 0x240f88, 0x2552b0, 0x32d5fc, 0x32d614, 0x32d62c, 0x32d644, 0x32d65c, 0x32d6b8, 0x32d770 };
             case JP:
@@ -86,10 +86,10 @@ namespace Region {
         switch (region) {
             case US:
                 return {
-                    0x2421E8, 0x2421E8, 0x24C480, 0x24D408,           // gRowInfo
-                    0x1979E0, 0x1983FC, 0x242350, 0x2424BC, 0x24E010, // gRowInfo1
-                    0x2423D4, 0x2619C0,                               // gRowInfo2
-                    0x224FE8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
+                    0x2421e8, 0x2421e8, 0x24c480, 0x24d408,           // gRowInfo
+                    0x1979e0, 0x1983fc, 0x242350, 0x2424bc, 0x24e010, // gRowInfo1
+                    0x2423d4, 0x2619c0,                               // gRowInfo2
+                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
                 };
 
             // TODO:
@@ -104,7 +104,7 @@ namespace Region {
     std::vector<u32> MuseumRowsColorsAddresses() {
         switch (region) {
             case US:
-                return { 0x17D8B4, 0x17E318, 0x17E4C4, 0x241FC4, 0x38E6D8 };
+                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 };
 
             // TODO:
             case EU:
@@ -118,7 +118,7 @@ namespace Region {
     std::vector<u32> MuseumRowsR1Cmps() {
         switch (region) {
             case US:
-                return { 0x2423C4, 0x2423DC, 0x2619B0 };
+                return { 0x2423c4, 0x2423dc, 0x2619b0 };
 
             // TODO:
             case EU:
@@ -132,7 +132,7 @@ namespace Region {
     std::vector<u32> MuseumRowsR8Cmps() {
         switch (region) {
             case US:
-                return { 0x242400, 0x2424A0 };
+                return { 0x242400, 0x2424a0 };
 
             // TODO:
             case EU:
@@ -161,12 +161,12 @@ namespace Region {
     u32 TempoTable() {
         switch (region) {
             case US:
-                return 0x53EF54;
+                return 0x53ef54;
             case EU:
             case KR:
-                return 0x53F04C;
+                return 0x53f04c;
             case JP:
-                return 0x5324B0;
+                return 0x5324b0;
             default:
                 return 0;
         }

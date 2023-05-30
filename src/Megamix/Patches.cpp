@@ -6,7 +6,7 @@
 #include "Megamix.hpp"
 #include "Megamix/Patches.hpp"
 
-#define rgba(value) { (value >> 24) & 0xFF, (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF }
+#define rgba(value) { (value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff }
 
 namespace Megamix::Patches {
     const u32 museumRowCount = 32;
@@ -48,39 +48,39 @@ namespace Megamix::Patches {
     };
 
     const MuseumRowColor museumRowColors[museumRowCount] {
-        /* E2 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-        /* E1 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-        /* E0 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
+        /* E2 */ MuseumRowColor(rgba(0x424242ff), rgba(0x00000000)),
+        /* E1 */ MuseumRowColor(rgba(0x424242ff), rgba(0x00000000)),
+        /* E0 */ MuseumRowColor(rgba(0x424242ff), rgba(0x00000000)),
 
-        /* 0  */ MuseumRowColor(rgba(0xFFED2AFF), rgba(0x8C640000)),
-        /* 1  */ MuseumRowColor(rgba(0x4AF8F1FF), rgba(0x01494C00)),
-        /* 2  */ MuseumRowColor(rgba(0xDCD9D9FF), rgba(0x85561600)),
-        /* 3  */ MuseumRowColor(rgba(0xFFA030FF), rgba(0x783A0000)),
-        /* 4  */ MuseumRowColor(rgba(0x3667CAFF), rgba(0x04007800)),
-        /* 5  */ MuseumRowColor(rgba(0xCECACAFF), rgba(0x82393900)),
-        /* 6  */ MuseumRowColor(rgba(0xEB4040FF), rgba(0x4F000000)),
-        /* 7  */ MuseumRowColor(rgba(0x9A43B7FF), rgba(0x0F013F00)),
-        /* 8  */ MuseumRowColor(rgba(0xAFAFAFFF), rgba(0x284D2F00)),
-        /* 9  */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 10 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 11 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 12 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 13 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 14 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 15 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 16 */ MuseumRowColor(rgba(0xFFCAEDFF), rgba(0x7E3E9200)),
-        /* 17 */ MuseumRowColor(rgba(0xB7ECE2FF), rgba(0x2E818600)),
-        /* 18 */ MuseumRowColor(rgba(0xECE5B7FF), rgba(0xADAA0800)),
-        /* 19 */ MuseumRowColor(rgba(0x8C8C8CFF), rgba(0x503C5000)),
-        /* 20 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 21 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 22 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 23 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 24 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 25 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 26 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 27 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 28 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
+        /* 0  */ MuseumRowColor(rgba(0xffed2aff), rgba(0x8c640000)),
+        /* 1  */ MuseumRowColor(rgba(0x4af8f1ff), rgba(0x01494c00)),
+        /* 2  */ MuseumRowColor(rgba(0xdcd9d9ff), rgba(0x85561600)),
+        /* 3  */ MuseumRowColor(rgba(0xffa030ff), rgba(0x783a0000)),
+        /* 4  */ MuseumRowColor(rgba(0x3667caff), rgba(0x04007800)),
+        /* 5  */ MuseumRowColor(rgba(0xcecacaff), rgba(0x82393900)),
+        /* 6  */ MuseumRowColor(rgba(0xeb4040ff), rgba(0x4f000000)),
+        /* 7  */ MuseumRowColor(rgba(0x9a43b7ff), rgba(0x0f013f00)),
+        /* 8  */ MuseumRowColor(rgba(0xafafafff), rgba(0x284d2f00)),
+        /* 9  */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 10 */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 11 */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 12 */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 13 */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 14 */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 15 */ MuseumRowColor(rgba(0x2ba820ff), rgba(0x013f0d00)),
+        /* 16 */ MuseumRowColor(rgba(0xffcaedff), rgba(0x7e3e9200)),
+        /* 17 */ MuseumRowColor(rgba(0xb7ece2ff), rgba(0x2e818600)),
+        /* 18 */ MuseumRowColor(rgba(0xece5b7ff), rgba(0xadaa0800)),
+        /* 19 */ MuseumRowColor(rgba(0x8c8c8cff), rgba(0x503c5000)),
+        /* 20 */ MuseumRowColor(rgba(0xf7f2b9ff), rgba(0xaa943c00)),
+        /* 21 */ MuseumRowColor(rgba(0xf7f2b9ff), rgba(0xaa943c00)),
+        /* 22 */ MuseumRowColor(rgba(0xf7f2b9ff), rgba(0xaa943c00)),
+        /* 23 */ MuseumRowColor(rgba(0x78500aff), rgba(0x643c3200)),
+        /* 24 */ MuseumRowColor(rgba(0x78500aff), rgba(0x643c3200)),
+        /* 25 */ MuseumRowColor(rgba(0x78500aff), rgba(0x643c3200)),
+        /* 26 */ MuseumRowColor(rgba(0x78500aff), rgba(0x643c3200)),
+        /* 27 */ MuseumRowColor(rgba(0x78500aff), rgba(0x643c3200)),
+        /* 28 */ MuseumRowColor(rgba(0x78500aff), rgba(0x643c3200)),
     };
 
     // see section F5.1.35 in the arm A-profile reference manual
