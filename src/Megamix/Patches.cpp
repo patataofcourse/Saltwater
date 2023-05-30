@@ -9,9 +9,9 @@
 #define rgba(value) { (value >> 24) & 0xFF, (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF }
 
 namespace Megamix::Patches {
-    const u32 MuseumRowCount = 32;
+    const u32 museumRowCount = 32;
 
-    const MuseumRow MuseumRows[MuseumRowCount] {
+    const MuseumRow museumRows[museumRowCount] {
         /* E2 */ MuseumRow({ CtrStepL,       CtrSumouL,     RvlBadmintonL, None,            None       }, "room_05",       0, 0),
         /* E1 */ MuseumRow({ NtrCoinToss,    AgbVirus,      CtrChicken,    RvlSword,        None       }, "room_05",       0, 0),
         /* E0 */ MuseumRow({ NtrFrogL,       RvlKarate2,    NtrShootingS,  CtrWoodCatS,     RvlKarate4 }, "room_05",       0, 0),
@@ -47,7 +47,7 @@ namespace Megamix::Patches {
         /* 28 */ MuseumRow({ RvlSortL,       RvlWatchL,     RvlKarate3,    None,            None       }, "bonus_RVL3",    0, 0),
     };
 
-    const MuseumRowColor MuseumRowColors[MuseumRowCount] {
+    const MuseumRowColor museumRowColors[museumRowCount] {
         /* E2 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
         /* E1 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
         /* E0 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
@@ -85,38 +85,38 @@ namespace Megamix::Patches {
 
     // see section F5.1.35 in the arm A-profile reference manual
     // register is 4 bits, value is 12 bits
-    u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
+    u32 MakeCmpImmediateInstruction(u32 reg, u32 value) {
         // 1110 == no condition
         const u32 cond = 0b1110 << 28;
-        const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
+        const u32 cmpImmBase = 0b0000'00110'10'1 << 20;
         reg <<= 16;
 
-        return cond | cmp_imm_base | reg | value;
+        return cond | cmpImmBase | reg | value;
     }
 
     void PatchMuseumExtraRows() {
         for (auto address : Region::MuseumRowsInfoAddresses()) {
-            Process::Patch(address, (u32) MuseumRows);
+            Process::Patch(address, (u32) museumRows);
         }
 
-        u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, MuseumRowCount);
+        u32 compareR1Instruction = // cmp r1, MUSEUM_ROW_COUNT
+            MakeCmpImmediateInstruction(1, museumRowCount);
 
         for (auto address : Region::MuseumRowsR1Cmps()) {
-            Process::Patch(address, compare_r1_instruction);
+            Process::Patch(address, compareR1Instruction);
         }
 
-        u32 compare_r8_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(8, MuseumRowCount);
+        u32 compareR8Instruction = // cmp r1, MUSEUM_ROW_COUNT
+            MakeCmpImmediateInstruction(8, museumRowCount);
 
         for (auto address : Region::MuseumRowsR8Cmps()) {
-            Process::Patch(address, compare_r8_instruction);
+            Process::Patch(address, compareR8Instruction);
         }
 
         // FIXME: for this to work we need to stop c++ from overwriting the
         // colors when it runs the constructor (@ 0x38DE58) for the array
         for (auto address : Region::MuseumRowsColorsAddresses()) {
-            Process::Patch(address, (u32) MuseumRowColors);
+            Process::Patch(address, (u32) museumRowColors);
         }
     }
 }
