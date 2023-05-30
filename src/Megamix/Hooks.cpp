@@ -140,6 +140,6 @@ namespace Megamix::Hooks {
         rtDisableHook(&tempoSeqHook);
         rtDisableHook(&tempoAllHook);
         rtDisableHook(&regionFSHook);
-        //rtDisableHook(&regionOtherHook);
+        rtDisableHook(&regionOtherHook);
     }
 }
