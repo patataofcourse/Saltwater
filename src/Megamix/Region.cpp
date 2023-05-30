@@ -101,6 +101,20 @@ namespace Region {
         }
     }
 
+    u32 MuseumRowsColorsInitFunc() {
+        switch (region) {
+            case US:
+                return 0x38de58;
+
+            // TODO:
+            case EU:
+            case KR:
+            case JP:
+
+            default: return {};
+        }
+    }
+
     std::vector<u32> MuseumRowsColorsAddresses() {
         switch (region) {
             case US:
