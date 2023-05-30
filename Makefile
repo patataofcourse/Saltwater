@@ -22,7 +22,7 @@ FLATPAK 	:= 0
 BARISTA_DIR	?= ../Barista/Barista
 
 # Assume flatpak
-ifeq ($(shell which citra 2> /dev/null || true),)
+ifeq ($(shell which citra 2> /dev/null || which citra-qt 2> /dev/null || true),)
 	FLATPAK		:= 1
 endif
 
@@ -37,7 +37,7 @@ else
 		endif
 	else
 		ifeq ($(shell uname -s), macOS)
-			CITRA_DIR := "~/Library/Application Support/Citra/sdmc"
+			CITRA_DIR := ~/Library/Application Support/Citra/sdmc
 		else
 			CITRA :=
 		endif
@@ -114,7 +114,7 @@ re: clean all
 #---------------------------------------------------------------------------------
 
 test: all
-	@cp $(OUTPUT).3gx $(CITRA_DIR)/spicerack/bin/
+	@cp $(OUTPUT).3gx $(CITRA_DIR)/spicerack/bin/Saltwater.3gx
 	@make -C $(BARISTA_DIR) test
 	
 
