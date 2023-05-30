@@ -156,8 +156,8 @@ namespace Megamix::Patches {
             Process::Patch(address, compare_r8_instruction);
         }
 
-        // FIXME: for this to work we need to stop c++ from overwriting the
-        // colors when it runs the constructor (@ 0x38DE58) for the array
+        Process::Patch(Region::MuseumRowsColorsInitFunc(), /* bx lr */ 0xe12fff1e);
+
         for (auto address : Region::MuseumRowsColorsAddresses()) {
             Process::Patch(address, (u32) museumRowColors.data());
         }
