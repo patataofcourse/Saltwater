@@ -4,18 +4,12 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
-#include "Megamix/Patches.hpp"
+#include "Config.hpp"
 
-#define rgba(value) { (value >> 24) & 0xFF, (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF }
+#define rgba(value) Color8 { (value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff }
 
 namespace Megamix::Patches {
-    const u32 MuseumRowCount = 32;
-
-    const MuseumRow MuseumRows[MuseumRowCount] {
-        /* E2 */ MuseumRow({ CtrStepL,       CtrSumouL,     RvlBadmintonL, None,            None       }, "room_05",       0, 0),
-        /* E1 */ MuseumRow({ NtrCoinToss,    AgbVirus,      CtrChicken,    RvlSword,        None       }, "room_05",       0, 0),
-        /* E0 */ MuseumRow({ NtrFrogL,       RvlKarate2,    NtrShootingS,  CtrWoodCatS,     RvlKarate4 }, "room_05",       0, 0),
-
+    std::vector<MuseumRow> museumRows {
         /* 0  */ MuseumRow({ RvlKarate0,     NtrRobotS,     RvlBadmintonS, CtrStepS,        None       }, "stage_gr00",    0, 0),
         /* 1  */ MuseumRow({ AgbHairS,       NtrChorusS,    RvlMuscleS,    CtrFruitbasketS, None       }, "stage_gr01",    0, 1),
         /* 2  */ MuseumRow({ NtrCoinToss,    None,          None,          None,            None       }, "stage_gate_00", 0, 2),
@@ -47,11 +41,7 @@ namespace Megamix::Patches {
         /* 28 */ MuseumRow({ RvlSortL,       RvlWatchL,     RvlKarate3,    None,            None       }, "bonus_RVL3",    0, 0),
     };
 
-    const MuseumRowColor MuseumRowColors[MuseumRowCount] {
-        /* E2 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-        /* E1 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-        /* E0 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-
+    std::vector<MuseumRowColor> museumRowColors {
         /* 0  */ MuseumRowColor(rgba(0xFFED2AFF), rgba(0x8C640000)),
         /* 1  */ MuseumRowColor(rgba(0x4AF8F1FF), rgba(0x01494C00)),
         /* 2  */ MuseumRowColor(rgba(0xDCD9D9FF), rgba(0x85561600)),
@@ -94,20 +84,73 @@ namespace Megamix::Patches {
         return cond | cmp_imm_base | reg | value;
     }
 
+    void AddExtraRowsToFront() {
+        std::vector<MuseumRow>      extraMuseumRows {};
+        std::vector<MuseumRowColor> extraMuseumRowColors {};
+
+        // add tickflows to extra rows
+        std::array<u16, 5> newRowIds { 0x101, 0x101, 0x101, 0x101, 0x101 };
+        size_t newRowLength = 0;
+
+        auto PushNewRows = [&]() {
+            extraMuseumRows.emplace_back(newRowIds, "", 0, 0);
+            extraMuseumRowColors.emplace_back(rgba(0x424242ff), rgba(0x00000000));
+
+            newRowIds = { 0x101, 0x101, 0x101, 0x101, 0x101 };
+            newRowLength = 0;
+        };
+
+        for (auto &pair : config->tickflows) {
+            newRowIds[newRowLength] = pair.first;
+            newRowLength += 1;
+
+            if (newRowLength == 5) {
+                PushNewRows();
+            }
+        }
+
+        if (newRowLength != 0) {
+            PushNewRows();
+        }
+
+        // concat extra rows with original rows
+        std::vector<MuseumRow> originalMuseumRows = std::move(museumRows);
+        museumRows.reserve(originalMuseumRows.size() + extraMuseumRows.size());
+        museumRows.insert(museumRows.end(), extraMuseumRows.begin(), extraMuseumRows.end());
+        museumRows.insert(museumRows.end(), originalMuseumRows.begin(), originalMuseumRows.end());
+
+        // concat extra row colors with original row colors
+        std::vector<MuseumRowColor> originalMuseumRowColors = std::move(museumRowColors);
+        museumRowColors.reserve(originalMuseumRowColors.size() + extraMuseumRowColors.size());
+        museumRowColors.insert(
+            museumRowColors.end(),
+            extraMuseumRowColors.begin(),
+            extraMuseumRowColors.end()
+        );
+        museumRowColors.insert(
+            museumRowColors.end(),
+            originalMuseumRowColors.begin(),
+            originalMuseumRowColors.end()
+        );
+    }
+
     void PatchMuseumExtraRows() {
+        AddExtraRowsToFront();
+
+        // patch in new museum rows
         for (auto address : Region::MuseumRowsInfoAddresses()) {
-            Process::Patch(address, (u32) MuseumRows);
+            Process::Patch(address, (u32) museumRows.data());
         }
 
         u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, MuseumRowCount);
+            make_cmp_immediate_instruction(1, museumRows.size());
 
         for (auto address : Region::MuseumRowsR1Cmps()) {
             Process::Patch(address, compare_r1_instruction);
         }
 
-        u32 compare_r8_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, MuseumRowCount);
+        u32 compare_r8_instruction = // cmp r8, MUSEUM_ROW_COUNT
+            make_cmp_immediate_instruction(8, museumRows.size());
 
         for (auto address : Region::MuseumRowsR8Cmps()) {
             Process::Patch(address, compare_r8_instruction);
@@ -116,7 +159,7 @@ namespace Megamix::Patches {
         // FIXME: for this to work we need to stop c++ from overwriting the
         // colors when it runs the constructor (@ 0x38DE58) for the array
         for (auto address : Region::MuseumRowsColorsAddresses()) {
-            Process::Patch(address, (u32) MuseumRowColors);
+            Process::Patch(address, (u32) museumRowColors.data());
         }
     }
 }
