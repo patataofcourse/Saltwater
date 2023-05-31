@@ -6,8 +6,6 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
-#define rgba(value) Color8 { (value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff }
-
 namespace Megamix::Patches {
     std::vector<MuseumRow> museumRows {
         /* 0  */ MuseumRow({ RvlKarate0,     NtrRobotS,     RvlBadmintonS, CtrStepS,        None       }, "stage_gr00",    0, 0),
@@ -42,35 +40,35 @@ namespace Megamix::Patches {
     };
 
     std::vector<MuseumRowColor> museumRowColors {
-        /* 0  */ MuseumRowColor(rgba(0xFFED2AFF), rgba(0x8C640000)),
-        /* 1  */ MuseumRowColor(rgba(0x4AF8F1FF), rgba(0x01494C00)),
-        /* 2  */ MuseumRowColor(rgba(0xDCD9D9FF), rgba(0x85561600)),
-        /* 3  */ MuseumRowColor(rgba(0xFFA030FF), rgba(0x783A0000)),
-        /* 4  */ MuseumRowColor(rgba(0x3667CAFF), rgba(0x04007800)),
-        /* 5  */ MuseumRowColor(rgba(0xCECACAFF), rgba(0x82393900)),
-        /* 6  */ MuseumRowColor(rgba(0xEB4040FF), rgba(0x4F000000)),
-        /* 7  */ MuseumRowColor(rgba(0x9A43B7FF), rgba(0x0F013F00)),
-        /* 8  */ MuseumRowColor(rgba(0xAFAFAFFF), rgba(0x284D2F00)),
-        /* 9  */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 10 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 11 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 12 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 13 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 14 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 15 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 16 */ MuseumRowColor(rgba(0xFFCAEDFF), rgba(0x7E3E9200)),
-        /* 17 */ MuseumRowColor(rgba(0xB7ECE2FF), rgba(0x2E818600)),
-        /* 18 */ MuseumRowColor(rgba(0xECE5B7FF), rgba(0xADAA0800)),
-        /* 19 */ MuseumRowColor(rgba(0x8C8C8CFF), rgba(0x503C5000)),
-        /* 20 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 21 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 22 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 23 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 24 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 25 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 26 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 27 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 28 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
+        /* 0  */ MuseumRowColor(0xFFED2AFF, 0x8C640000),
+        /* 1  */ MuseumRowColor(0x4AF8F1FF, 0x01494C00),
+        /* 2  */ MuseumRowColor(0xDCD9D9FF, 0x85561600),
+        /* 3  */ MuseumRowColor(0xFFA030FF, 0x783A0000),
+        /* 4  */ MuseumRowColor(0x3667CAFF, 0x04007800),
+        /* 5  */ MuseumRowColor(0xCECACAFF, 0x82393900),
+        /* 6  */ MuseumRowColor(0xEB4040FF, 0x4F000000),
+        /* 7  */ MuseumRowColor(0x9A43B7FF, 0x0F013F00),
+        /* 8  */ MuseumRowColor(0xAFAFAFFF, 0x284D2F00),
+        /* 9  */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 10 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 11 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 12 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 13 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 14 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 15 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 16 */ MuseumRowColor(0xFFCAEDFF, 0x7E3E9200),
+        /* 17 */ MuseumRowColor(0xB7ECE2FF, 0x2E818600),
+        /* 18 */ MuseumRowColor(0xECE5B7FF, 0xADAA0800),
+        /* 19 */ MuseumRowColor(0x8C8C8CFF, 0x503C5000),
+        /* 20 */ MuseumRowColor(0xF7F2B9FF, 0xAA943C00),
+        /* 21 */ MuseumRowColor(0xF7F2B9FF, 0xAA943C00),
+        /* 22 */ MuseumRowColor(0xF7F2B9FF, 0xAA943C00),
+        /* 23 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 24 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 25 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 26 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 27 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 28 */ MuseumRowColor(0x78500AFF, 0x643C3200),
     };
 
     // see section F5.1.35 in the arm A-profile reference manual
@@ -94,7 +92,7 @@ namespace Megamix::Patches {
 
         auto PushNewRows = [&]() {
             extraMuseumRows.emplace_back(newRowIds, "", 0, 0);
-            extraMuseumRowColors.emplace_back(rgba(0x424242ff), rgba(0x00000000));
+            extraMuseumRowColors.emplace_back(0x424242ff, 0x00000000);
 
             newRowIds = { 0x101, 0x101, 0x101, 0x101, 0x101 };
             newRowLength = 0;

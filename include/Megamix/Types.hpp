@@ -203,6 +203,27 @@ namespace Megamix {
         u8 g;
         u8 b;
         u8 a;
+
+        Color8() {
+            this->r = 0;
+            this->g = 0;
+            this->b = 0;
+            this->a = 0;
+        }
+
+        Color8(u8 r, u8 g, u8 b, u8 a) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+            this->a = a;
+        }
+
+        Color8(u32 color) {
+            this->r = color >> 24;
+            this->g = color >> 16;
+            this->b = color >>  8;
+            this->a = color;
+        }
     };
 
     struct MuseumRowColor {
