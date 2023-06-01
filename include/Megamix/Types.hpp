@@ -186,7 +186,9 @@ namespace Megamix {
         u32 lowIndex;
 
         MuseumRow(std::array<u16, 5> gameIndices, const char *titleId, u32 highIndex, u32 lowIndex) {
-            if      (gameIndices[1] == 0x101) this->columnCount = 1;
+            if      (gameIndices[0] == 0x101) this->columnCount = 0;
+            else if (gameIndices[1] == 0x101) this->columnCount = 1;
+            else if (gameIndices[2] == 0x101) this->columnCount = 2;
             else if (gameIndices[3] == 0x101) this->columnCount = 3;
             else if (gameIndices[4] == 0x101) this->columnCount = 4;
             else                              this->columnCount = 5;

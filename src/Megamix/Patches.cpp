@@ -86,29 +86,45 @@ namespace Megamix::Patches {
         std::vector<MuseumRow>      extraMuseumRows {};
         std::vector<MuseumRowColor> extraMuseumRowColors {};
 
-        // add tickflows to extra rows
-        std::array<u16, 5> newRowIds { 0x101, 0x101, 0x101, 0x101, 0x101 };
-        size_t newRowLength = 0;
-
-        auto PushNewRows = [&]() {
+        auto PushExtraRow = [&](std::array<u16, 5> newRowIds) {
             extraMuseumRows.emplace_back(newRowIds, "", 0, 0);
             extraMuseumRowColors.emplace_back(0x424242ff, 0x00000000);
-
-            newRowIds = { 0x101, 0x101, 0x101, 0x101, 0x101 };
-            newRowLength = 0;
         };
 
-        for (auto &pair : config->tickflows) {
-            newRowIds[newRowLength] = pair.first;
-            newRowLength += 1;
-
-            if (newRowLength == 5) {
-                PushNewRows();
+        // museum don't support rows with only 2 games
+        if (config->tickflows.size() == 2) {
+            for (auto &pair : config->tickflows) {
+                PushExtraRow({ pair.first, 0x101, 0x101, 0x101, 0x101 });
             }
-        }
+        } else {
+            std::array<u16, 5> newRowIds { 0x101, 0x101, 0x101, 0x101, 0x101 };
+            size_t newRowLength = 0;
 
-        if (newRowLength != 0) {
-            PushNewRows();
+            for (auto &pair : config->tickflows) {
+                newRowIds[newRowLength] = pair.first;
+                newRowLength += 1;
+
+                if (newRowLength == 5) {
+                    PushExtraRow(newRowIds);
+
+                    newRowIds = { 0x101, 0x101, 0x101, 0x101, 0x101 };
+                    newRowLength = 0;
+                }
+            }
+
+            // museum don't support rows with only 2 games
+            if (newRowLength == 2) {
+                auto &last_extra_row = extraMuseumRows.back();
+
+                newRowIds[2] = last_extra_row.gameIndices[4];
+
+                last_extra_row.columnCount -= 1;
+                last_extra_row.gameIndices[4] = 0x101;
+            }
+
+            if (newRowLength != 0) {
+                PushExtraRow(newRowIds);
+            }
         }
 
         // concat extra rows with original rows
