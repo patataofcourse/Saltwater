@@ -5,6 +5,7 @@
 
 #include "Megamix.hpp"
 #include "Config.hpp"
+#include "external/rt.h"
 
 namespace Megamix::Patches {
     std::vector<MuseumRow> museumRows {
@@ -148,6 +149,17 @@ namespace Megamix::Patches {
         );
     }
 
+    void StubbedFunction() {
+    }
+
+    // redirects function at address to a stubbed function
+    void StubFunction(u32 address) {
+        rtGenerateJumpCode(
+            (u32)   StubbedFunction,
+            (u32 *) address
+        );
+    }
+
     void PatchMuseumExtraRows() {
         AddExtraRowsToFront();
 
@@ -170,7 +182,7 @@ namespace Megamix::Patches {
             Process::Patch(address, compare_r8_instruction);
         }
 
-        Process::Patch(Region::MuseumRowsColorsInitFunc(), /* bx lr */ 0xe12fff1e);
+        StubFunction(Region::MuseumRowsColorsInitFunc());
 
         for (auto address : Region::MuseumRowsColorsAddresses()) {
             Process::Patch(address, (u32) museumRowColors.data());
