@@ -85,15 +85,15 @@ namespace Region {
     std::vector<u32> MuseumRowsInfoAddresses() {
         switch (region) {
             case US:
+            case EU:
                 return {
-                    0x2421E8, 0x2421E8, 0x24C480, 0x24D408,           // gRowInfo
+                    0x2421E8, 0x24C480, 0x24D408,                     // gRowInfo
                     0x1979E0, 0x1983FC, 0x242350, 0x2424BC, 0x24E010, // gRowInfo1
                     0x2423D4, 0x2619C0,                               // gRowInfo2
                     0x224FE8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
                 };
 
             // TODO:
-            case EU:
             case KR:
             case JP:
 
@@ -104,10 +104,10 @@ namespace Region {
     u32 MuseumRowsColorsInitFunc() {
         switch (region) {
             case US:
+            case EU:
                 return 0x38de58;
 
             // TODO:
-            case EU:
             case KR:
             case JP:
 
@@ -118,10 +118,10 @@ namespace Region {
     std::vector<u32> MuseumRowsColorsAddresses() {
         switch (region) {
             case US:
+            case EU:
                 return { 0x17D8B4, 0x17E318, 0x17E4C4, 0x241FC4, 0x38E6D8 };
 
             // TODO:
-            case EU:
             case KR:
             case JP:
 
@@ -132,10 +132,10 @@ namespace Region {
     std::vector<u32> MuseumRowsR1Cmps() {
         switch (region) {
             case US:
+            case EU:
                 return { 0x2423C4, 0x2423DC, 0x2619B0 };
 
             // TODO:
-            case EU:
             case KR:
             case JP:
 
@@ -146,10 +146,10 @@ namespace Region {
     std::vector<u32> MuseumRowsR8Cmps() {
         switch (region) {
             case US:
+            case EU:
                 return { 0x242400, 0x2424A0 };
 
             // TODO:
-            case EU:
             case KR:
             case JP:
 
