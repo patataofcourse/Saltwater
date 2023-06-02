@@ -1,4 +1,6 @@
 #include <array>
+#include <vector>
+#include <algorithm>
 
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
@@ -126,6 +128,8 @@ namespace Megamix::Patches {
                 PushExtraRow(newRowIds);
             }
         }
+
+        std::reverse(extraMuseumRows.begin(), extraMuseumRows.end());
 
         // concat extra rows with original rows
         std::vector<MuseumRow> originalMuseumRows = std::move(museumRows);
