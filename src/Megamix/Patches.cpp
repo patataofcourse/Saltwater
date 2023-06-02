@@ -94,10 +94,10 @@ namespace Megamix::Patches {
         // museum don't support rows with only 2 games
         if (config->tickflows.size() == 2) {
             for (auto &pair : config->tickflows) {
-                PushExtraRow({ pair.first, 0x101, 0x101, 0x101, 0x101 });
+                PushExtraRow({ pair.first, None, None, None, None });
             }
         } else {
-            std::array<u16, 5> newRowIds { 0x101, 0x101, 0x101, 0x101, 0x101 };
+            std::array<u16, 5> newRowIds { None, None, None, None, None };
             size_t newRowLength = 0;
 
             for (auto &pair : config->tickflows) {
@@ -107,7 +107,7 @@ namespace Megamix::Patches {
                 if (newRowLength == 5) {
                     PushExtraRow(newRowIds);
 
-                    newRowIds = { 0x101, 0x101, 0x101, 0x101, 0x101 };
+                    newRowIds = { None, None, None, None, None };
                     newRowLength = 0;
                 }
             }
@@ -119,7 +119,7 @@ namespace Megamix::Patches {
                 newRowIds[2] = last_extra_row.gameIndices[4];
 
                 last_extra_row.columnCount -= 1;
-                last_extra_row.gameIndices[4] = 0x101;
+                last_extra_row.gameIndices[4] = None;
             }
 
             if (newRowLength != 0) {
