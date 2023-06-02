@@ -186,7 +186,9 @@ namespace Megamix {
         u32 lowIndex;
 
         MuseumRow(std::array<u16, 5> gameIndices, const char *titleId, u32 highIndex, u32 lowIndex) {
-            if      (gameIndices[1] == 0x101) this->columnCount = 1;
+            if      (gameIndices[0] == 0x101) this->columnCount = 0;
+            else if (gameIndices[1] == 0x101) this->columnCount = 1;
+            else if (gameIndices[2] == 0x101) this->columnCount = 2;
             else if (gameIndices[3] == 0x101) this->columnCount = 3;
             else if (gameIndices[4] == 0x101) this->columnCount = 4;
             else                              this->columnCount = 5;
@@ -203,6 +205,27 @@ namespace Megamix {
         u8 g;
         u8 b;
         u8 a;
+
+        Color8() {
+            this->r = 0;
+            this->g = 0;
+            this->b = 0;
+            this->a = 0;
+        }
+
+        Color8(u8 r, u8 g, u8 b, u8 a) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+            this->a = a;
+        }
+
+        Color8(u32 color) {
+            this->r = color >> 24;
+            this->g = color >> 16;
+            this->b = color >>  8;
+            this->a = color;
+        }
     };
 
     struct MuseumRowColor {

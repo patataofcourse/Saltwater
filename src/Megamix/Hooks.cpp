@@ -18,7 +18,7 @@ namespace Megamix::Hooks {
     RT_HOOK tempoStrmHook;
     RT_HOOK tempoSeqHook;
     RT_HOOK tempoAllHook;
-    
+
     RT_HOOK regionFSHook;
     RT_HOOK regionOtherHook;
 
@@ -142,4 +142,27 @@ namespace Megamix::Hooks {
         rtDisableHook(&regionFSHook);
         rtDisableHook(&regionOtherHook);
     }
+
+    template<typename T>
+    T StubbedFunction() {
+        return {};
+    }
+
+    template<>
+    void StubbedFunction<void>() {
+    }
+
+    // redirects function at address to a stubbed function
+    template<typename T>
+    void StubFunction(u32 address) {
+        rtGenerateJumpCode(
+            (u32)   StubbedFunction<T>,
+            (u32 *) address
+        );
+    }
+
+    // template instantiations
+    // if either StubbedFunction or StubFunction is used with a type, a template
+    // instantiation must be added with that type
+    template void StubFunction<void>(u32);
 }

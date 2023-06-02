@@ -1,21 +1,15 @@
 #include <array>
+#include <vector>
+#include <algorithm>
 
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
-#include "Megamix/Patches.hpp"
-
-#define rgba(value) { (value >> 24) & 0xFF, (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF }
+#include "Config.hpp"
 
 namespace Megamix::Patches {
-    const u32 MuseumRowCount = 32;
-
-    const MuseumRow MuseumRows[MuseumRowCount] {
-        /* E2 */ MuseumRow({ CtrStepL,       CtrSumouL,     RvlBadmintonL, None,            None       }, "room_05",       0, 0),
-        /* E1 */ MuseumRow({ NtrCoinToss,    AgbVirus,      CtrChicken,    RvlSword,        None       }, "room_05",       0, 0),
-        /* E0 */ MuseumRow({ NtrFrogL,       RvlKarate2,    NtrShootingS,  CtrWoodCatS,     RvlKarate4 }, "room_05",       0, 0),
-
+    std::vector<MuseumRow> museumRows {
         /* 0  */ MuseumRow({ RvlKarate0,     NtrRobotS,     RvlBadmintonS, CtrStepS,        None       }, "stage_gr00",    0, 0),
         /* 1  */ MuseumRow({ AgbHairS,       NtrChorusS,    RvlMuscleS,    CtrFruitbasketS, None       }, "stage_gr01",    0, 1),
         /* 2  */ MuseumRow({ NtrCoinToss,    None,          None,          None,            None       }, "stage_gate_00", 0, 2),
@@ -47,40 +41,36 @@ namespace Megamix::Patches {
         /* 28 */ MuseumRow({ RvlSortL,       RvlWatchL,     RvlKarate3,    None,            None       }, "bonus_RVL3",    0, 0),
     };
 
-    const MuseumRowColor MuseumRowColors[MuseumRowCount] {
-        /* E2 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-        /* E1 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-        /* E0 */ MuseumRowColor(rgba(0x424242FF), rgba(0x00000000)),
-
-        /* 0  */ MuseumRowColor(rgba(0xFFED2AFF), rgba(0x8C640000)),
-        /* 1  */ MuseumRowColor(rgba(0x4AF8F1FF), rgba(0x01494C00)),
-        /* 2  */ MuseumRowColor(rgba(0xDCD9D9FF), rgba(0x85561600)),
-        /* 3  */ MuseumRowColor(rgba(0xFFA030FF), rgba(0x783A0000)),
-        /* 4  */ MuseumRowColor(rgba(0x3667CAFF), rgba(0x04007800)),
-        /* 5  */ MuseumRowColor(rgba(0xCECACAFF), rgba(0x82393900)),
-        /* 6  */ MuseumRowColor(rgba(0xEB4040FF), rgba(0x4F000000)),
-        /* 7  */ MuseumRowColor(rgba(0x9A43B7FF), rgba(0x0F013F00)),
-        /* 8  */ MuseumRowColor(rgba(0xAFAFAFFF), rgba(0x284D2F00)),
-        /* 9  */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 10 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 11 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 12 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 13 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 14 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 15 */ MuseumRowColor(rgba(0x2BA820FF), rgba(0x013F0D00)),
-        /* 16 */ MuseumRowColor(rgba(0xFFCAEDFF), rgba(0x7E3E9200)),
-        /* 17 */ MuseumRowColor(rgba(0xB7ECE2FF), rgba(0x2E818600)),
-        /* 18 */ MuseumRowColor(rgba(0xECE5B7FF), rgba(0xADAA0800)),
-        /* 19 */ MuseumRowColor(rgba(0x8C8C8CFF), rgba(0x503C5000)),
-        /* 20 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 21 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 22 */ MuseumRowColor(rgba(0xF7F2B9FF), rgba(0xAA943C00)),
-        /* 23 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 24 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 25 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 26 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 27 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
-        /* 28 */ MuseumRowColor(rgba(0x78500AFF), rgba(0x643C3200)),
+    std::vector<MuseumRowColor> museumRowColors {
+        /* 0  */ MuseumRowColor(0xFFED2AFF, 0x8C640000),
+        /* 1  */ MuseumRowColor(0x4AF8F1FF, 0x01494C00),
+        /* 2  */ MuseumRowColor(0xDCD9D9FF, 0x85561600),
+        /* 3  */ MuseumRowColor(0xFFA030FF, 0x783A0000),
+        /* 4  */ MuseumRowColor(0x3667CAFF, 0x04007800),
+        /* 5  */ MuseumRowColor(0xCECACAFF, 0x82393900),
+        /* 6  */ MuseumRowColor(0xEB4040FF, 0x4F000000),
+        /* 7  */ MuseumRowColor(0x9A43B7FF, 0x0F013F00),
+        /* 8  */ MuseumRowColor(0xAFAFAFFF, 0x284D2F00),
+        /* 9  */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 10 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 11 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 12 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 13 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 14 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 15 */ MuseumRowColor(0x2BA820FF, 0x013F0D00),
+        /* 16 */ MuseumRowColor(0xFFCAEDFF, 0x7E3E9200),
+        /* 17 */ MuseumRowColor(0xB7ECE2FF, 0x2E818600),
+        /* 18 */ MuseumRowColor(0xECE5B7FF, 0xADAA0800),
+        /* 19 */ MuseumRowColor(0x8C8C8CFF, 0x503C5000),
+        /* 20 */ MuseumRowColor(0xF7F2B9FF, 0xAA943C00),
+        /* 21 */ MuseumRowColor(0xF7F2B9FF, 0xAA943C00),
+        /* 22 */ MuseumRowColor(0xF7F2B9FF, 0xAA943C00),
+        /* 23 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 24 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 25 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 26 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 27 */ MuseumRowColor(0x78500AFF, 0x643C3200),
+        /* 28 */ MuseumRowColor(0x78500AFF, 0x643C3200),
     };
 
     // see section F5.1.35 in the arm A-profile reference manual
@@ -94,29 +84,100 @@ namespace Megamix::Patches {
         return cond | cmp_imm_base | reg | value;
     }
 
+    void AddExtraRowsToFront() {
+        std::vector<MuseumRow>      extraMuseumRows {};
+        std::vector<MuseumRowColor> extraMuseumRowColors {};
+
+        auto PushExtraRow = [&](std::array<u16, 5> newRowIds) {
+            extraMuseumRows.emplace_back(newRowIds, "", 0, 0);
+            extraMuseumRowColors.emplace_back(0x424242ff, 0x00000000);
+        };
+
+        // museum don't support rows with only 2 games
+        if (config->tickflows.size() == 2) {
+            for (auto &pair : config->tickflows) {
+                PushExtraRow({ pair.first, None, None, None, None });
+            }
+        } else {
+            std::array<u16, 5> newRowIds { None, None, None, None, None };
+            size_t newRowLength = 0;
+
+            for (auto &pair : config->tickflows) {
+                newRowIds[newRowLength] = pair.first;
+                newRowLength += 1;
+
+                if (newRowLength == 5) {
+                    PushExtraRow(newRowIds);
+
+                    newRowIds = { None, None, None, None, None };
+                    newRowLength = 0;
+                }
+            }
+
+            // museum don't support rows with only 2 games
+            if (newRowLength == 2) {
+                auto &last_extra_row = extraMuseumRows.back();
+
+                newRowIds[2] = last_extra_row.gameIndices[4];
+
+                last_extra_row.columnCount -= 1;
+                last_extra_row.gameIndices[4] = None;
+            }
+
+            if (newRowLength != 0) {
+                PushExtraRow(newRowIds);
+            }
+        }
+
+        std::reverse(extraMuseumRows.begin(), extraMuseumRows.end());
+
+        // concat extra rows with original rows
+        std::vector<MuseumRow> originalMuseumRows = std::move(museumRows);
+        museumRows.reserve(originalMuseumRows.size() + extraMuseumRows.size());
+        museumRows.insert(museumRows.end(), extraMuseumRows.begin(), extraMuseumRows.end());
+        museumRows.insert(museumRows.end(), originalMuseumRows.begin(), originalMuseumRows.end());
+
+        // concat extra row colors with original row colors
+        std::vector<MuseumRowColor> originalMuseumRowColors = std::move(museumRowColors);
+        museumRowColors.reserve(originalMuseumRowColors.size() + extraMuseumRowColors.size());
+        museumRowColors.insert(
+            museumRowColors.end(),
+            extraMuseumRowColors.begin(),
+            extraMuseumRowColors.end()
+        );
+        museumRowColors.insert(
+            museumRowColors.end(),
+            originalMuseumRowColors.begin(),
+            originalMuseumRowColors.end()
+        );
+    }
+
     void PatchMuseumExtraRows() {
+        AddExtraRowsToFront();
+
+        // patch in new museum rows
         for (auto address : Region::MuseumRowsInfoAddresses()) {
-            Process::Patch(address, (u32) MuseumRows);
+            Process::Patch(address, (u32) museumRows.data());
         }
 
         u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, MuseumRowCount);
+            make_cmp_immediate_instruction(1, museumRows.size());
 
         for (auto address : Region::MuseumRowsR1Cmps()) {
             Process::Patch(address, compare_r1_instruction);
         }
 
-        u32 compare_r8_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, MuseumRowCount);
+        u32 compare_r8_instruction = // cmp r8, MUSEUM_ROW_COUNT
+            make_cmp_immediate_instruction(8, museumRows.size());
 
         for (auto address : Region::MuseumRowsR8Cmps()) {
             Process::Patch(address, compare_r8_instruction);
         }
 
-        // FIXME: for this to work we need to stop c++ from overwriting the
-        // colors when it runs the constructor (@ 0x38DE58) for the array
+        Hooks::StubFunction<void>(Region::MuseumRowsColorsInitFunc());
+
         for (auto address : Region::MuseumRowsColorsAddresses()) {
-            Process::Patch(address, (u32) MuseumRowColors);
+            Process::Patch(address, (u32) museumRowColors.data());
         }
     }
 }

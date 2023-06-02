@@ -27,6 +27,7 @@ namespace Region {
 
     std::vector<u32> MuseumRowsInfoAddresses();
     std::vector<u32> MuseumRowsColorsAddresses();
+    u32              MuseumRowsColorsInitFunc();
     // TODO: maybe make this into MuseumRowsCmps that returns a
     // map of int -> vector<u8> other regions might use different registers
     std::vector<u32> MuseumRowsR1Cmps();
