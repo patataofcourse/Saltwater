@@ -21,10 +21,6 @@ namespace Region {
     u8 FromCode(u32 code);
     std::string Name();
 
-    std::vector<u32> RHMPatchGameAddresses();
-    std::vector<u32> RHMPatchTempoAddresses();
-    std::vector<u32> RHMPatchGateAddresses();
-
     std::vector<u32> MuseumRowsInfoAddresses();
     std::vector<u32> MuseumRowsColorsAddresses();
     u32              MuseumRowsColorsInitFunc();

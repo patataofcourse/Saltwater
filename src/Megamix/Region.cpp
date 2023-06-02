@@ -31,55 +31,6 @@ namespace Region {
         }
     }
 
-    // RHMPatch
-
-    std::vector<u32> RHMPatchGameAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-                return {
-                    0x109008, 0x22D57C, 0x22D67C, 0x22D698, 0x22D6B4, 0x22D6D0, 0x240458, 0x24CB28, 0x2553CC, 0x255578, 0x258618,
-                    0x258E0C, 0x32D434, 0x32D450, 0x32D470, 0x32D4C8, 0x32D548, 0x32D5B0, 0x32D5E8
-                };
-            case KR:
-                return {
-                    0x109008, 0x22d554, 0x22d654, 0x22d670, 0x22d68c, 0x22d6a8, 0x240430, 0x24cb00, 0x2553a4, 0x255550, 0x2585f0,
-                    0x258de4, 0x32d434, 0x32d450, 0x32d470, 0x32d4c8, 0x32d548, 0x32d5b0, 0x32d5e8
-                };
-            case JP:
-                return {
-                    0x108864, 0x22e934, 0x22ea34, 0x22ea50, 0x22ea6c, 0x22ea88, 0x241a0c, 0x24e068, 0x2565c0, 0x256a00, 0x2599d8,
-                    0x25a1cc, 0x32de20, 0x32de3c, 0x32de5c, 0x32deb4, 0x32df34, 0x32df9c, 0x32dfd4
-                };
-            default: return {};
-        }
-    }
-
-    std::vector<u32> RHMPatchTempoAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return { 0x101C10, 0x12B3B0 };
-            case JP:
-                return { 0x101c08, 0x120878 };
-            default: return {};
-        }
-    }
-
-    std::vector<u32> RHMPatchGateAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x22AE40, 0x240FB0, 0x2552D8, 0x32D5FC, 0x32D614, 0x32D62C, 0x32D644, 0x32D65C, 0x32D6B8, 0x32D770 };
-            case KR:
-                return { 0x22ae18, 0x240f88, 0x2552b0, 0x32d5fc, 0x32d614, 0x32d62c, 0x32d644, 0x32d65c, 0x32d6b8, 0x32d770 };
-            case JP:
-                return { 0x22c1fc, 0x242524, 0x2564cc, 0x32dfe8, 0x32e000, 0x32e018, 0x32e030, 0x32e048, 0x32e0a4, 0x32e15c };
-            default: return { };
-        }
-    }
-
     // Extra museum rows patch
 
     std::vector<u32> MuseumRowsInfoAddresses() {
@@ -87,14 +38,20 @@ namespace Region {
             case US:
             case EU:
                 return {
-                    0x2421E8, 0x24C480, 0x24D408,                     // gRowInfo
-                    0x1979E0, 0x1983FC, 0x242350, 0x2424BC, 0x24E010, // gRowInfo1
-                    0x2423D4, 0x2619C0,                               // gRowInfo2
-                    0x224FE8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
+                    0x2421e8, 0x24c480, 0x24d408,                     // gRowInfo
+                    0x1979e0, 0x1983fc, 0x242350, 0x2424bc, 0x24e010, // gRowInfo1
+                    0x2423d4, 0x2619c0,                               // gRowInfo2
+                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
+                };
+            case KR:
+                return {
+                    0x2421c0, 0x24c458, 0x24d3e0,                     // gRowInfo
+                    0x1979e0, 0x1983fc, 0x242328, 0x242494, 0x24dfe8, // gRowInfo1
+                    0x2423ac, 0x261998,                               // gRowInfo2
+                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
                 };
 
             // TODO:
-            case KR:
             case JP:
 
             default: return {};
@@ -105,10 +62,10 @@ namespace Region {
         switch (region) {
             case US:
             case EU:
+            case KR:
                 return 0x38de58;
 
             // TODO:
-            case KR:
             case JP:
 
             default: return {};
@@ -119,10 +76,11 @@ namespace Region {
         switch (region) {
             case US:
             case EU:
-                return { 0x17D8B4, 0x17E318, 0x17E4C4, 0x241FC4, 0x38E6D8 };
+                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 };
+            case KR:
+                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241f9c, 0x38e6d8 };
 
             // TODO:
-            case KR:
             case JP:
 
             default: return {};
@@ -133,10 +91,12 @@ namespace Region {
         switch (region) {
             case US:
             case EU:
-                return { 0x2423C4, 0x2423DC, 0x2619B0 };
+                return { 0x2423c4, 0x2423DC, 0x2619B0 };
+
+            case KR:
+                return { 0x24239c, 0x2423b4, 0x261988 };
 
             // TODO:
-            case KR:
             case JP:
 
             default: return {};
@@ -147,10 +107,11 @@ namespace Region {
         switch (region) {
             case US:
             case EU:
-                return { 0x242400, 0x2424A0 };
-
-            // TODO:
+                return { 0x242400, 0x2424a0 };
             case KR:
+                return { 0x2423d8, 0x242478 };
+
+            //TODO:
             case JP:
 
             default: return {};

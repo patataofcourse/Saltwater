@@ -113,7 +113,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
         Megamix::Hooks::TempoHooks();
     }
 
-    if (region == Region::US && params.extra_rows) {
+    if (region != Region::JP && params.extra_rows) {
         Megamix::Patches::PatchMuseumExtraRows();
     }
 }
