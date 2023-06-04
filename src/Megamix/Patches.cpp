@@ -1,6 +1,7 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+#include <optional>
 
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
@@ -84,6 +85,21 @@ namespace Megamix::Patches {
         return cond | cmp_imm_base | reg | value;
     }
 
+    std::optional<u16> SlotIdToMuseumGameId(u16 gameId) {
+        if (gameId < 0x100) {
+            return gameId;
+        }
+
+        switch (gameId) {
+            case 0x103: return AgbVirus;
+            case 0x107: return NtrCoinToss;
+            case 0x10b: return RvlSword;
+            case 0x10f: return CtrChicken;
+        }
+
+        return std::nullopt;
+    }
+
     void AddExtraRowsToFront() {
         std::vector<MuseumRow>      extraMuseumRows {};
         std::vector<MuseumRowColor> extraMuseumRowColors {};
@@ -93,17 +109,35 @@ namespace Megamix::Patches {
             extraMuseumRowColors.emplace_back(0x424242ff, 0x00000000);
         };
 
+        // not all slots are valid museum games
+        u32 validGameIds = 0;
+        for (auto &[key, _] : config->tickflows) {
+            if (SlotIdToMuseumGameId(key).has_value()) {
+                validGameIds += 1;
+            }
+        }
+
         // museum don't support rows with only 2 games
-        if (config->tickflows.size() == 2) {
+        if (validGameIds == 2) {
             for (auto &pair : config->tickflows) {
-                PushExtraRow({ pair.first, None, None, None, None });
+                std::optional<u16> id = SlotIdToMuseumGameId(pair.first);
+                if (!id.has_value()) {
+                    continue;
+                }
+
+                PushExtraRow({ id.value(), None, None, None, None });
             }
         } else {
             std::array<u16, 5> newRowIds { None, None, None, None, None };
             size_t newRowLength = 0;
 
             for (auto &pair : config->tickflows) {
-                newRowIds[newRowLength] = pair.first;
+                std::optional<u16> id = SlotIdToMuseumGameId(pair.first);
+                if (!id.has_value()) {
+                    continue;
+                }
+
+                newRowIds[newRowLength] = id.value();
                 newRowLength += 1;
 
                 if (newRowLength == 5) {
