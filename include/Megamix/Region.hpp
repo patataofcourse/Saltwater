@@ -16,6 +16,7 @@ namespace Region {
         EU,
         KR,
         UNK,
+        KR_CTR = 5 // in the SDK, KR is 5 instead of 3
     };
 
     u8 FromCode(u32 code);
