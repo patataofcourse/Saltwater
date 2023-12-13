@@ -311,8 +311,9 @@ namespace Region {
         switch (region) {
             case US:
             case EU:
-            case KR:
                 return 0x28c070;
+            case KR:
+                return 0x28c048;
             default: // this function doesn't exist in JP afaik
                 return 0;
 

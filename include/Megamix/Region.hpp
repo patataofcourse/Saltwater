@@ -11,12 +11,12 @@ extern u8 region;
 namespace Region {
 
     enum {
-        JP,
-        US,
-        EU,
-        KR,
-        UNK,
-        KR_CTR = 5 // in the SDK, KR is 5 instead of 3
+        JP = 0,
+        US = 1,
+        EU = 2,
+        KR = 3,
+        KR_CTR = 5, // in the SDK, KR is 5 instead of 3
+        UNK
     };
 
     u8 FromCode(u32 code);

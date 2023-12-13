@@ -101,7 +101,8 @@ namespace Megamix::Hooks {
         }
     }
 
-    u32 getRegion() {
+    u32 getRegionCTR() {
+        //TODO: handle JP region / JP langpack
         if (region == Region::KR)
             return Region::KR_CTR;
         return region;
@@ -135,7 +136,7 @@ namespace Megamix::Hooks {
             rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegionMegamix);
             rtEnableHook(&regionFSHook);
         }
-        rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegion);
+        rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegionCTR);
         rtEnableHook(&regionOtherHook);
     }
 
