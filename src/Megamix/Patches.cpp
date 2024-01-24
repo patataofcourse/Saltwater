@@ -105,7 +105,7 @@ namespace Megamix::Patches {
         std::vector<MuseumRowColor> extraMuseumRowColors {};
 
         auto PushExtraRow = [&](std::array<u16, 5> newRowIds) {
-            extraMuseumRows.emplace_back(newRowIds, "", 0, 0);
+            extraMuseumRows.emplace_back(newRowIds, "navi_char_name_Question", 0, 0);
             extraMuseumRowColors.emplace_back(0x424242ff, 0x00000000);
         };
 
