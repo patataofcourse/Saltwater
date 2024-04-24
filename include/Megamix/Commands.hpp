@@ -3,12 +3,13 @@
 
 #include "Megamix/Types.hpp"
 
-namespace Megamix {
+namespace Megamix{
     enum CustomCommands: u16{
         VersionNumber = 0x201
     };
 
-    void tickflowCommandsHook (CTickflow* self, u32 cmd_num, u32 arg0, u32* args);
-}
+    extern "C" void tickflowCommandsHook(CTickflow*, u32, u32, u32*);
 
+    void tickflowCommandsHookWrapper();
+}
 #endif
