@@ -119,7 +119,7 @@ namespace Megamix::Hooks {
         asm(
             "mov r6, r0\n"
             "bx tickflowCommandsHook"
-        )
+        );
     }
 
     void TickflowHooks() {
@@ -150,7 +150,7 @@ namespace Megamix::Hooks {
     }
 
     void CommandHook() {
-        rtInitHook(&tickflowCommandSwitch, Region::TickflowCommandSwitch(), (u32)tickflowCommandsHookWrapper)
+        rtInitHook(&tickflowCommandSwitch, Region::TickflowCommandSwitch(), (u32)tickflowCommandsHookWrapper);
         rtEnableHook(&tickflowCommandSwitch);
     }
 

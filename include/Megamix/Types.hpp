@@ -247,7 +247,7 @@ namespace Megamix {
         int* _vtable;
         struct CList* mNext;
         struct CList* mPrev;
-    }
+    };
     
     struct TickFlowStack {
         u32 *tick;
@@ -259,7 +259,7 @@ namespace Megamix {
         u32* mTickflow;
         u32 mCategory;
         int mTickFlowSize;
-        f32 mRest;
+        float mRest;
         u8 unk1;
         u32 mCondvar;
         u32 mCondvarStack[10];
@@ -272,11 +272,11 @@ namespace Megamix {
         u8 mButtonPromptIsPressed;
         u32 mButtonPromptButton;
         int mButtonPromptPressSfx;
-        int Sfx mButtonPromptReleaseSfx;
+        int mButtonPromptReleaseSfx;
         u8 pad3[7];
         u32 mCountdownValue;
         u32 mCountdownCounter;
-    }
+    };
 }
 
 #endif
