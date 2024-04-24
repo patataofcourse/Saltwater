@@ -22,6 +22,8 @@ namespace Megamix::Hooks {
     RT_HOOK regionFSHook;
     RT_HOOK regionOtherHook;
 
+    RT_HOOK tickflowCommandSwitch;
+
     void* getTickflowOffset(int index) {
         if (config->tickflows.contains(index)) {
             int result = Megamix::btks.LoadFile(config->tickflows[index]);
@@ -113,6 +115,13 @@ namespace Megamix::Hooks {
         return region;
     }
 
+    void tickflowCommandsHookWrapper() {
+        asm(
+            "mov r6, r0\n"
+            "bx tickflowCommandsHook"
+        )
+    }
+
     void TickflowHooks() {
         rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
@@ -138,6 +147,11 @@ namespace Megamix::Hooks {
         }
         rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegionCTR);
         rtEnableHook(&regionOtherHook);
+    }
+
+    void CommandHook() {
+        rtInitHook(&tickflowCommandSwitch, Region::TickflowCommandSwitch(), (u32)tickflowCommandsHookWrapper)
+        rtEnableHook(&tickflowCommandSwitch);
     }
 
     void DisableAllHooks() {

@@ -242,6 +242,41 @@ namespace Megamix {
             this->edgeFade = edgeFade;
         }
     };
+
+    struct CList{
+        int* _vtable;
+        struct CList* mNext;
+        struct CList* mPrev;
+    }
+    
+    struct TickFlowStack {
+        u32 *tick;
+        u32 tickSize;
+    };
+
+    struct CTickflow {
+        CList at0;
+        u32* mTickflow;
+        u32 mCategory;
+        int mTickFlowSize;
+        f32 mRest;
+        u8 unk1;
+        u32 mCondvar;
+        u32 mCondvarStack[10];
+        u8 pad1[0x17];
+        u8 mCondvarStackCounter;
+        struct TickFlowStack mTickFlowStack[8];
+        u8 pad2[0x3F];
+        u8 mTickFlowStackCounter;
+        u8 mButtonPromptIsReleased;
+        u8 mButtonPromptIsPressed;
+        u32 mButtonPromptButton;
+        int mButtonPromptPressSfx;
+        int Sfx mButtonPromptReleaseSfx;
+        u8 pad3[7];
+        u32 mCountdownValue;
+        u32 mCountdownCounter;
+    }
 }
 
 #endif

@@ -292,6 +292,20 @@ namespace Region {
         }
     }
 
+    u32 TickflowCommandSwitch() {
+        switch (region) {
+            case EU:
+            case US:
+                return 0x25c3a0;
+            case KR:
+                return 0x25c378;
+            case JP:
+                return 0x25e034;
+            default:
+                return 0;
+        }
+    }
+
     // RHMPatch's retry remix sub patch locations
     std::vector<u32> RetryRemixLocs() {
         switch (region) {
