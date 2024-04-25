@@ -111,7 +111,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     if (region != Region::JP) {
         //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
-        //Same for tickflow commands
+        //TODO: find out how to make the tickflow commands hook JP-compatible
         Megamix::Hooks::CommandHook();
     }
 

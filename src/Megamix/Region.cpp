@@ -292,15 +292,17 @@ namespace Region {
         }
     }
 
+    // Various locations used for the Tickflow Command flow
+
     u32 TickflowCommandSwitch() {
         switch (region) {
-            case EU:
+            case JP:
+                return 0x25e034;
             case US:
+            case EU:
                 return 0x25c3a0;
             case KR:
                 return 0x25c378;
-            case JP:
-                return 0x25e034;
             default:
                 return 0;
         }

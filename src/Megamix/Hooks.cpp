@@ -181,4 +181,5 @@ namespace Megamix::Hooks {
     // if either StubbedFunction or StubFunction is used with a type, a template
     // instantiation must be added with that type
     template void StubFunction<void>(u32);
+    
 }

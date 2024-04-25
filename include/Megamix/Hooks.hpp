@@ -13,4 +13,5 @@ namespace Megamix::Hooks {
     template<typename T> T StubbedFunction();
     template<typename T> void StubFunction(u32 address);
 }
+
 #endif

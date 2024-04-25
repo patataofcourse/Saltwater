@@ -243,8 +243,6 @@ namespace Megamix {
         }
     };
 
-}
-
     struct CList{
         int* _vtable;
         struct CList* mNext;
@@ -279,5 +277,7 @@ namespace Megamix {
         u32 mCountdownValue;
         u32 mCountdownCounter;
     };
+
+}
 
 #endif

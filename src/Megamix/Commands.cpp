@@ -5,7 +5,8 @@
 
 namespace Megamix{
 
-    extern "C" __attribute__((used)) void tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
+    extern "C" __attribute__((used)) 
+    void tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
         if (cmd_num == VersionNumber){ //Returns version number
             if (arg0 == 0){ //RHMPatch version
                 self->mCondvar = 0x103;
