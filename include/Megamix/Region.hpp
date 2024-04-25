@@ -46,8 +46,9 @@ namespace Region {
     u32 RodataEnd();
     u32 DataEnd();
     u32 BssEnd();
-    
-    u32 TickflowCommandSwitch();
+
+    u32 TickflowCommandsSwitch();
+    u32 TickflowCommandsEnd();
 
     std::vector<u32> RetryRemixLocs();
 

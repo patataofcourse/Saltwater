@@ -8,7 +8,7 @@ namespace Megamix{
         VersionNumber = 0x201
     };
 
-    extern "C" void tickflowCommandsHook(CTickflow*, u32, u32, u32*);
+    extern "C" int tickflowCommandsHook(CTickflow*, u32, u32, u32*);
 
     void tickflowCommandsHookWrapper();
 }

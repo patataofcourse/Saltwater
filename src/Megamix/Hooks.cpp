@@ -22,7 +22,7 @@ namespace Megamix::Hooks {
     RT_HOOK regionFSHook;
     RT_HOOK regionOtherHook;
 
-    RT_HOOK tickflowCommandHook;
+    RT_HOOK tickflowCommandsHook;
 
     void* getTickflowOffset(int index) {
         if (config->tickflows.contains(index)) {
@@ -144,8 +144,8 @@ namespace Megamix::Hooks {
     }
 
     void CommandHook() {
-        rtInitHook(&tickflowCommandHook, Region::TickflowCommandSwitch(), (u32)tickflowCommandsHookWrapper);
-        rtEnableHook(&tickflowCommandHook);
+        rtInitHook(&tickflowCommandsHook, Region::TickflowCommandsSwitch(), (u32)tickflowCommandsHookWrapper);
+        rtEnableHook(&tickflowCommandsHook);
     }
 
     void DisableAllHooks() {
@@ -156,7 +156,7 @@ namespace Megamix::Hooks {
         rtDisableHook(&tempoAllHook);
         rtDisableHook(&regionFSHook);
         rtDisableHook(&regionOtherHook);
-        rtDisableHook(&tickflowCommandHook);
+        rtDisableHook(&tickflowCommandsHook);
     }
 
     template<typename T>
@@ -181,5 +181,5 @@ namespace Megamix::Hooks {
     // if either StubbedFunction or StubFunction is used with a type, a template
     // instantiation must be added with that type
     template void StubFunction<void>(u32);
-    
+
 }
