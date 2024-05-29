@@ -322,6 +322,35 @@ namespace Region {
         }
     }
 
+    u32 TickflowAsyncSubLocation() {
+        switch (region) {
+            case JP:
+                return 0x25e338;
+            case US:
+            case EU:
+                return 0x25c6c0;
+            case KR:
+                return 0x25c698;
+            default:
+                return 0;
+        }
+    }
+
+    // Locations of global variables
+
+    u32 GlobalSaveDataPointer(){
+        switch (region) {
+            case JP:
+            case US:
+                return 0x54d350;
+            case EU:
+                return 0x54d448;
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
     // RHMPatch's retry remix sub patch locations
     std::vector<u32> RetryRemixLocs() {
         switch (region) {

@@ -49,6 +49,10 @@ namespace Region {
 
     u32 TickflowCommandsSwitch();
     u32 TickflowCommandsEnd();
+    u32 TickflowAsyncSubLocation();
+
+    u32 GlobalSaveDataPointer();
+    u32 GlobalInputManagerPointer();
 
     std::vector<u32> RetryRemixLocs();
 

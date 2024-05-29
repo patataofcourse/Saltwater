@@ -278,6 +278,55 @@ namespace Megamix {
         u32 mCountdownCounter;
     };
 
+    enum EPlayStyle : u8{
+        EPlayStyle_Button = 0,
+        EPlayStyle_Tap = 1
+    };
+
+    struct CSaveData_Sub2 {
+        u8 pad1[0xF];
+        u32 mPlayTime;
+        u32 mPlayerData; //Actually unknown
+        short pad2[7];
+        u8 pad3[0x3F];
+        u8 mGameRanks[104];
+        u8 pad4[0xf17];
+        u8 unk2[1][16];
+        u8 pad5[0xB3];
+        u16 unk3;
+        u16 unk4;
+        u8 pad6[7];
+        u8 mLocale;
+        u8 pad7[0x90];
+        bool mUnlockedGoat;
+        u8 pad8[5];
+        bool mIsFirstMuseumTalk;
+        u8 pad9[2];
+        bool mHasBeenInCafe;
+        u8 pad10[0x1C];
+        u16 mClPlay2;
+        u16 mClPlay3;
+        u16 unk6;
+        u16 unk5;
+        u16 mMoney;
+        u16 mCoin;
+        enum EPlayStyle mPlayStyle;
+        u8 mTimingEft;
+        u8 isCec;
+    };
+
+    struct CSaveData {
+        int* _vtable;
+        u32 unk1;
+        u8 unk2;
+        u8 unk3;
+        u32 unk4;
+        u32 unk5[4];
+        u8 cSaveData_sub1[0x1c20];
+        struct CSaveData_Sub2 mFileData[4];
+        u32 mCurrentFile;
+    };
+
 }
 
 #endif

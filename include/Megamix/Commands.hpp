@@ -5,12 +5,16 @@
 
 namespace Megamix{
     enum CustomCommands: u16{
+        InputCheck = 0x200,
         VersionNumber = 0x201
     };
 
-    extern "C" int tickflowCommandsHook(CTickflow*, u32, u32, u32*);
-
     void tickflowCommandsHookWrapper();
+
+    extern "C" int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args);
+
+    void input_cmd(CTickflow* self, u32 arg0, u32* args);
+    void versionCheck(CTickflow* self, u32 arg0, u32* args);
 }
 
 #endif
