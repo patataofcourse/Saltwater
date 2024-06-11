@@ -242,6 +242,47 @@ namespace Megamix {
             this->edgeFade = edgeFade;
         }
     };
+
+
+    struct FileInfo {
+        wchar_t filePath[0x80];
+        void* fileBuffer;
+        u8* compressedFileBuffer;
+        void* unk108;
+        u32 fileSize;
+        u32 compressedFileSize;
+        u32 unk114;
+        u8 mode;
+        s32 fileId;
+    };
+
+    struct FileInputStream {
+        void* vtable;
+        struct FileBase {
+            void* ptr;
+            s64 position;
+            s64 size;
+        } base;
+    };
+
+    struct CFileManager {
+        void* vtable;
+        s32 unk4;
+        s32 unk8;
+        void* romWorkingMemory;
+        u32 romWorkingMemorySize;
+        u8* gzipWorkingMemory;
+        FileInfo* fileInfo;
+        u32 fileIds;
+        u32 fileIdCount;
+        u32 unk24;
+        bool unk28;
+        u32 unk2C;
+        wchar_t locale[9];
+        wchar_t sublocale[9];
+        struct { u32 unk[2]; } thread; //TODO
+        bool threadCreated;
+    };
 }
 
 #endif

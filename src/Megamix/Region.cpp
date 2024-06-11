@@ -333,4 +333,61 @@ namespace Region {
 
         }
     }
+
+    // Filesystem patches
+    u32 DoOpenFileFunc() {
+        switch (region) {
+            case JP:
+                return -1; //TODO! this will probably need a different hook
+            case US:
+                return 0x283f5c;
+            default:
+                return 0;
+        }
+    }
+
+    u32 CacheFileManagerPos() {
+        switch (region) {
+            case US:
+                return 0x54eeec;
+            default:
+                return 0;
+        }
+    }
+
+    u32 FileInputStreamVtable() {
+        switch (region) {
+            case US:
+                return 0x4f6454;
+        }
+    }
+
+    IsFileCachedSignature IsFileCachedFunc() {
+        switch (region) {
+            case US:
+                return (IsFileCachedSignature)0x129fa0;
+            default:
+                return nullptr;
+        }
+    }
+
+    CacheFileSignature CacheFileFunc() {
+        switch (region) {
+            case US:
+                return (CacheFileSignature)0x120d28;
+            default:
+                return nullptr;
+        }
+    }
+
+    //TODO
+    TryOpenFileSignature TryOpenFileFunc() {
+
+    }
+    CloseFileSignature CloseFileFunc() {
+
+    }
+    TryGetSizeSignature TryGetSizeFunc() {
+
+    }
 }

@@ -6,6 +6,8 @@
 
 #include "types.h"
 
+#include "Megamix/Types.hpp"
+
 extern u8 region;
 
 namespace Region {
@@ -51,6 +53,23 @@ namespace Region {
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
+
+    typedef void* (*IsFileCachedSignature) (void* cachedFileManager, s32 fileId, Megamix::FileInfo* fileInfo);
+    typedef bool (*CacheFileSignature) (void* cachedFileManager, s32 fileId, Megamix::FileInfo* fileInfo);
+
+    typedef Result (*TryOpenFileSignature) (Megamix::FileInputStream::FileBase* fileBase, wchar_t* filePath, u32 mode);
+    typedef Result (*CloseFileSignature) (void* ptr);
+    typedef Result (*TryGetSizeSignature) (Megamix::FileInputStream::FileBase* fileBase, s64 position);
+
+    u32 DoOpenFileFunc();
+    u32 CacheFileManagerPos();
+    u32 FileInputStreamVtable();
+    IsFileCachedSignature IsFileCachedFunc();
+    CacheFileSignature CacheFileFunc();
+    TryOpenFileSignature TryOpenFileFunc();
+    CloseFileSignature CloseFileFunc();
+    TryGetSizeSignature TryGetSizeFunc();
+
 }
 
 #endif

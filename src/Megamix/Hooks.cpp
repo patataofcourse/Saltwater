@@ -6,7 +6,9 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
+using CTRPluginFramework::File;
 using CTRPluginFramework::OSD;
+using CTRPluginFramework::Utils;
 
 using Megamix::TempoTable;
 
@@ -172,4 +174,60 @@ namespace Megamix::Hooks {
     // if either StubbedFunction or StubFunction is used with a type, a template
     // instantiation must be added with that type
     template void StubFunction<void>(u32);
+
+    void doReadFile(CFileManager* self, FileInfo* fileInfo) {
+        void* cache; // i don't feel like making another struct for this undocumented thing, so pointer arithmetic go brr
+
+        // cached filesystem hell
+        if (fileInfo->fileId >= 0 && (cache = Region::IsFileCachedFunc()(*(void**)Region::CacheFileManagerPos(), fileInfo->fileId, fileInfo), cache != 0)) {
+            fileInfo->fileSize = *(u32*)(cache + 0x84);
+            fileInfo->fileBuffer = new u8[fileInfo->fileSize];
+            memcpy(fileInfo->fileBuffer, *(void**)(cache + 0x80), fileInfo->fileSize);
+        }
+
+        FileInputStream inputStream = {(void*)Region::FileInputStreamVtable(), {0, 0, 0}};
+        wchar_t* buffer = new wchar_t[256];
+        File file_ctrpf;
+        Result result_ctrpf;
+        Result result_game;
+
+        auto game_result_checker = [] (Result result) {
+            // taken straight from ghidra
+            return (((result & 0x3fc00) == 0x4400) && (99 < (result & 0x3ff))) && ((result & 0x3ff) < 0xb4);
+        };
+
+        const char* LAYERED_LOCATION = "/spicerack/fs/%ls%ls";
+
+        // sublocale - SD
+        file_ctrpf = File();
+        result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, self->sublocale, fileInfo->filePath + 5), File::Mode::READ);
+
+        // locale - SD
+        if (result_ctrpf != 0) {
+            file_ctrpf.Close();
+            result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, self->locale, fileInfo->filePath + 5), File::Mode::READ);
+        }
+
+        // global - SD
+        if (result_ctrpf != 0) {
+            file_ctrpf.Close();
+            result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, L"", fileInfo->filePath + 5), File::Mode::READ);
+        }
+        
+        if (result_ctrpf == 0) {
+            // TODO: read file here
+        } else {
+            file_ctrpf.Close();
+
+            //TODO
+
+            // sublocale - RomFS
+            swprintf(buffer, 256, L"rom:/%ls%ls", self->sublocale, fileInfo->filePath + 5);
+            result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
+
+            // locale - RomFS
+            swprintf(buffer, 256, L"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
+            // global
+        }
+    }
 }
