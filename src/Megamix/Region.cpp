@@ -359,6 +359,8 @@ namespace Region {
         switch (region) {
             case US:
                 return 0x4f6454;
+            default:
+                return 0;
         }
     }
 
@@ -380,14 +382,39 @@ namespace Region {
         }
     }
 
-    //TODO
     TryOpenFileSignature TryOpenFileFunc() {
-
+        switch (region) {
+            case US:
+                return (TryOpenFileSignature)0x2859b4;
+            default:
+                return nullptr;
+        }
     }
+
     CloseFileSignature CloseFileFunc() {
-
+        switch (region) {
+            case US:
+                return (CloseFileSignature)0x285944;
+            default:
+                return nullptr;
+        }
     }
-    TryGetSizeSignature TryGetSizeFunc() {
 
+    TryGetSizeSignature TryGetSizeFunc() {
+        switch (region) {
+            case US:
+                return (TryGetSizeSignature)0x28595c;
+            default:
+                return nullptr;
+        }
+    }
+
+    TryReadSignature TryReadFunc() {
+        switch (region) {
+            case US:
+                return (TryReadSignature)0x285808;
+            default:
+                return nullptr;
+        }
     }
 }

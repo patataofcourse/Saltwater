@@ -189,7 +189,6 @@ namespace Megamix::Hooks {
         wchar_t* buffer = new wchar_t[256];
         File file_ctrpf;
         Result result_ctrpf;
-        Result result_game;
 
         auto game_result_checker = [] (Result result) {
             // taken straight from ghidra
@@ -219,15 +218,42 @@ namespace Megamix::Hooks {
         } else {
             file_ctrpf.Close();
 
-            //TODO
-
             // sublocale - RomFS
             swprintf(buffer, 256, L"rom:/%ls%ls", self->sublocale, fileInfo->filePath + 5);
-            result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
+            Result result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
+
 
             // locale - RomFS
-            swprintf(buffer, 256, L"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
-            // global
+            if (game_result_checker(result_game)) {
+                if ((u32)inputStream.base.ptr >> 1 != 0) {
+                    if ((u32)inputStream.base.ptr & 1 == 1) {
+                        svcBreak(USERBREAK_PANIC);
+                    }
+                    Region::CloseFileFunc()(inputStream.base.ptr);
+                    inputStream.base.ptr = nullptr;
+                }
+            
+                inputStream.base = {0, 0, 0};
+                swprintf(buffer, 256, L"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
+                result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
+            }
+
+            // global - RomFS
+            if (game_result_checker(result_game)) {
+                if ((u32)inputStream.base.ptr >> 1 != 0) {
+                    if ((u32)inputStream.base.ptr & 1 == 1) {
+                        svcBreak(USERBREAK_PANIC);
+                    }
+                    Region::CloseFileFunc()(inputStream.base.ptr);
+                    inputStream.base.ptr = nullptr;
+                }
+            
+                inputStream.base = {0, 0, 0};
+                swprintf(buffer, 256, L"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
+                result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
+            }
+
+            // TODO: read and close
         }
     }
 }

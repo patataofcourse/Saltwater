@@ -59,7 +59,8 @@ namespace Region {
 
     typedef Result (*TryOpenFileSignature) (Megamix::FileInputStream::FileBase* fileBase, wchar_t* filePath, u32 mode);
     typedef Result (*CloseFileSignature) (void* ptr);
-    typedef Result (*TryGetSizeSignature) (Megamix::FileInputStream::FileBase* fileBase, s64 position);
+    typedef Result (*TryGetSizeSignature) (Megamix::FileInputStream::FileBase* fileBase, s64* size);
+    typedef Result (*TryReadSignature) (Megamix::FileInputStream::FileBase* fileBase, u32* bytesRead, void* fileBuffer, u32 size);
 
     u32 DoOpenFileFunc();
     u32 CacheFileManagerPos();
