@@ -12,6 +12,8 @@ using CTRPluginFramework::Utils;
 
 using Megamix::TempoTable;
 
+// TODO: split file further
+
 namespace Megamix::Hooks {
     RT_HOOK tickflowHook;
     RT_HOOK gateHook;
@@ -23,6 +25,8 @@ namespace Megamix::Hooks {
 
     RT_HOOK regionFSHook;
     RT_HOOK regionOtherHook;
+
+    RT_HOOK fsOpenFileHook;
 
     void* getTickflowOffset(int index) {
         if (config->tickflows.contains(index)) {
@@ -115,43 +119,6 @@ namespace Megamix::Hooks {
         return region;
     }
 
-    void TickflowHooks() {
-        rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
-        rtEnableHook(&tickflowHook);
-        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset);
-        rtEnableHook(&gateHook);
-        rtInitHook(&gatePracHook, Region::GatePracHookFunc(), (u32)getGatePracticeTickflowOffset);
-        rtEnableHook(&gatePracHook);
-    }
-
-    void TempoHooks() {
-        rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm);
-        rtEnableHook(&tempoStrmHook);
-        rtInitHook(&tempoSeqHook, Region::SeqTempoHookFunc(), (u32)getTempoSeq);
-        rtEnableHook(&tempoSeqHook);
-        rtInitHook(&tempoAllHook, Region::AllTempoHookFunc(), (u32)getTempoAll);
-        rtEnableHook(&tempoAllHook);
-    }
-
-    void RegionHooks() {
-        if (region != Region::JP){
-            rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegionMegamix);
-            rtEnableHook(&regionFSHook);
-        }
-        rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegionCTR);
-        rtEnableHook(&regionOtherHook);
-    }
-
-    void DisableAllHooks() {
-        rtDisableHook(&tickflowHook);
-        rtDisableHook(&gateHook);
-        rtDisableHook(&tempoStrmHook);
-        rtDisableHook(&tempoSeqHook);
-        rtDisableHook(&tempoAllHook);
-        rtDisableHook(&regionFSHook);
-        rtDisableHook(&regionOtherHook);
-    }
-
     template<typename T>
     T StubbedFunction() {
         return {};
@@ -183,6 +150,7 @@ namespace Megamix::Hooks {
             fileInfo->fileSize = *(u32*)(cache + 0x84);
             fileInfo->fileBuffer = new u8[fileInfo->fileSize];
             memcpy(fileInfo->fileBuffer, *(void**)(cache + 0x80), fileInfo->fileSize);
+            return;
         }
 
         FileInputStream inputStream = {(void*)Region::FileInputStreamVtable(), {0, 0, 0}};
@@ -215,6 +183,22 @@ namespace Megamix::Hooks {
         
         if (result_ctrpf == 0) {
             // TODO: read file here
+
+            s64 size = file_ctrpf.GetSize();
+            if (size < 0) {
+                // could not read filesize
+                svcBreak(USERBREAK_PANIC);
+            }
+            fileInfo->fileSize = size;
+
+            void* fileBuffer = Region::OperatorNewFunc()(fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
+            result_ctrpf = file_ctrpf.Read(fileBuffer, fileInfo->fileSize);
+            if (result_ctrpf < 0) {
+                // could not read file
+                svcBreak(USERBREAK_PANIC);
+            }
+
+            file_ctrpf.Close();
         } else {
             file_ctrpf.Close();
 
@@ -227,6 +211,9 @@ namespace Megamix::Hooks {
             if (game_result_checker(result_game)) {
                 if ((u32)inputStream.base.ptr >> 1 != 0) {
                     if ((u32)inputStream.base.ptr & 1 == 1) {
+                        // the reason i'm using svcBreak is because any kind of error handling in here is a mess and i don't think we're going to have any errors?
+
+                        // pointer is not 2-aligned
                         svcBreak(USERBREAK_PANIC);
                     }
                     Region::CloseFileFunc()(inputStream.base.ptr);
@@ -242,6 +229,7 @@ namespace Megamix::Hooks {
             if (game_result_checker(result_game)) {
                 if ((u32)inputStream.base.ptr >> 1 != 0) {
                     if ((u32)inputStream.base.ptr & 1 == 1) {
+                        // pointer is not 2-aligned
                         svcBreak(USERBREAK_PANIC);
                     }
                     Region::CloseFileFunc()(inputStream.base.ptr);
@@ -249,11 +237,98 @@ namespace Megamix::Hooks {
                 }
             
                 inputStream.base = {0, 0, 0};
-                swprintf(buffer, 256, L"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
-                result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
+                result_game = Region::TryOpenFileFunc()(&inputStream.base, fileInfo->filePath, 1);
             }
 
-            // TODO: read and close
+            // read file (or set status accordingly if file couldn't be opened)
+            if (game_result_checker(result_game)) {
+                fileInfo->status = 0xb; 
+            } else {
+                s64 size;
+                result_game = Region::TryGetSizeFunc()(&inputStream.base, &size);
+                if (result_game < 0) {
+                    // couldn't read filesize
+                    svcBreak(USERBREAK_PANIC);
+                }
+
+                fileInfo->fileSize = size;
+                fileInfo->fileBuffer = Region::OperatorNewFunc()(size, fileInfo->mode, fileInfo->alignment);
+                result_game = Region::TryReadFunc()(&inputStream.base, (u32*)&size, fileInfo->fileBuffer, fileInfo->fileSize);
+                if (result_game < 0) {
+                    // couldn't read file
+                    svcBreak(USERBREAK_PANIC);
+                }
+            }
+
+            // close file if it was opened
+            if (((s32)inputStream.base.ptr & 0xfffffffe) != 0) {
+                if (((s32)inputStream.base.ptr & 1) == 1) {
+                    // pointer is not 2-aligned
+                    svcBreak(USERBREAK_PANIC);
+                }
+
+                Region::CloseFileFunc()(inputStream.base.ptr); // original game has an & 0xfffffffe here which is... superflous considering the million ptr checks
+                inputStream.base.ptr = nullptr;
+
+            }
+        
+            // original game has a second file closing here - not adding unless it seems to give any issues because like wtf
         }
+
+        // cache file
+        // i still refuse to make a struct for cache shit, even if this is documented
+        u8 is_cache_enabled = *(u8*)(Region::CacheFileManagerPos() + 0xc);
+        if ((fileInfo->fileId > -1) && is_cache_enabled != 0) { // hey champ shouldnt this also not happen when the file isn't loaded???
+            Region::CacheFileFunc()((void*)Region::CacheFileManagerPos(), fileInfo->fileId, fileInfo->filePath, fileInfo->fileBuffer,
+                fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
+        }
+
+        // and done!
+    }
+
+
+    // define hooks
+
+    void TickflowHooks() {
+        rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
+        rtEnableHook(&tickflowHook);
+        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset);
+        rtEnableHook(&gateHook);
+        rtInitHook(&gatePracHook, Region::GatePracHookFunc(), (u32)getGatePracticeTickflowOffset);
+        rtEnableHook(&gatePracHook);
+    }
+
+    void TempoHooks() {
+        rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm);
+        rtEnableHook(&tempoStrmHook);
+        rtInitHook(&tempoSeqHook, Region::SeqTempoHookFunc(), (u32)getTempoSeq);
+        rtEnableHook(&tempoSeqHook);
+        rtInitHook(&tempoAllHook, Region::AllTempoHookFunc(), (u32)getTempoAll);
+        rtEnableHook(&tempoAllHook);
+    }
+
+    void RegionHooks() {
+        if (region != Region::JP){
+            rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegionMegamix);
+            rtEnableHook(&regionFSHook);
+        }
+        rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegionCTR);
+        rtEnableHook(&regionOtherHook);
+    }
+
+    void FSHooks() {
+        rtInitHook(&fsOpenFileHook, Region::DoOpenFileHookFunc(), (u32)doReadFile);
+        rtEnableHook(&fsOpenFileHook);
+    }
+
+    void DisableAllHooks() {
+        rtDisableHook(&tickflowHook);
+        rtDisableHook(&gateHook);
+        rtDisableHook(&tempoStrmHook);
+        rtDisableHook(&tempoSeqHook);
+        rtDisableHook(&tempoAllHook);
+        rtDisableHook(&regionFSHook);
+        rtDisableHook(&regionOtherHook);
+        rtDisableHook(&fsOpenFileHook);
     }
 }

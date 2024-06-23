@@ -335,7 +335,7 @@ namespace Region {
     }
 
     // Filesystem patches
-    u32 DoOpenFileFunc() {
+    u32 DoOpenFileHookFunc() {
         switch (region) {
             case JP:
                 return -1; //TODO! this will probably need a different hook
@@ -413,6 +413,15 @@ namespace Region {
         switch (region) {
             case US:
                 return (TryReadSignature)0x285808;
+            default:
+                return nullptr;
+        }
+    }
+
+    OperatorNewSignature OperatorNewFunc() {
+        switch (region) {
+            case US:
+                return (OperatorNewSignature)0x28b368;
             default:
                 return nullptr;
         }

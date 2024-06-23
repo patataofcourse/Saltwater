@@ -253,6 +253,8 @@ namespace Megamix {
         u32 compressedFileSize;
         u32 unk114;
         u8 mode;
+        u32 alignment;
+        u8 status;
         s32 fileId;
     };
 

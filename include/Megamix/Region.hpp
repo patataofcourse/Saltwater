@@ -55,21 +55,28 @@ namespace Region {
     u32 RegionOtherHookFunc();
 
     typedef void* (*IsFileCachedSignature) (void* cachedFileManager, s32 fileId, Megamix::FileInfo* fileInfo);
-    typedef bool (*CacheFileSignature) (void* cachedFileManager, s32 fileId, Megamix::FileInfo* fileInfo);
+    typedef bool (*CacheFileSignature) (void* cachedFileManager, s32 fileId, wchar_t* filePath, void* fileBuffer, size_t fileSize, u8 mode, s32 alignment);
 
     typedef Result (*TryOpenFileSignature) (Megamix::FileInputStream::FileBase* fileBase, wchar_t* filePath, u32 mode);
     typedef Result (*CloseFileSignature) (void* ptr);
     typedef Result (*TryGetSizeSignature) (Megamix::FileInputStream::FileBase* fileBase, s64* size);
     typedef Result (*TryReadSignature) (Megamix::FileInputStream::FileBase* fileBase, u32* bytesRead, void* fileBuffer, u32 size);
+    
+    typedef void* (*OperatorNewSignature) (size_t size, s32 mode, s32 alignment);
 
-    u32 DoOpenFileFunc();
+    u32 DoOpenFileHookFunc();
     u32 CacheFileManagerPos();
     u32 FileInputStreamVtable();
+
     IsFileCachedSignature IsFileCachedFunc();
     CacheFileSignature CacheFileFunc();
     TryOpenFileSignature TryOpenFileFunc();
     CloseFileSignature CloseFileFunc();
     TryGetSizeSignature TryGetSizeFunc();
+    TryReadSignature TryReadFunc();
+
+    // use this to allocate stuff in the game's RAM
+    OperatorNewSignature OperatorNewFunc();
 
 }
 
