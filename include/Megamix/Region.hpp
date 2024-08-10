@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 
-#include "types.h"
-
 #include "Megamix/Types.hpp"
 
 extern u8 region;

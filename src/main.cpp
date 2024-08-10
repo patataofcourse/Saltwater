@@ -1,7 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "csvc.h"
+#include "external/csvc.h"
 #include "external/plgldr.h"
 
 #include "Megamix.hpp"
