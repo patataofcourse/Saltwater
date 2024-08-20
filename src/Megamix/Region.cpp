@@ -322,6 +322,8 @@ namespace Region {
         }
     }
 
+    // Location of the code for async_sub (fixes custom commands)
+
     u32 TickflowAsyncSubLocation() {
         switch (region) {
             case JP:

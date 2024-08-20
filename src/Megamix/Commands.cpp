@@ -8,7 +8,7 @@ using CTRPluginFramework::Utils;
 
 namespace Megamix{
 
-    CSaveData* gSaveData = (CSaveData*)Region::GlobalSaveDataPointer();
+    CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
 
     void tickflowCommandsHookWrapper() {
         asm(
@@ -34,7 +34,7 @@ namespace Megamix{
     }
 
     void input_cmd(CTickflow* self, u32 arg0, u32* args) {
-            OSD::Notify("Current playstyle:"+Utils::ToString(gSaveData->mFileData[gSaveData->mCurrentFile].mPlayStyle));
+            OSD::Notify("Savefile:"+Utils::Format("0x%08x",(*gSaveData)->mCurrentFile));
         // if (arg0 > 2) {
         //     self->mCondvar = 0;
         //     return;
