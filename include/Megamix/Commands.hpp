@@ -7,6 +7,7 @@ namespace Megamix{
     enum CustomCommands: u16{
         InputCheck = 0x200,
         VersionNumber = 0x201,
+        LanguageCheck = 0x202,
         DisplayCondvar = 0x203
     };
 
@@ -16,6 +17,7 @@ namespace Megamix{
 
     void input_cmd(CTickflow* self, u32 arg0, u32* args);
     void versionCheck(CTickflow* self, u32 arg0, u32* args);
+    void languageCheck(CTickflow* self, u32 arg0, u32* args);
     void displayCondvar(CTickflow* self, u32 arg0, u32* args);
 }
 

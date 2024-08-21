@@ -30,6 +30,9 @@ namespace Megamix{
             case VersionNumber:
                 versionCheck(self, arg0, args);
             break;
+            case LanguageCheck:
+                languageCheck(self, arg0, args);
+            break;
             case DisplayCondvar:
                 displayCondvar(self, arg0, args);
             break;
@@ -65,6 +68,10 @@ namespace Megamix{
                     // OSD::Notify("Saltwater version:"+VERSION_MAJOR*0x100+VERSION_MINOR);
                     self->mCondvar = VERSION_MAJOR*0x100+VERSION_MINOR;
                 }
+    }
+
+    void languageCheck(CTickflow* self, u32 arg0, u32* args) {
+        self->mCondvar = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mLocale;
     }
 
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {
