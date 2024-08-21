@@ -245,7 +245,7 @@ namespace Megamix {
 
 
     struct FileInfo {
-        wchar_t filePath[0x80];
+        char16_t filePath[0x80];
         void* fileBuffer;
         u8* compressedFileBuffer;
         void* unk108;
@@ -280,8 +280,8 @@ namespace Megamix {
         u32 unk24;
         bool unk28;
         u32 unk2C;
-        wchar_t locale[9];
-        wchar_t sublocale[9];
+        char16_t locale[9];
+        char16_t sublocale[9];
         struct { u32 unk[2]; } thread; //TODO
         bool threadCreated;
     };

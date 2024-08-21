@@ -418,6 +418,16 @@ namespace Region {
         }
     }
 
+
+    SWPrintfSignature SWPrintfFunc() {
+        switch (region) {
+            case US:
+                return (SWPrintfSignature)(0x28a2d0 + 1);
+            default:
+                return nullptr;
+        }
+    }
+
     OperatorNewSignature OperatorNewFunc() {
         switch (region) {
             case US:

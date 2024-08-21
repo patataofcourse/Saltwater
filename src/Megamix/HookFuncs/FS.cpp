@@ -8,6 +8,8 @@ using CTRPluginFramework::Utils;
 
 namespace Megamix::Hooks {
     void doReadFile(CFileManager* self, FileInfo* fileInfo) {
+        // TODO: triple check everything here works properly - ESPECIALLY the filenames, both for internal game functions and ctrpf functions
+
         void* cache; // i don't feel like making another struct for this undocumented thing, so pointer arithmetic go brr
 
         // cached filesystem hell
@@ -19,7 +21,7 @@ namespace Megamix::Hooks {
         }
 
         FileInputStream inputStream = {(void*)Region::FileInputStreamVtable(), {0, 0, 0}};
-        wchar_t* buffer = new wchar_t[256];
+        char16_t* buffer = new char16_t[256];
         File file_ctrpf;
         Result result_ctrpf;
 
@@ -30,20 +32,29 @@ namespace Megamix::Hooks {
 
         const char* LAYERED_LOCATION = "/spicerack/fs/%ls%ls";
 
+        wchar_t* strings_utf32[3] = {
+            new wchar_t[9],
+            new wchar_t[9],
+            new wchar_t[0x80]
+        };
+        utf16_to_utf32((u32*)strings_utf32[0], (u16*)&self->sublocale, 9);
+        utf16_to_utf32((u32*)strings_utf32[1], (u16*)&self->locale, 9);
+        utf16_to_utf32((u32*)strings_utf32[2], (u16*)&fileInfo->filePath, 0x80);
+
         // sublocale - SD
         file_ctrpf = File();
-        result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, self->sublocale, fileInfo->filePath + 5), File::Mode::READ);
+        result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, strings_utf32[0], strings_utf32[2] + 5), File::Mode::READ);
 
         // locale - SD
         if (result_ctrpf != 0) {
             file_ctrpf.Close();
-            result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, self->locale, fileInfo->filePath + 5), File::Mode::READ);
+            result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, strings_utf32[1], strings_utf32[2] + 5), File::Mode::READ);
         }
 
         // global - SD
         if (result_ctrpf != 0) {
             file_ctrpf.Close();
-            result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, L"", fileInfo->filePath + 5), File::Mode::READ);
+            result_ctrpf = File::Open(file_ctrpf, Utils::Format(LAYERED_LOCATION, L"", strings_utf32[2] + 5), File::Mode::READ);
         }
         
         if (result_ctrpf == 0) {
@@ -66,7 +77,7 @@ namespace Megamix::Hooks {
             file_ctrpf.Close();
 
             // sublocale - RomFS
-            swprintf(buffer, 256, L"rom:/%ls%ls", self->sublocale, fileInfo->filePath + 5);
+            Region::SWPrintfFunc()(buffer, 256, u"rom:/%ls%ls", self->sublocale, fileInfo->filePath + 5);
             Result result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
 
 
@@ -79,9 +90,9 @@ namespace Megamix::Hooks {
                     Region::CloseFileFunc()(inputStream.base.ptr);
                     inputStream.base.ptr = nullptr;
                 }
-            
+
                 inputStream.base = {0, 0, 0};
-                swprintf(buffer, 256, L"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
+                Region::SWPrintfFunc()(buffer, 256, u"rom:/%ls%ls", self->locale, fileInfo->filePath + 5);
                 result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
             }
 
@@ -94,7 +105,7 @@ namespace Megamix::Hooks {
                     Region::CloseFileFunc()(inputStream.base.ptr);
                     inputStream.base.ptr = nullptr;
                 }
-            
+                
                 inputStream.base = {0, 0, 0};
                 result_game = Region::TryOpenFileFunc()(&inputStream.base, fileInfo->filePath, 1);
             }

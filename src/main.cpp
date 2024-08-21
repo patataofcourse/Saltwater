@@ -77,7 +77,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     ToggleTouchscreenForceOn();
 
     // Crash handler
-    Process::exceptionCallback = Megamix::CrashHandler;
+    //Process::exceptionCallback = Megamix::CrashHandler;
 
     // le params :D
     params = *(SaltwaterParams*)ctrpf::FwkSettings::Header->config;
