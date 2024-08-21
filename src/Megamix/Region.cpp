@@ -353,6 +353,18 @@ namespace Region {
         }
     }
 
+    u32 GlobalInputManagerPointer(){
+        switch (region) {
+            case JP:
+            case US:
+                return 0x54eed0;
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
     // RHMPatch's retry remix sub patch locations
     std::vector<u32> RetryRemixLocs() {
         switch (region) {

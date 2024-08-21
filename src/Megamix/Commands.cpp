@@ -9,6 +9,7 @@ using CTRPluginFramework::Utils;
 namespace Megamix{
 
     CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
+    CInputManager** gInputManager = (CInputManager**)Region::GlobalInputManagerPointer();
 
     void tickflowCommandsHookWrapper() {
         asm(
@@ -29,31 +30,34 @@ namespace Megamix{
             case VersionNumber:
                 versionCheck(self, arg0, args);
             break;
+            case DisplayCondvar:
+                displayCondvar(self, arg0, args);
+            break;
         }
         return Region::TickflowCommandsEnd();
     }
 
     void input_cmd(CTickflow* self, u32 arg0, u32* args) {
-            OSD::Notify("Savefile:"+Utils::Format("0x%08x",(*gSaveData)->mCurrentFile));
-        // if (arg0 > 2) {
-        //     self->mCondvar = 0;
-        //     return;
-        // } else if (arg0 == 2) {
-        //     // if you properly define the struct you can just do
-        //     arg0 = gSaveData->mFileData[gSaveData->mCurrentFile].mPlayStyle;
-        //     // otherwise you have to fuck with pointer arithmetic and i don't recommend it
-        // }
+            // OSD::Notify("Savefile:"+Utils::Format("0x%08x",(*gSaveData)->mCurrentFile));
+        if (arg0 > 2) {
+            self->mCondvar = 0;
+            return;
+        } else if (arg0 == 2) {
+            // if you properly define the struct you can just do
+            arg0 = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mPlayStyle;
+            // otherwise you have to fuck with pointer arithmetic and i don't recommend it
+        }
 
-        // if (arg0 == 0) {
-        //     if (args[0] >= 32) {
-        //         self->mCondvar = 0;
-        //         return;
-        //     }
+        if (arg0 == 0) {
+            if (args[0] >= 32) {
+                self->mCondvar = 0;
+                return;
+            }
             
-        //     self->mCondvar = (gInputManager->unk4->unk4 >> args[0]) & 1;
-        // } else {
-        //     self->mCondvar = (gInputManager->unk8->unkC);
-        // }
+            self->mCondvar = ((*gInputManager)->mPadHandler->mHoldButtons >> args[0]) & 1;
+        } else {
+            self->mCondvar = ((*gInputManager)->mTouchPanelHandler->mTouchPanelStatus.touch);
+        }
     }
 
     void versionCheck(CTickflow* self, u32 arg0, u32* args) {
@@ -64,6 +68,10 @@ namespace Megamix{
                     // OSD::Notify("Saltwater version:"+VERSION_MAJOR*0x100+VERSION_MINOR);
                     self->mCondvar = VERSION_MAJOR*0x100+VERSION_MINOR;
                 }
+    }
+
+    void displayCondvar(CTickflow* self, u32 arg0, u32* args) {
+            OSD::Notify("Condvar:"+Utils::Format("0x%08x",self->mCondvar));
     }
 
 }

@@ -285,36 +285,9 @@ struct CTickflow {
   u32 mCountdownCounter;
 };
 
-// struct CSaveData_Sub2 {
-//     s32 pad1[0xF];
-//     u32 mPlayTime;
-//     u8 mPlayerData; //Actually unknown
-//     u8 pad3[0x5E];
-//     u8 mGameRanks[104];
-//     u8 pad4[0xf17];
-//     u8 unk2[1][16];
-//     u8 pad5[0xB3];
-//     u16 unk3;
-//     u16 unk4;
-//     u8 pad6[7];
-//     u8 mLocale;
-//     u8 pad7[0x90];
-//     bool mUnlockedGoat;
-//     u8 pad8[5];
-//     bool mIsFirstMuseumTalk;
-//     u8 pad9[2];
-//     bool mHasBeenInCafe;
-//     u8 pad10[0x1C];
-//     u16 mClPlay2;
-//     u16 mClPlay3;
-//     u16 unk6;
-//     u16 unk5;
-//     u16 mMoney;
-//     u16 mCoin;
-//     enum EPlayStyle mPlayStyle;
-//     u8 mTimingEft;
-//     u8 isCec;
-// };
+//-----------------
+//Save File
+//-----------------
 
 typedef enum EGameRank {
   eLocked = 0,
@@ -327,8 +300,8 @@ typedef enum EGameRank {
 } EGameRank;
 
 typedef enum EPlayStyle { /* simple tap / button */
-                          ePlayStyle_Button = 0,
-                          ePlayStyle_Tap = 1
+  ePlayStyle_Button = 0,
+  ePlayStyle_Tap = 1
 } EPlayStyle;
 
 struct CSaveData_Sub2 {
@@ -375,6 +348,135 @@ struct CSaveData {
   u8 cSaveData_sub1[0x1c20];
   struct CSaveData_Sub2 mFileData[4];
   u32 mCurrentFile;
+};
+
+//-----------------
+//Input Manager
+//-----------------
+
+typedef enum EButtonFlag {
+    eButton_None=0,
+    eButton_A=1,
+    eButton_B=2,
+    eButton_Select=4,
+    eButton_Start=8,
+    eButton_DpadRight=16,
+    eButton_DpadLeft=32,
+    eButton_DpadUp=64,
+    eButton_DpadDown=128,
+    eButton_R=256,
+    eButton_L=512,
+    eButton_X=1024,
+    eButton_Y=2048
+} EButtonFlag;
+
+typedef enum ClampMode {
+    STICK_CLAMP_MODE_CIRCLE=0,
+    STICK_CLAMP_MODE_CROSS=1,
+    STICK_CLAMP_MODE_MINIMUM=2
+} ClampMode;
+
+struct AnalogStickClamper {
+    s16 m_MinOfStickClampCircle;
+    s16 m_MinOfStickClampCross;
+    s16 m_MinOfStickClampMinimum;
+    s16 m_MaxOfStickClampCircle;
+    s16 m_MaxOfStickClampCross;
+    s16 m_MaxOfStickClampMinimum;
+    enum ClampMode m_StickClampMode;
+    u8 padding;
+    s16 m_Threshold;
+    float m_Scale;
+    float m_Stroke;
+    float m_StrokeVelocity;
+    float m_LastLength;
+    float m_LastDiff;
+};
+
+struct PadReader {
+    struct Pad *m_Pad;
+    s32 m_IndexOfRead;
+    u32 m_LatestHold;
+    struct AnalogStickClamper m_StickClamper;
+    bool m_IsReadLatestFirst;
+    u32 padding3;
+    u32 padding4; /* this is intentional */
+    s64 m_TickOfRead;
+};
+
+struct CInputPadHandler {
+    u8 *_vtable;
+    enum EButtonFlag mHoldButtons;
+    enum EButtonFlag mTriggerButtons;
+    enum EButtonFlag mReleaseButtons;
+    enum EButtonFlag mPreviousTriggerButtons;
+    u32 field5_0x14;
+    s8 field6_0x18[12];
+    s8 field7_0x24[12];
+    u8 CInputPadHandler_sub_x30_padding[4];
+    s32 field9_0x34;
+    float mCirclePadX;
+    u32 mCirclePadY;
+    float field12_0x40;
+    float field13_0x44;
+    float field14_0x48;
+    float field15_0x4c;
+    float field16_0x50;
+    struct PadReader *mPadReader;
+    u8 field18_0x58;
+    u8 field19_0x59;
+    u8 field20_0x5a;
+    u8 field21_0x5b;
+};
+
+struct TouchPanelReader {
+    struct TouchPanel *m_TouchPanel;
+    s32 m_IndexOfRead;
+    s64 m_TickOfRead;
+};
+
+struct TouchPanelStatus {
+    u16 x;
+    u16 y;
+    u8 touch; /* 0 - pen up; 1 - touch */
+    u32 padding;
+};
+
+struct CInputTouchPanelHandler {
+    u8 *_vtable;
+    struct TouchPanelReader *mTouchPanelReader;
+    struct TouchPanelStatus mTouchPanelStatus;
+    struct TouchPanelStatus mPreviousTouchPanelStatus;
+    float field4_0x18;
+    float field5_0x1c;
+    float field6_0x20;
+    float field7_0x24;
+    float field8_0x28;
+    float field9_0x2c;
+    float field10_0x30;
+    float field11_0x34;
+    float field12_0x38;
+    float field13_0x3c;
+    float field14_0x40;
+    float field15_0x44;
+    float field16_0x48;
+    float field17_0x4c;
+    float field18_0x50;
+    float field19_0x54;
+    float field20_0x58;
+    float field21_0x5c;
+    float field22_0x60;
+    s32 field23_0x64;
+    bool mCurrentTouched; /* Created by retype action */
+    bool mPreviousTouched; /* Created by retype action */
+    u8 field26_0x6a;
+    u8 field27_0x6b;
+};
+
+struct CInputManager {
+    int *_vtable;
+    struct CInputPadHandler *mPadHandler;
+    struct CInputTouchPanelHandler *mTouchPanelHandler;
 };
 
 } // namespace Megamix
