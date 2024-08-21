@@ -305,7 +305,7 @@ typedef enum EPlayStyle { /* simple tap / button */
 } EPlayStyle;
 
 struct CSaveData_Sub2 {
-  u8 pad1[0xF];
+  u8 pad1[0x10];
   u32 mPlayTime;
   u8 mPlayerData; /* Created by retype action */
   u8 pad2[0x5F];
@@ -323,7 +323,7 @@ struct CSaveData_Sub2 {
   u8 pad8[0x1D];
   u16 mClPlay2;
   u16 mCLPlay3;
-  u8 pad9[0x2];
+  u8 pad9[0x4];
   u16 mMoney;
   u16 mCoin;
   enum EPlayStyle mPlayStyle;
@@ -335,7 +335,7 @@ struct CSaveData_Sub2 {
   u8 mOnion[3];
   u8 pad12[0x7];
   u32 mGoatLv;
-  u8 pad13[0x26B];
+  u8 pad13[0x26c];
 };
 
 struct CSaveData {

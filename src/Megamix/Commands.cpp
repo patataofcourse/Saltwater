@@ -38,14 +38,11 @@ namespace Megamix{
     }
 
     void input_cmd(CTickflow* self, u32 arg0, u32* args) {
-            // OSD::Notify("Savefile:"+Utils::Format("0x%08x",(*gSaveData)->mCurrentFile));
         if (arg0 > 2) {
             self->mCondvar = 0;
             return;
         } else if (arg0 == 2) {
-            // if you properly define the struct you can just do
             arg0 = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mPlayStyle;
-            // otherwise you have to fuck with pointer arithmetic and i don't recommend it
         }
 
         if (arg0 == 0) {
