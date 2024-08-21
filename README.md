@@ -6,12 +6,10 @@ This tool is part of the **SpiceRack** project, which aims to create more advanc
 Join the RHModding server for information and support regarding modding Rhythm Heaven games in general: https://discord.com/invite/ps4rq53
 
 ## How to use
-todo
-<!--
-The following guides explain how to install Saltwater and Barista:
+The following guides explain how to install Saltwater and its launcher, Barista:
     - Hardware: https://patataofcourse.github.io/spicerack-guide/
     - Citra: https://patataofcourse.github.io/spicerack-guide/citra.html
--->
+
 
 ## Building
 You'll need the following:
