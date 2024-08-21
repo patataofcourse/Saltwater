@@ -51,16 +51,14 @@ namespace Megamix::Hooks {
 
             s64 size = file_ctrpf.GetSize();
             if (size < 0) {
-                // could not read filesize
-                svcBreak(USERBREAK_PANIC);
+                ERRF_ThrowResultWithMessage(size, "(m) Could not read file");
             }
             fileInfo->fileSize = size;
 
             void* fileBuffer = Region::OperatorNewFunc()(fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
             result_ctrpf = file_ctrpf.Read(fileBuffer, fileInfo->fileSize);
             if (result_ctrpf < 0) {
-                // could not read file
-                svcBreak(USERBREAK_PANIC);
+                ERRF_ThrowResultWithMessage(result_ctrpf, "(m) Could not read file");
             }
 
             file_ctrpf.Close();
@@ -72,14 +70,11 @@ namespace Megamix::Hooks {
             Result result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
 
 
-            // locale - RomFS
+            // locale - RomFS   
             if (game_result_checker(result_game)) {
                 if ((u32)inputStream.base.ptr >> 1 != 0) {
                     if ((u32)inputStream.base.ptr & 1 == 1) {
-                        // the reason i'm using svcBreak is because any kind of error handling in here is a mess and i don't think we're going to have any errors?
-
-                        // pointer is not 2-aligned
-                        svcBreak(USERBREAK_PANIC);
+                        ERRF_ThrowResultWithMessage(-1, "(sl) File pointer is not 2-aligned");
                     }
                     Region::CloseFileFunc()(inputStream.base.ptr);
                     inputStream.base.ptr = nullptr;
@@ -94,8 +89,7 @@ namespace Megamix::Hooks {
             if (game_result_checker(result_game)) {
                 if ((u32)inputStream.base.ptr >> 1 != 0) {
                     if ((u32)inputStream.base.ptr & 1 == 1) {
-                        // pointer is not 2-aligned
-                        svcBreak(USERBREAK_PANIC);
+                        ERRF_ThrowResultWithMessage(-1, "(l) File pointer is not 2-aligned");
                     }
                     Region::CloseFileFunc()(inputStream.base.ptr);
                     inputStream.base.ptr = nullptr;
@@ -112,24 +106,21 @@ namespace Megamix::Hooks {
                 s64 size;
                 result_game = Region::TryGetSizeFunc()(&inputStream.base, &size);
                 if (result_game < 0) {
-                    // couldn't read filesize
-                    svcBreak(USERBREAK_PANIC);
+                    ERRF_ThrowResultWithMessage(result_game, "Could not read filesize");
                 }
 
                 fileInfo->fileSize = size;
                 fileInfo->fileBuffer = Region::OperatorNewFunc()(size, fileInfo->mode, fileInfo->alignment);
                 result_game = Region::TryReadFunc()(&inputStream.base, (u32*)&size, fileInfo->fileBuffer, fileInfo->fileSize);
                 if (result_game < 0) {
-                    // couldn't read file
-                    svcBreak(USERBREAK_PANIC);
+                    ERRF_ThrowResultWithMessage(result_game, "Could not read file");
                 }
             }
 
             // close file if it was opened
             if (((s32)inputStream.base.ptr & 0xfffffffe) != 0) {
                 if (((s32)inputStream.base.ptr & 1) == 1) {
-                    // pointer is not 2-aligned
-                    svcBreak(USERBREAK_PANIC);
+                    ERRF_ThrowResultWithMessage(-1, "(g) File pointer is not 2-aligned");
                 }
 
                 Region::CloseFileFunc()(inputStream.base.ptr); // original game has an & 0xfffffffe here which is... superflous considering the million ptr checks
