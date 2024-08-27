@@ -368,6 +368,20 @@ namespace Region {
         }
     }
 
+    u32 GlobalFileManagerPointer(){
+        switch (region) {
+            case JP:
+                return 0;
+            case US:
+                return 0x54eedc;
+            case EU:
+            case KR:
+                return 0x54efd4;
+            default:
+                return 0;
+        }
+    }
+
     // RHMPatch's retry remix sub patch locations
     std::vector<u32> RetryRemixLocs() {
         switch (region) {

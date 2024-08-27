@@ -53,6 +53,7 @@ namespace Region {
 
     u32 GlobalSaveDataPointer();
     u32 GlobalInputManagerPointer();
+    u32 GlobalFileManagerPointer();
 
     std::vector<u32> RetryRemixLocs();
 

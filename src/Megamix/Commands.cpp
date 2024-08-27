@@ -71,7 +71,32 @@ namespace Megamix{
 
     void languageCheck(CTickflow* self, u32 arg0, u32* args) {
         CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
-        self->mCondvar = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mLocale;
+        CFileManager** gFileManager = (CFileManager**)Region::GlobalFileManagerPointer();
+        int locale = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mLocale;
+        if(locale == 1){
+            self->mCondvar = 0;
+        } else {
+            wchar_t sublocale[4];
+            utf16_to_utf32((u32*)sublocale, (*gFileManager)->mSublocale, 4);
+            std::wstring localews(sublocale);
+            std::string locales(localews.begin(), localews.end());
+            OSD::Notify("Locale:"+locales);
+            if(localews.find(L"EN") != (unsigned int)-1){
+                self->mCondvar = 1; 
+            } else if (localews.find(L"FR") != (unsigned int)-1) {
+                self->mCondvar = 2; 
+            } else if (localews.find(L"GE") != (unsigned int)-1) {
+                self->mCondvar = 3; 
+            } else if (localews.find(L"IT") != (unsigned int)-1) {
+                self->mCondvar = 4; 
+            } else if (localews.find(L"SP") != (unsigned int)-1) {
+                self->mCondvar = 5; 
+            } else if (localews.find(L"KR") != (unsigned int)-1) {
+                self->mCondvar = 7; 
+            } else {
+                self->mCondvar = -1;
+            }
+        }
     }
 
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {

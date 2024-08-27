@@ -479,6 +479,51 @@ struct CInputManager {
     struct CInputTouchPanelHandler *mTouchPanelHandler;
 };
 
+
+//-----------------
+//File Manager
+//-----------------
+
+struct CFileManager {
+    int *_vtable;
+    s32 field1_0x4;
+    s32 field2_0x8;
+    void *mRomWorkingMemory;
+    u32 mRomWorkingMemorySize;
+    u8 *mGzipWorkMemory;
+    struct FileInfo *mFileInfo;
+    u32 *mFileIds;
+    u32 mFileIdCount;
+    u32 field9_0x24;
+    bool field10_0x28;
+    u8 field11_0x29;
+    u8 field12_0x2a;
+    u8 field13_0x2b;
+    u32 field14_0x2c;
+    u16 mLocale[9];
+    u16 mSublocale[9];
+};
+
+struct FileInfo {
+    u16 mFilePath[128];
+    void *mFileBuffer;
+    u8 *mCompFileBuffer;
+    void *field3_0x108;
+    size_t mFileSize;
+    size_t mCompFileSize;
+    size_t field6_0x114;
+    u8 mMode;
+    u8 field8_0x119;
+    u8 field9_0x11a;
+    u8 field10_0x11b;
+    u32 mAlignment;
+    u8 mStatus;
+    u8 field13_0x121;
+    u8 field14_0x122;
+    u8 field15_0x123;
+    s32 mId;
+};
+
 } // namespace Megamix
 
 #endif
