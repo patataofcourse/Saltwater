@@ -8,9 +8,6 @@ using CTRPluginFramework::Utils;
 
 namespace Megamix{
 
-    CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
-    CInputManager** gInputManager = (CInputManager**)Region::GlobalInputManagerPointer();
-
     void tickflowCommandsHookWrapper() {
         asm(
             "mov r0, r6\n"
@@ -45,9 +42,11 @@ namespace Megamix{
             self->mCondvar = 0;
             return;
         } else if (arg0 == 2) {
+            CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
             arg0 = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mPlayStyle;
         }
 
+        CInputManager** gInputManager = (CInputManager**)Region::GlobalInputManagerPointer();
         if (arg0 == 0) {
             if (args[0] >= 32) {
                 self->mCondvar = 0;
@@ -71,6 +70,7 @@ namespace Megamix{
     }
 
     void languageCheck(CTickflow* self, u32 arg0, u32* args) {
+        CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
         self->mCondvar = (*gSaveData)->mFileData[(*gSaveData)->mCurrentFile].mLocale;
     }
 
