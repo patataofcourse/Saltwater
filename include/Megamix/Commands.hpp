@@ -8,7 +8,7 @@ namespace Megamix{
         InputCheck = 0x200,
         VersionNumber = 0x201,
         LanguageCheck = 0x202,
-        DisplayCondvar = 0x203
+        DisplayCondvar = 0x300
     };
 
     void tickflowCommandsHookWrapper();
