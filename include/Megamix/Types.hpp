@@ -348,25 +348,25 @@ namespace Megamix {
     //-----------------
 
     enum class EButtonFlag {
-        Button_None=0,
-        Button_A=1 << 0,
-        Button_B=1 << 1,
-        Button_Select=1 << 2,
-        Button_Start=1 << 3,
-        Button_DpadRight=1 << 4,
-        Button_DpadLeft=1 << 5,
-        Button_DpadUp=1 << 6,
-        Button_DpadDown=1 << 7,
-        Button_R=1 << 8,
-        Button_L=1 << 9,
-        Button_X=1 << 10,
-        Button_Y=1 << 11
+        ButtonNone=0,
+        ButtonA=1 << 0,
+        ButtonB=1 << 1,
+        ButtonSelect=1 << 2,
+        ButtonStart=1 << 3,
+        ButtonDpadRight=1 << 4,
+        ButtonDpadLeft=1 << 5,
+        ButtonDpadUp=1 << 6,
+        ButtonDpadDown=1 << 7,
+        ButtonR=1 << 8,
+        ButtonL=1 << 9,
+        ButtonX=1 << 10,
+        ButtonY=1 << 11
     };
 
     enum class ClampMode {
-        STICK_CLAMP_MODE_CIRCLE=0,
-        STICK_CLAMP_MODE_CROSS=1,
-        STICK_CLAMP_MODE_MINIMUM=2
+        ModeCircle=0,
+        ModeCross=1,
+        ModeMinimum=2
     };
 
     struct AnalogStickClamper {
