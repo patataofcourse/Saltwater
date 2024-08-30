@@ -102,7 +102,11 @@ namespace Megamix{
         // Keeping that just in case
         // Screen bottomScreen = OSD::GetBottomScreen();
         // bottomScreen.Draw("Condvar:"+Utils::Format("0x%08x",self->condvar), 0, 0, Color::White, Color::Black);
-        OSD::Notify("Condvar:"+Utils::Format("0x%08x",self->condvar));
+        if(arg0 == 0) {
+            OSD::Notify("Condvar:"+Utils::Format("0x%08x",self->condvar));
+        } else if (arg0 == 1){ 
+            OSD::Notify("Condvar:"+Utils::Format("%08d",self->condvar));
+        }
     }
 
 }
