@@ -19,20 +19,25 @@ namespace Megamix{
     extern "C" __attribute__((used)) 
     int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
         switch(cmd_num){
-            case 0: // Necessary, as it doesn't execute otherwise.
+             // Necessary, as our hook overrides case 0.
+            case 0:
                 return Region::TickflowAsyncSubLocation();
+            
+            // 0x200 range - regular custom commands
             case InputCheck:
                 input_cmd(self, arg0, args);
-            break;
+                break;
             case VersionNumber:
                 versionCheck(self, arg0, args);
-            break;
+                break;
             case LanguageCheck:
                 languageCheck(self, arg0, args);
-            break;
+                break;
+            
+            // 0x300 range - debugging commands
             case DisplayCondvar:
                 displayCondvar(self, arg0, args);
-            break;
+                break;
         }
         return Region::TickflowCommandsEnd();
     }
