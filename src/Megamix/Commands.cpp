@@ -53,7 +53,7 @@ namespace Megamix{
 
         CInputManager** gInputManager = (CInputManager**)Region::GlobalInputManagerPointer();
         if (arg0 == 0) {
-            if (args[0] >= 32) {
+            if (args[0] >= 32) { // We're working with a 32-bit integer here, so flags are limited to bits 1-31
                 self->condvar = 0;
                 return;
             }
