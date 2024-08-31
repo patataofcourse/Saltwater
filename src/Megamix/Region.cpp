@@ -342,13 +342,12 @@ namespace Region {
 
     u32 GlobalSaveDataPointer(){
         switch (region) {
-            case JP:
-                return 0;
             case US:
                 return 0x54d350;
             case EU:
             case KR:
                 return 0x54d448;
+            case JP:
             default:
                 return 0;
         }
@@ -356,13 +355,12 @@ namespace Region {
 
     u32 GlobalInputManagerPointer(){
         switch (region) {
-            case JP:
-                return 0;
             case US:
                 return 0x54eed0;
             case EU:
             case KR:
                 return 0x54efc8;
+            case JP:
             default:
                 return 0;
         }
@@ -370,13 +368,12 @@ namespace Region {
 
     u32 GlobalFileManagerPointer(){
         switch (region) {
-            case JP:
-                return 0;
             case US:
                 return 0x54eedc;
             case EU:
             case KR:
                 return 0x54efd4;
+            case JP:
             default:
                 return 0;
         }

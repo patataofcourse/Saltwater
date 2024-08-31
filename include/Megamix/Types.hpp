@@ -18,19 +18,19 @@ namespace Megamix {
         u32 id2;
         u8 unk8;
         u16 unkA;
-        Tempo *pos;
+        Tempo* pos;
     };
 
     struct SM_TempoTable {
         u32 id;
-        TempoTable *tempo;
+        TempoTable* tempo;
     };
 
     struct CSoundManager {
         u8 pad0[0x8C];
-        TempoTable *tempoTable;
-        SM_TempoTable *tableStrm;
-        SM_TempoTable *tableSeq;
+        TempoTable* tempoTable;
+        SM_TempoTable* tableStrm;
+        SM_TempoTable* tableSeq;
         u16 numberTempos;
     };
 
@@ -181,11 +181,11 @@ namespace Megamix {
         u32 columnCount;
         std::array<u16, 5> gameIndices;
         u8 pad[2];
-        const char *titleId;
+        const char* titleId;
         u32 highIndex;
         u32 lowIndex;
 
-        MuseumRow(std::array<u16, 5> gameIndices, const char *titleId, u32 highIndex, u32 lowIndex) {
+        MuseumRow(std::array<u16, 5> gameIndices, const char* titleId, u32 highIndex, u32 lowIndex) {
             if      (gameIndices[0] == 0x101) this->columnCount = 0;
             else if (gameIndices[1] == 0x101) this->columnCount = 1;
             else if (gameIndices[2] == 0x101) this->columnCount = 2;
@@ -244,19 +244,19 @@ namespace Megamix {
     };
 
     struct CList {
-        int *_vtable;
-        struct CList *next;
-        struct CList *prev;
+        int* _vtable;
+        struct CList* next;
+        struct CList* prev;
     };
 
     struct TickFlowStack {
-        u32 *tick;
+        u32* tick;
         u32 tickSize;
     };
 
     struct CTickflow {
         CList at0;
-        u32 *tickflow;
+        u32* tickflow;
         u32 category;
         int tickFlowSize;
         float rest;
@@ -293,54 +293,54 @@ namespace Megamix {
     };
 
     enum class EPlayStyle : u8 { /* simple tap / button */
-    Button = 0,
-    Tap = 1
+        Button = 0,
+        Tap = 1
     };
 
     struct CSaveFileData {
-    u8 pad1[0x10];
-    u32 playTime;
-    u8 playerData; /* Created by retype action */
-    u8 pad2[0x5F];
-    enum EGameRank gameRanks[104];
-    u8 pad3[0xF18];
-    u8 field3957_0xff4[1][16];
-    u8 pad4[0xBF];
-    u8 locale; /* Created by retype action */
-    u8 pad5[0x91];
-    bool unlockedGoat; /* Created by retype action */
-    u8 pad6[0x5];
-    u8 isFirstMuseumTalk; /* Created by retype action */
-    u8 pad7[0x2];
-    bool hasBeenInCafe;
-    u8 pad8[0x1D];
-    u16 clPlay2;
-    u16 cLPlay3;
-    u8 pad9[0x4];
-    u16 money;
-    u16 coin;
-    enum EPlayStyle playStyle;
-    u8 timingEft;
-    u8 isCec; /* Created by retype action */
-    u8 pad10[0x131];
-    u8 field4646_0x12bc[104];
-    u8 pad11[0xAA];
-    u8 onion[3];
-    u8 pad12[0x7];
-    u32 goatLv;
-    u8 pad13[0x26c];
+        u8 pad1[0x10];
+        u32 playTime;
+        u8 playerData;
+        u8 pad2[0x5F];
+        enum EGameRank gameRanks[104];
+        u8 pad3[0xF18];
+        u8 field3957_0xff4[1][16];
+        u8 pad4[0xBF];
+        u8 locale;
+        u8 pad5[0x91];
+        bool unlockedGoat;
+        u8 pad6[0x5];
+        u8 isFirstMuseumTalk;
+        u8 pad7[0x2];
+        bool hasBeenInCafe;
+        u8 pad8[0x1D];
+        u16 clPlay2;
+        u16 cLPlay3;
+        u8 pad9[0x4];
+        u16 money;
+        u16 coin;
+        enum EPlayStyle playStyle;
+        u8 timingEft;
+        u8 isCec;
+        u8 pad10[0x131];
+        u8 field4646_0x12bc[104];
+        u8 pad11[0xAA];
+        u8 onion[3];
+        u8 pad12[0x7];
+        u32 goatLv;
+        u8 pad13[0x26c];
     };
 
     struct CSaveData {
-    int *_vtable;
-    u32 unk1;
-    u8 unk2;
-    u8 unk3;
-    u32 unk4;
-    u32 unk5[4];
-    u8 cSaveData_sub1[0x1c20];
-    struct CSaveFileData fileData[4];
-    u32 currentFile;
+        int* _vtable;
+        u32 unk1;
+        u8 unk2;
+        u8 unk3;
+        u32 unk4;
+        u32 unk5[4];
+        u8 cSaveData_sub1[0x1c20];
+        struct CSaveFileData fileData[4];
+        u32 currentFile;
     };
 
     //-----------------
@@ -387,18 +387,18 @@ namespace Megamix {
     };
 
     struct PadReader {
-        struct Pad *pad;
+        struct Pad* pad;
         s32 indexOfRead;
         u32 latestHold;
         struct AnalogStickClamper stickClamper;
         bool isReadLatestFirst;
         u32 padding3;
-        u32 padding4; /* this is intentional */
+        u32 padding4;
         s64 tickOfRead;
     };
 
     struct CInputPadHandler {
-        u8 *_vtable;
+        u8* _vtable;
         enum EButtonFlag holdButtons;
         enum EButtonFlag triggerButtons;
         enum EButtonFlag releaseButtons;
@@ -415,7 +415,7 @@ namespace Megamix {
         float field14_0x48;
         float field15_0x4c;
         float field16_0x50;
-        struct PadReader *padReader;
+        struct PadReader* padReader;
         u8 field18_0x58;
         u8 field19_0x59;
         u8 field20_0x5a;
@@ -423,7 +423,7 @@ namespace Megamix {
     };
 
     struct TouchPanelReader {
-        struct TouchPanel *touchPanel;
+        struct TouchPanel* touchPanel;
         s32 indexOfRead;
         s64 tickOfRead;
     };
@@ -436,8 +436,8 @@ namespace Megamix {
     };
 
     struct CInputTouchPanelHandler {
-        u8 *_vtable;
-        struct TouchPanelReader *touchPanelReader;
+        u8* _vtable;
+        struct TouchPanelReader* touchPanelReader;
         struct TouchPanelStatus touchPanelStatus;
         struct TouchPanelStatus previousTouchPanelStatus;
         float field4_0x18;
@@ -460,16 +460,16 @@ namespace Megamix {
         float field21_0x5c;
         float field22_0x60;
         s32 field23_0x64;
-        bool currentTouched; /* Created by retype action */
-        bool previousTouched; /* Created by retype action */
+        bool currentTouched;
+        bool previousTouched;
         u8 field26_0x6a;
         u8 field27_0x6b;
     };
 
     struct CInputManager {
-        int *_vtable;
-        struct CInputPadHandler *padHandler;
-        struct CInputTouchPanelHandler *touchPanelHandler;
+        int* _vtable;
+        struct CInputPadHandler* padHandler;
+        struct CInputTouchPanelHandler* touchPanelHandler;
     };
 
 
@@ -478,14 +478,14 @@ namespace Megamix {
     //-----------------
 
     struct CFileManager {
-        int *_vtable;
+        int* _vtable;
         s32 field1_0x4;
         s32 field2_0x8;
-        void *romWorkingMemory;
+        void* romWorkingMemory;
         u32 romWorkingMemorySize;
-        u8 *gzipWorkMemory;
-        struct FileInfo *fileInfo;
-        u32 *fileIds;
+        u8* gzipWorkMemory;
+        struct FileInfo* fileInfo;
+        u32* fileIds;
         u32 fileIdCount;
         u32 field9_0x24;
         bool field10_0x28;
@@ -499,9 +499,9 @@ namespace Megamix {
 
     struct FileInfo {
         u16 filePath[128];
-        void *fileBuffer;
-        u8 *compFileBuffer;
-        void *field3_0x108;
+        void* fileBuffer;
+        u8* compFileBuffer;
+        void* field3_0x108;
         size_t fileSize;
         size_t compFileSize;
         size_t field6_0x114;

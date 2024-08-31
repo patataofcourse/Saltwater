@@ -48,6 +48,7 @@ namespace Megamix{
             return;
         } else if (arg0 == 2) {
             CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
+            // Here, arg0 gets replaced by the playstyle - 0 for buttons, 1 for tap - Results in playstyle-dependant reading
             arg0 = (u32)(*gSaveData)->fileData[(*gSaveData)->currentFile].playStyle;
         }
 
@@ -68,23 +69,23 @@ namespace Megamix{
         if (arg0 == 0){ //RHMPatch version
             self->condvar = SUPPORTED_RHMPATCH;
         } else if (arg0 == 1){ //Saltwater version
-            self->condvar = VERSION_MAJOR*0x10
-                +VERSION_MINOR;
+            self->condvar = VERSION_MAJOR*0x10+VERSION_MINOR;
         }
     }
 
     void languageCheck(CTickflow* self, u32 arg0, u32* args) {
         CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
         CFileManager** gFileManager = (CFileManager**)Region::GlobalFileManagerPointer();
-        int locale = (*gSaveData)->fileData[(*gSaveData)->currentFile].locale;
-        if(locale == 1){
+        int saveLanguage = (*gSaveData)->fileData[(*gSaveData)->currentFile].locale;
+        if(saveLanguage == 1){
             self->condvar = 0;
         } else {
-            wchar_t sublocale[4];
+            wchar_t sublocale[5];
             utf16_to_utf32((u32*)sublocale, (*gFileManager)->sublocale, 4);
+            sublocale[4] = '\0';
             std::wstring localews(sublocale);
             if(localews.find(L"JP") != (unsigned int)-1){
-                self->condvar = 1; 
+                self->condvar = 0; 
             } else if (localews.find(L"EN") != (unsigned int)-1){
                 self->condvar = 1; 
             } else if (localews.find(L"FR") != (unsigned int)-1) {
