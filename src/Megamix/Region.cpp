@@ -292,6 +292,93 @@ namespace Region {
         }
     }
 
+    // Various locations used for the Tickflow Command flow
+
+    u32 TickflowCommandsSwitch() {
+        switch (region) {
+            case JP:
+                return 0x25e054;
+            case US:
+            case EU:
+                return 0x25c3c0;
+            case KR:
+                return 0x25c398;
+            default:
+                return 0;
+        }
+    }
+
+    u32 TickflowCommandsEnd() {
+        switch (region) {
+            case JP:
+                return 0x262eac;
+            case US:
+            case EU:
+                return 0x2613cc;
+            case KR:
+                return 0x2613a4;
+            default:
+                return 0;
+        }
+    }
+
+    // Location of the code for async_sub (fixes custom commands)
+
+    u32 TickflowAsyncSubLocation() {
+        switch (region) {
+            case JP:
+                return 0x25e338;
+            case US:
+            case EU:
+                return 0x25c6c0;
+            case KR:
+                return 0x25c698;
+            default:
+                return 0;
+        }
+    }
+
+    // Locations of global variables
+
+    u32 GlobalSaveDataPointer(){
+        switch (region) {
+            case US:
+                return 0x54d350;
+            case EU:
+            case KR:
+                return 0x54d448;
+            case JP:
+            default:
+                return 0;
+        }
+    }
+
+    u32 GlobalInputManagerPointer(){
+        switch (region) {
+            case US:
+                return 0x54eed0;
+            case EU:
+            case KR:
+                return 0x54efc8;
+            case JP:
+            default:
+                return 0;
+        }
+    }
+
+    u32 GlobalFileManagerPointer(){
+        switch (region) {
+            case US:
+                return 0x54eedc;
+            case EU:
+            case KR:
+                return 0x54efd4;
+            case JP:
+            default:
+                return 0;
+        }
+    }
+
     // RHMPatch's retry remix sub patch locations
     std::vector<u32> RetryRemixLocs() {
         switch (region) {

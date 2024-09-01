@@ -47,6 +47,14 @@ namespace Region {
     u32 DataEnd();
     u32 BssEnd();
 
+    u32 TickflowCommandsSwitch();
+    u32 TickflowCommandsEnd();
+    u32 TickflowAsyncSubLocation();
+
+    u32 GlobalSaveDataPointer();
+    u32 GlobalInputManagerPointer();
+    u32 GlobalFileManagerPointer();
+
     std::vector<u32> RetryRemixLocs();
 
     u32 RegionFSHookFunc();

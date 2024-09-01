@@ -7,6 +7,7 @@ namespace Megamix::Hooks {
     void TickflowHooks();
     void TempoHooks();
     void RegionHooks();
+    void CommandHook();
     void DisableAllHooks();
 
     template<typename T> T StubbedFunction();
