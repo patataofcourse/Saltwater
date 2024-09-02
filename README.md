@@ -25,6 +25,8 @@ To install them, you'll need [devkitPro pacman](https://devkitpro.org/wiki/devki
 Run `make` to build the plugin.
 
 ## Credits
+* patataofcourse, 0xadk, and TheAlternateDoctor for programming the actual plugin
+* EstexNT for a LOT of the research used in this project - thank you so much!
 * Nanquitas for the Luma3DS plugin loader, CTRPF, and the template
 * PabloMK7 for CTRPF, the template, CTGP-7 (which inspired this project), and a LOT of support (ty)
 * NeoBeo for RHMPatch
