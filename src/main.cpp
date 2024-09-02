@@ -76,9 +76,6 @@ static void ToggleTouchscreenForceOn(void) {
 void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     ToggleTouchscreenForceOn();
 
-    // Crash handler
-    Process::exceptionCallback = Megamix::CrashHandler;
-
     // le params :D
     params = *(SaltwaterParams*)ctrpf::FwkSettings::Header->config;
 
@@ -156,6 +153,9 @@ void InitMenu(ctrpf::PluginMenu &menu) {
 #endif
 
 int ctrpf::main(void) {
+    // Crash handler
+    Process::exceptionCallback = Megamix::CrashHandler;
+
     if (params.barista != 0xD06) {
         ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();
         Process::ReturnToHomeMenu();
