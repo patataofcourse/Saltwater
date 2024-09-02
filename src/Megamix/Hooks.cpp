@@ -22,7 +22,10 @@ namespace Megamix::Hooks {
     RT_HOOK regionFSHook;
     RT_HOOK regionOtherHook;
 
+    RT_HOOK tickflowCommandsHook;
+
     RT_HOOK fsOpenFileHook;
+
 
     void TickflowHooks() {
         rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
@@ -51,6 +54,11 @@ namespace Megamix::Hooks {
         rtEnableHook(&regionOtherHook);
     }
 
+    void CommandHook() {
+        rtInitHook(&tickflowCommandsHook, Region::TickflowCommandsSwitch(), (u32)tickflowCommandsHookWrapper);
+        rtEnableHook(&tickflowCommandsHook);
+    }
+
     void FSHooks() {
         rtInitHook(&fsOpenFileHook, Region::DoOpenFileHookFunc(), (u32)doReadFile);
         rtEnableHook(&fsOpenFileHook);
@@ -64,6 +72,7 @@ namespace Megamix::Hooks {
         rtDisableHook(&tempoAllHook);
         rtDisableHook(&regionFSHook);
         rtDisableHook(&regionOtherHook);
+        rtDisableHook(&tickflowCommandsHook);
         rtDisableHook(&fsOpenFileHook);
     }
 
@@ -89,4 +98,5 @@ namespace Megamix::Hooks {
     }
 
     template void StubFunction<void>(u32);
+
 }

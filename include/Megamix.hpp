@@ -15,4 +15,5 @@
 #include "Megamix/Patches.hpp"
 #include "Megamix/BTKS.hpp"
 #include "Megamix/Error.hpp"
+#include "Megamix/Commands.hpp"
 #include "Megamix/Types.hpp"
