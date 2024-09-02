@@ -16,7 +16,7 @@ namespace Megamix::Hooks {
             if (cache != nullptr) {
                 fileInfo->fileSize = cache->size;
                 fileInfo->fileBuffer = Region::OperatorNewFunc()(fileInfo->fileSize, cache->mode, cache->alignment);
-                memcpy(fileInfo->fileBuffer, fileInfo->fileBuffer, fileInfo->fileSize);
+                memcpy(fileInfo->fileBuffer, cache->buffer, fileInfo->fileSize);
                 return;
             }
         }

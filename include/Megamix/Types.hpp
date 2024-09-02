@@ -520,7 +520,7 @@ namespace Megamix {
 
     struct CachedFileInfo {
         char16_t filePath[64];
-        void* memory;
+        void* buffer;
         u32 size;
         u8 mode;
         s32 alignment;
