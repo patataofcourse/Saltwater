@@ -158,7 +158,7 @@ void InitMenu(ctrpf::PluginMenu &menu) {
 
 int ctrpf::main(void) {
     // Crash handler
-    //Process::exceptionCallback = Megamix::CrashHandler;
+    Process::exceptionCallback = Megamix::CrashHandler;
 
     if (params.barista != 0xD06) {
         ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();

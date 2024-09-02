@@ -15,7 +15,7 @@ namespace Megamix {
 
     extern u8 errorImg[];
 
-    enum class CrashType {
+    enum class CrashType: u8 {
         Extended,
         Short,
     };
