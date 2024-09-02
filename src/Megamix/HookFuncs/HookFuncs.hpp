@@ -1,3 +1,6 @@
+#ifndef HOOKFUNCS_HPP
+#define HOOKFUNCS_HPP
+
 // for internal usage in Hooks.cpp - please don't call any of these functions directly
 
 #include <3ds.h>
@@ -14,6 +17,9 @@ namespace Megamix::Hooks {
     Megamix::TempoTable* getTempoSeq(Megamix::CSoundManager* this_, u32 id);
     Megamix::TempoTable* getTempoAll(Megamix::CSoundManager* this_, u32 id);
 
+    // Commands.cpp
+    void tickflowCommandsHookWrapper();
+
     // FS.cpp
     void doReadFile(CFileManager* self, FileInfo* fileInfo);
 
@@ -21,3 +27,5 @@ namespace Megamix::Hooks {
     u32 getRegionCTR();
     u32 getRegionMegamix();
 }
+
+#endif

@@ -6,7 +6,7 @@
 #include "Megamix.hpp"
 #include "Config.hpp"
 
-#include "./HookFuncs/HookFuncs.h"
+#include "./HookFuncs/HookFuncs.hpp"
 
 namespace Megamix::Hooks {
     // Hook functions have been moved to the HookFuncs folder

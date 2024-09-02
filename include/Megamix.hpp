@@ -7,13 +7,12 @@
 #define MEGAMIX_MODS_PATH "/spicerack/mods/"
 #define MEGAMIX_CONFIG_PATH MEGAMIX_BIN_PATH "saltwater.cfg"
 
-#endif
-
 #include "Saltwater.hpp"
-#include "Megamix/Region.hpp"
-#include "Megamix/Hooks.hpp"
-#include "Megamix/Patches.hpp"
 #include "Megamix/BTKS.hpp"
 #include "Megamix/Error.hpp"
-#include "Megamix/Commands.hpp"
+#include "Megamix/Hooks.hpp"
+#include "Megamix/Patches.hpp"
+#include "Megamix/Region.hpp"
 #include "Megamix/Types.hpp"
+
+#endif 
