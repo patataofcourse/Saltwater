@@ -31,7 +31,7 @@ namespace Megamix::Hooks {
             return (((result & 0x3fc00) == 0x4400) && (99 < (result & 0x3ff))) && ((result & 0x3ff) < 0xb4);
         };
 
-        const char* LAYERED_LOCATION = "/spicerack/fs/%ls%ls";
+        const char* LAYERED_LOCATION = MEGAMIX_BIN_PATH "fs/%ls%ls";
 
         wchar_t* strings_utf32[3] = {
             new wchar_t[9],
@@ -59,20 +59,24 @@ namespace Megamix::Hooks {
         }
         
         if (result_ctrpf == 0) {
-            // TODO: read file here
-            ERRF_ThrowResultWithMessage(0xdeadc0de, "WIP");
+            // read the file here
 
             s64 size = file_ctrpf.GetSize();
             if (size < 0) {
-                ERRF_ThrowResultWithMessage(size, "(m) Could not read file");
+                ERRF_ThrowResultWithMessage(size, "(m) Could not read filesize");
             }
             fileInfo->fileSize = size;
 
-            void* fileBuffer = Region::OperatorNewFunc()(fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
-            result_ctrpf = file_ctrpf.Read(fileBuffer, fileInfo->fileSize);
+            fileInfo->fileBuffer = Region::OperatorNewFunc()(fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
+
+            // CTRPF can't write to RAM for whatever reason, so we're adding an extra buffer
+            u8* tempBuffer = new u8[size];
+            result_ctrpf = file_ctrpf.Read(tempBuffer, fileInfo->fileSize);
             if (result_ctrpf < 0) {
                 ERRF_ThrowResultWithMessage(result_ctrpf, "(m) Could not read file");
             }
+            memcpy(fileInfo->fileBuffer, tempBuffer, fileInfo->fileSize);
+            delete tempBuffer;
 
             file_ctrpf.Close();
         } else {
