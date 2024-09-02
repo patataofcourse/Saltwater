@@ -282,8 +282,32 @@ namespace Megamix {
         u32 unk2C;
         char16_t locale[9];
         char16_t sublocale[9];
-        struct { u32 unk[2]; } thread; //TODO
+        struct { u32 unk[2]; } thread; //TODO: s64?
         bool threadCreated;
+    };
+
+    struct CachedFileInfo {
+        char16_t filePath[64];
+        void* memory;
+        u32 size;
+        u8 mode;
+        s32 alignment;
+    };
+
+    struct CCachedFile {
+        void* vtable;
+        void* heapStart;
+        u8 expHeap[0x58]; // TODO
+        u8 expHeapMutex[0xc]; //TODO
+        u32 unk;
+        CachedFileInfo* info;
+    };
+
+    struct CCachedFileManager {
+        void* vtable;
+        CCachedFile* files;
+        s32 fileCount;
+        bool enabled;
     };
 }
 

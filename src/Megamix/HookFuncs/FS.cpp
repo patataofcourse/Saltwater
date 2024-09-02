@@ -10,14 +10,15 @@ namespace Megamix::Hooks {
     void doReadFile(CFileManager* self, FileInfo* fileInfo) {
         // TODO: triple check everything here works properly - ESPECIALLY the filenames, both for internal game functions and ctrpf functions
 
-        void* cache; // i don't feel like making another struct for this undocumented thing, so pointer arithmetic go brr
-
         // cached filesystem hell
-        if (fileInfo->fileId >= 0 && (cache = Region::IsFileCachedFunc()(*(void**)Region::CacheFileManagerPos(), fileInfo->fileId, fileInfo), cache != 0)) {
-            fileInfo->fileSize = *(u32*)(cache + 0x84);
-            fileInfo->fileBuffer = new u8[fileInfo->fileSize];
-            memcpy(fileInfo->fileBuffer, *(void**)(cache + 0x80), fileInfo->fileSize);
-            return;
+        if (fileInfo->fileId >= 0) {
+            CachedFileInfo* cache = Region::IsFileCachedFunc()(*(CCachedFileManager**)Region::CacheFileManagerPos(), fileInfo->fileId, fileInfo);
+            if (cache != nullptr) {
+                fileInfo->fileSize = cache->size;
+                fileInfo->fileBuffer = Region::OperatorNewFunc()(fileInfo->fileSize, cache->mode, cache->alignment);
+                memcpy(fileInfo->fileBuffer, fileInfo->fileBuffer, fileInfo->fileSize);
+                return;
+            }
         }
 
         FileInputStream inputStream = {(void*)Region::FileInputStreamVtable(), {0, 0, 0}};
@@ -59,6 +60,7 @@ namespace Megamix::Hooks {
         
         if (result_ctrpf == 0) {
             // TODO: read file here
+            ERRF_ThrowResultWithMessage(0xdeadc0de, "WIP");
 
             s64 size = file_ctrpf.GetSize();
             if (size < 0) {
@@ -143,11 +145,12 @@ namespace Megamix::Hooks {
         }
 
         // cache file
-        // i still refuse to make a struct for cache shit, even if this is documented
-        u8 is_cache_enabled = *(u8*)(Region::CacheFileManagerPos() + 0xc);
-        if ((fileInfo->fileId > -1) && is_cache_enabled != 0) { // hey champ shouldnt this also not happen when the file isn't loaded???
-            Region::CacheFileFunc()((void*)Region::CacheFileManagerPos(), fileInfo->fileId, fileInfo->filePath, fileInfo->fileBuffer,
-                fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
+        if (fileInfo->fileId > -1) {
+            auto cache_manager = *(CCachedFileManager**)Region::CacheFileManagerPos();
+            if (cache_manager->enabled) {
+                Region::CacheFileFunc()(cache_manager, fileInfo->fileId, fileInfo->filePath, fileInfo->fileBuffer,
+                    fileInfo->fileSize, fileInfo->mode, fileInfo->alignment);
+            }
         }
 
         // and done!
