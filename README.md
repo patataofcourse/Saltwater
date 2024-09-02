@@ -7,8 +7,9 @@ Join the RHModding server for information and support regarding modding Rhythm H
 
 ## How to use
 The following guides explain how to install Saltwater and its launcher, Barista:
-    - Hardware: https://patataofcourse.github.io/spicerack-guide/
-    - Citra: https://patataofcourse.github.io/spicerack-guide/citra.html
+
+- Hardware: https://patataofcourse.github.io/spicerack-guide/
+- Citra: https://patataofcourse.github.io/spicerack-guide/citra.html
 
 
 ## Building
