@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "types.h"
+#include "Megamix/Types.hpp"
 
 extern u8 region;
 
@@ -59,6 +59,35 @@ namespace Region {
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
+
+    typedef Megamix::CachedFileInfo* (*IsFileCachedSignature) (Megamix::CCachedFileManager* self, s32 fileId, Megamix::FileInfo* fileInfo);
+    typedef bool (*CacheFileSignature) (Megamix::CCachedFileManager* self, s32 fileId, char16_t* filePath, void* fileBuffer, size_t fileSize, u8 mode, s32 alignment);
+
+    typedef Result (*TryOpenFileSignature) (Megamix::FileInputStream::FileBase* self, char16_t* filePath, u32 mode);
+    typedef Result (*CloseFileSignature) (void* ptr);
+    typedef Result (*TryGetSizeSignature) (Megamix::FileInputStream::FileBase* self, s64* size);
+    typedef Result (*TryReadSignature) (Megamix::FileInputStream::FileBase* self, u32* bytesRead, void* fileBuffer, u32 size);
+    
+    typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
+
+    typedef void* (*OperatorNewSignature) (size_t size, s32 mode, s32 alignment);
+
+    u32 DoOpenFileHookFunc();
+    u32 CacheFileManagerPos();
+    u32 FileInputStreamVtable();
+
+    IsFileCachedSignature IsFileCachedFunc();
+    CacheFileSignature CacheFileFunc();
+    TryOpenFileSignature TryOpenFileFunc();
+    CloseFileSignature CloseFileFunc();
+    TryGetSizeSignature TryGetSizeFunc();
+    TryReadSignature TryReadFunc();
+
+    SWPrintfSignature SWPrintfFunc();
+
+    // use this to allocate stuff in the game's RAM
+    OperatorNewSignature OperatorNewFunc();
+
 }
 
 #endif

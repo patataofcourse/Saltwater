@@ -6,7 +6,24 @@
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
 
-namespace Megamix{
+namespace Megamix::Hooks {
+    extern "C" int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args);
+
+    // define commands up here
+    enum CustomCommands: u16 {
+        InputCheck = 0x200,
+        VersionNumber = 0x201,
+        LanguageCheck = 0x202,
+        
+        DisplayCondvar = 0x300
+    };
+
+    void input_cmd(CTickflow* self, u32 arg0, u32* args);
+    void versionCheck(CTickflow* self, u32 arg0, u32* args);
+    void languageCheck(CTickflow* self, u32 arg0, u32* args);
+    void displayCondvar(CTickflow* self, u32 arg0, u32* args);
+
+    // -------
 
     void tickflowCommandsHookWrapper() {
         asm(
@@ -48,7 +65,7 @@ namespace Megamix{
             return;
         } else if (arg0 == 2) {
             CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
-            // Here, arg0 gets replaced by the playstyle - 0 for buttons, 1 for tap - Results in playstyle-dependant reading
+            // Here, arg0 gets replaced by the playstyle - 0 for buttons, 1 for tap. Results in playstyle-dependant reading
             arg0 = (u32)(*gSaveData)->fileData[(*gSaveData)->currentFile].playStyle;
         }
 
@@ -66,10 +83,10 @@ namespace Megamix{
     }
 
     void versionCheck(CTickflow* self, u32 arg0, u32* args) {
-        if (arg0 == 0){ //RHMPatch version
+        if (arg0 == 0){ // RHMPatch version
             self->condvar = SUPPORTED_RHMPATCH;
         } else if (arg0 == 1){ //Saltwater version
-            self->condvar = VERSION_MAJOR*0x10+VERSION_MINOR;
+            self->condvar = VERSION_MAJOR * 0x10 + VERSION_MINOR;
         }
     }
 
@@ -81,7 +98,7 @@ namespace Megamix{
             self->condvar = 0;
         } else {
             wchar_t sublocale[5];
-            utf16_to_utf32((u32*)sublocale, (*gFileManager)->sublocale, 4);
+            utf16_to_utf32((u32*)sublocale, (u16*)(*gFileManager)->sublocale, 4);
             sublocale[4] = '\0';
             std::wstring localews(sublocale);
             if(localews.find(L"JP") != (unsigned int)-1){
@@ -108,7 +125,7 @@ namespace Megamix{
         // Keeping that just in case
         // Screen bottomScreen = OSD::GetBottomScreen();
         // bottomScreen.Draw("Condvar:"+Utils::Format("0x%08x",self->condvar), 0, 0, Color::White, Color::Black);
-        if(arg0 == 0) {
+        if (arg0 == 0) {
             OSD::Notify("Condvar:"+Utils::Format("0x%08x",self->condvar));
         } else if (arg0 == 1){ 
             OSD::Notify("Condvar:"+Utils::Format("%08d",self->condvar));

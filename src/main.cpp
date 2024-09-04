@@ -1,7 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "csvc.h"
+#include "external/csvc.h"
 #include "external/plgldr.h"
 
 #include "Megamix.hpp"
@@ -110,6 +110,10 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
         Megamix::Hooks::TempoHooks();
         //TODO: find out how to make the tickflow commands hook JP-compatible
         Megamix::Hooks::CommandHook();
+    }
+
+    if (region == Region::US) {
+        Megamix::Hooks::FSHooks();
     }
 
     if (region != Region::JP && params.extra_rows) {

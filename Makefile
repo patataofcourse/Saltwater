@@ -14,12 +14,12 @@ PLGINFO 	:= 	saltwater.plgInfo
 
 BUILD 		:= 	build
 INCLUDES	:= 	include
-SOURCES 	:= 	src src/Megamix src/external #src/Helpers
+SOURCES 	:= 	src $(wildcard src/**/.) $(wildcard src/**/**/.)
 
 RELEASE		?= 0
 
 FLATPAK 	:= 0
-BARISTA_DIR	?= ../Barista/Barista
+BARISTA_DIR	?= ../Barista
 
 # Assume flatpak
 ifeq ($(shell which citra 2> /dev/null || which citra-qt 2> /dev/null || true),)
@@ -58,7 +58,7 @@ ifneq ($(RELEASE), 0)
 CFLAGS		+= -DRELEASE
 endif
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20 #-Wno-pointer-arith
 
 ASFLAGS		:=	$(ARCH)
 LDFLAGS		:= -T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,--gc-sections
