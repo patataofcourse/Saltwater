@@ -76,7 +76,7 @@ namespace Megamix::Hooks {
                 ERRF_ThrowResultWithMessage(result_ctrpf, "(m) Could not read file");
             }
             memcpy(fileInfo->fileBuffer, tempBuffer, fileInfo->fileSize);
-            delete tempBuffer;
+            delete[] tempBuffer;
 
             file_ctrpf.Close();
         } else {
