@@ -160,6 +160,11 @@ int ctrpf::main(void) {
     // Crash handler
     Process::exceptionCallback = Megamix::CrashHandler;
 
+#ifdef RELEASE
+    // it's more important to be able to fix an error with the game than an error with the crash handler
+    Process::ThrowOldExceptionOnCallbackException = true;
+#endif
+
     if (params.barista != 0xD06) {
         ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();
         Process::ReturnToHomeMenu();

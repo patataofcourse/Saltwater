@@ -87,7 +87,7 @@ namespace Megamix::Hooks {
             Result result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
 
 
-            // locale - RomFS   
+            // locale - RomFS
             if (game_result_checker(result_game)) {
                 if ((u32)inputStream.base.ptr >> 1 != 0) {
                     if ((u32)inputStream.base.ptr & 1 == 1) {
@@ -102,7 +102,7 @@ namespace Megamix::Hooks {
                 result_game = Region::TryOpenFileFunc()(&inputStream.base, buffer, 1);
             }
 
-            // global - RomFS
+            // global - RomFS 
             if (game_result_checker(result_game)) {
                 if ((u32)inputStream.base.ptr >> 1 != 0) {
                     if ((u32)inputStream.base.ptr & 1 == 1) {
