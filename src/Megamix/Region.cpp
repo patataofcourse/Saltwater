@@ -420,4 +420,107 @@ namespace Region {
 
         }
     }
+
+    // Filesystem patches
+    u32 DoOpenFileHookFunc() {
+        switch (region) {
+            case JP:
+                return -1; //TODO! this will probably need a different hook
+            case US:
+                return 0x283f5c;
+            default:
+                return 0;
+        }
+    }
+
+    u32 CacheFileManagerPos() {
+        switch (region) {
+            case US:
+                return 0x54eeec;
+            default:
+                return 0;
+        }
+    }
+
+    u32 FileInputStreamVtable() {
+        switch (region) {
+            case US:
+                return 0x4f6454;
+            default:
+                return 0;
+        }
+    }
+
+    IsFileCachedSignature IsFileCachedFunc() {
+        switch (region) {
+            case US:
+                return (IsFileCachedSignature)0x129fa0;
+            default:
+                return nullptr;
+        }
+    }
+
+    CacheFileSignature CacheFileFunc() {
+        switch (region) {
+            case US:
+                return (CacheFileSignature)0x120d28;
+            default:
+                return nullptr;
+        }
+    }
+
+    TryOpenFileSignature TryOpenFileFunc() {
+        switch (region) {
+            case US:
+                return (TryOpenFileSignature)0x2859b4;
+            default:
+                return nullptr;
+        }
+    }
+
+    CloseFileSignature CloseFileFunc() {
+        switch (region) {
+            case US:
+                return (CloseFileSignature)0x285944;
+            default:
+                return nullptr;
+        }
+    }
+
+    TryGetSizeSignature TryGetSizeFunc() {
+        switch (region) {
+            case US:
+                return (TryGetSizeSignature)0x28595c;
+            default:
+                return nullptr;
+        }
+    }
+
+    TryReadSignature TryReadFunc() {
+        switch (region) {
+            case US:
+                return (TryReadSignature)0x285808;
+            default:
+                return nullptr;
+        }
+    }
+
+
+    SWPrintfSignature SWPrintfFunc() {
+        switch (region) {
+            case US:
+                return (SWPrintfSignature)(0x28a2d0 + 1);
+            default:
+                return nullptr;
+        }
+    }
+
+    OperatorNewSignature OperatorNewFunc() {
+        switch (region) {
+            case US:
+                return (OperatorNewSignature)0x28b368;
+            default:
+                return nullptr;
+        }
+    }
 }

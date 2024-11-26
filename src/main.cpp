@@ -1,7 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "csvc.h"
+#include "external/csvc.h"
 #include "external/plgldr.h"
 
 #include "Megamix.hpp"
@@ -112,6 +112,10 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
         Megamix::Hooks::CommandHook();
     }
 
+    if (region == Region::US) {
+        Megamix::Hooks::FSHooks();
+    }
+
     if (region != Region::JP && params.extra_rows) {
         Megamix::Patches::PatchMuseumExtraRows();
     }
@@ -155,6 +159,11 @@ void InitMenu(ctrpf::PluginMenu &menu) {
 int ctrpf::main(void) {
     // Crash handler
     Process::exceptionCallback = Megamix::CrashHandler;
+
+#ifdef RELEASE
+    // it's more important to be able to fix an error with the game than an error with the crash handler
+    Process::ThrowOldExceptionOnCallbackException = true;
+#endif
 
     if (params.barista != 0xD06) {
         ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();

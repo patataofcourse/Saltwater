@@ -153,19 +153,20 @@ namespace Megamix {
                 crash.registers[i] = regs->r[i];
             crash.registers[13] = regs->sp;
 
-            u8* stack = (u8*)regs->sp;
-            u32 stack_len = (u32)stack >= 0x06000000
-                ? 0x100 // (u32)pluginStackEnd - (u32)stack --- no autodetect for now
-                : 0x01000000 - (u32)stack;
-            crash.stackLength = stack_len < 0x100 ? stack_len : 0x100;
+            u32 stack = regs->sp;
 
-            memcpy(crash.stackDump, stack, stack_len);
+            u32 stack_len = stack >= 0x06000000
+                ? 0x100 // pluginStackEnd - stack --- no autodetect for now
+                : 0x01000000 - stack;
+            crash.stackLength = stack_len = stack_len <= 0x100 ? stack_len : 0x100;
 
-            // TODO: get call stack
+            memcpy(crash.stackDump, (u8*)stack, stack_len);
+
+            // get call stack
             u32 stack_offset = 0;
             for (int i = 0; i < CALL_STACK_SIZE; i++) {
-                while ((u32)stack >= 0x06000000 || (u32)(stack + stack_offset) < 0x01000000) {
-                    u32 val = *(u32*)(regs->sp + stack_offset);
+                while (stack_offset < stack_len) {
+                    u32 val = *(u32*)(stack + stack_offset);
                     if ((val >= 0x0010000 && val < Region::TextEnd() || (val >= (u32)_start && val < _TEXT_END))) {
                         crash.info.callStack[i] = val;
                         stack_offset += 4;

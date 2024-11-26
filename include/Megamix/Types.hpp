@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include "types.h"
+//#include "types.h"
 
 namespace Megamix {
     struct Tempo {
@@ -472,51 +472,75 @@ namespace Megamix {
         struct CInputTouchPanelHandler* touchPanelHandler;
     };
 
-
-    //-----------------
-    //File Manager
-    //-----------------
-
-    struct CFileManager {
-        int* _vtable;
-        s32 field1_0x4;
-        s32 field2_0x8;
-        void* romWorkingMemory;
-        u32 romWorkingMemorySize;
-        u8* gzipWorkMemory;
-        struct FileInfo* fileInfo;
-        u32* fileIds;
-        u32 fileIdCount;
-        u32 field9_0x24;
-        bool field10_0x28;
-        u8 field11_0x29;
-        u8 field12_0x2a;
-        u8 field13_0x2b;
-        u32 field14_0x2c;
-        u16 locale[9];
-        u16 sublocale[9];
-    };
+    // ----------
+    // Filesystem
+    // ----------
 
     struct FileInfo {
-        u16 filePath[128];
+        char16_t filePath[0x80];
         void* fileBuffer;
-        u8* compFileBuffer;
-        void* field3_0x108;
-        size_t fileSize;
-        size_t compFileSize;
-        size_t field6_0x114;
+        u8* compressedFileBuffer;
+        void* unk108;
+        u32 fileSize;
+        u32 compressedFileSize;
+        u32 unk114;
         u8 mode;
-        u8 field8_0x119;
-        u8 field9_0x11a;
-        u8 field10_0x11b;
         u32 alignment;
         u8 status;
-        u8 field13_0x121;
-        u8 field14_0x122;
-        u8 field15_0x123;
-        s32 id;
+        s32 fileId;
     };
 
-} // namespace Megamix
+    struct FileInputStream {
+        void* vtable;
+        struct FileBase {
+            void* ptr;
+            s64 position;
+            s64 size;
+        } base;
+    };
+
+    struct CFileManager {
+        void* vtable;
+        s32 unk4;
+        s32 unk8;
+        void* romWorkingMemory;
+        u32 romWorkingMemorySize;
+        u8* gzipWorkingMemory;
+        FileInfo* fileInfo;
+        u32 fileIds;
+        u32 fileIdCount;
+        u32 unk24;
+        bool unk28;
+        u32 unk2C;
+        char16_t locale[9];
+        char16_t sublocale[9];
+        struct { u32 unk[2]; } thread; //TODO: s64?
+        bool threadCreated;
+    };
+
+    struct CachedFileInfo {
+        char16_t filePath[64];
+        void* buffer;
+        u32 size;
+        u8 mode;
+        s32 alignment;
+    };
+
+    struct CCachedFile {
+        void* vtable;
+        void* heapStart;
+        u8 expHeap[0x58]; // TODO
+        u8 expHeapMutex[0xc]; //TODO
+        u32 unk;
+        CachedFileInfo* info;
+    };
+
+    struct CCachedFileManager {
+        void* vtable;
+        CCachedFile* files;
+        s32 fileCount;
+        bool enabled;
+    };
+}
 
 #endif
