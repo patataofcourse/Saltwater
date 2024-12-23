@@ -3,6 +3,8 @@
 
 #include "Megamix.hpp"
 
+using CTRPluginFramework::Directory;
+using CTRPluginFramework::File;
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
 
@@ -32,6 +34,9 @@ namespace Megamix{
                 break;
             case LanguageCheck:
                 languageCheck(self, arg0, args);
+                break;
+            case PersistentStorage:
+                persistentStorage(self, arg0, args);
                 break;
             
             // 0x300 range - debugging commands
@@ -101,6 +106,52 @@ namespace Megamix{
             } else {
                 self->condvar = -1;
             }
+        }
+    }
+
+    void persistentStorage(CTickflow* self, u32 arg0, u32* args) {
+        //TODO: check string
+        char* name = (char*)args[0];
+
+        if (arg0 == 0) {
+            // save 0xb2 slots to file
+            u32 start = args[1];
+            u32 end = args[2];
+            if (end > 16 || start > 16 || start > end)
+                return;
+
+            if (end == (u32)-1)
+                end = start;
+            
+            Directory(MEGAMIX_STORAGE_PATH, true);
+
+            File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::WRITE | File::CREATE);
+            Result res = f.Write(&start, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d: %s", PersistentStorage, ErrorMessage(res)));
+                return;
+
+            }
+            res = f.Write(&end, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d: %s", PersistentStorage, ErrorMessage(res)));
+                return;
+            }
+
+            for (u32 i = start; i <= end; i++) {
+                //OSD::Notify(Utils::Format("0xB2 slot 0x%x: 0x%08x", i, Region::GetU32VariableFunc()(i)));
+                u32 value = Region::GetU32VariableFunc()(i);
+                res = f.Write(&value, 4);
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d: %s", PersistentStorage, ErrorMessage(res)));
+                    return;
+                }
+            }
+
+            f.Close();
+        } else if (arg0 == 1) {
+            // load 0xb2 slots from file
+
         }
     }
 

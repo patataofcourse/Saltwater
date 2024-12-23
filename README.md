@@ -18,6 +18,7 @@ You'll need the following:
 - devKitARM
 - libctru
 - libctrpf (CTRPluginFramework)
+    - v0.8 doesn't work, the last known working version is commit 1c22f8f2
 - 3gxtool
 
 To install them, you'll need [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), with the [ThePixellizerOSS package database](https://gitlab.com/thepixellizeross/ctrpluginframework#adding-package-database).
