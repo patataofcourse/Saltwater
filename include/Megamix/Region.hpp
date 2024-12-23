@@ -70,6 +70,18 @@ namespace Megamix {
         u32 tickflowCommandsCmd0;
         u32 tickflowCommandsReturn;
 
+        // persistent storage
+
+        typedef u32 (*GetU32VarSignature) (u32 pos);
+        typedef void (*SetU32VarSignature) (u32 pos, u32 value);
+        typedef u8 (*GetU8VarSignature) (u32 pos);
+        typedef void (*SetU8VarSignature) (u32 pos, u8 value);
+
+        GetU32VarSignature getU32VarFunc;
+        SetU32VarSignature setU32VarFunc;
+        GetU8VarSignature getU8VarFunc;
+        SetU8VarSignature setU8VarFunc;        
+
         // MSBT printf
 
         CBlackBarManager** blackbarLayout;
@@ -139,6 +151,22 @@ namespace Megamix {
 
         inline u32 setTextBoxString(Megamix::TextBox *textbox, const char16_t *string, u32 arg2) {
             return pointers->setTextBoxStringFunc(textbox, string, arg2);
+        }
+
+        inline u32 getU32Var(u32 pos) {
+            return pointers->getU32VarFunc(pos);
+        }
+
+        inline void setU32Var(u32 pos, u32 value) {
+            pointers->setU32VarFunc(pos, value);
+        }
+
+        inline u8 getU8Var(u32 pos) {
+            return pointers->getU8VarFunc(pos);
+        }
+
+        inline void setU8Var(u32 pos, u8 value) {
+            pointers->setU8VarFunc(pos, value);
         }
 
         // for hooks: feel free to drop em here, or make a namespace named hHookGroupName if you feel it needs more context

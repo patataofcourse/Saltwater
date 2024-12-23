@@ -1,3 +1,4 @@
+#include "Megamix/Region.hpp"
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
@@ -54,6 +55,11 @@ namespace Megamix {
         .tickflowCommandsCmd0=   0x25e338,
         .tickflowCommandsReturn= 0x262eac,
 
+        .getU32VarFunc = (GameInterface::GetU32VarSignature)GameInterface::UNIMPLEMENTED,
+        .setU32VarFunc = (GameInterface::SetU32VarSignature)GameInterface::UNIMPLEMENTED,
+        .getU8VarFunc = (GameInterface::GetU8VarSignature)GameInterface::UNIMPLEMENTED,
+        .setU8VarFunc = (GameInterface::SetU8VarSignature)GameInterface::UNIMPLEMENTED,
+
         .blackbarLayout=       (CBlackBarManager**)0x526404,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x100914),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x3204f8,
@@ -103,6 +109,11 @@ namespace Megamix {
         .tickflowCommandsCmd0=   0x25c6c0,
         .tickflowCommandsReturn= 0x2613cc,
 
+        .getU32VarFunc = (GameInterface::GetU32VarSignature)0x203a60,
+        .setU32VarFunc = (GameInterface::SetU32VarSignature)0x3701c0,
+        .getU8VarFunc = (GameInterface::GetU8VarSignature)0x221e38,
+        .setU8VarFunc = (GameInterface::SetU8VarSignature)0x2346a0,
+
         .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
@@ -146,6 +157,11 @@ namespace Megamix {
         .tickflowCommandsHook=   0x25c3c0,
         .tickflowCommandsCmd0=   0x25c6c0,
         .tickflowCommandsReturn= 0x2613cc,
+
+        .getU32VarFunc = (GameInterface::GetU32VarSignature)GameInterface::UNIMPLEMENTED,
+        .setU32VarFunc = (GameInterface::SetU32VarSignature)GameInterface::UNIMPLEMENTED,
+        .getU8VarFunc = (GameInterface::GetU8VarSignature)GameInterface::UNIMPLEMENTED,
+        .setU8VarFunc = (GameInterface::SetU8VarSignature)GameInterface::UNIMPLEMENTED,
 
         .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
@@ -195,6 +211,11 @@ namespace Megamix {
         .tickflowCommandsHook=   0x25c398,
         .tickflowCommandsCmd0=   0x25c698,
         .tickflowCommandsReturn= 0x2613a4,
+
+        .getU32VarFunc = (GameInterface::GetU32VarSignature)GameInterface::UNIMPLEMENTED,
+        .setU32VarFunc = (GameInterface::SetU32VarSignature)GameInterface::UNIMPLEMENTED,
+        .getU8VarFunc = (GameInterface::GetU8VarSignature)GameInterface::UNIMPLEMENTED,
+        .setU8VarFunc = (GameInterface::SetU8VarSignature)GameInterface::UNIMPLEMENTED,
 
         .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2a8),
