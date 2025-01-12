@@ -112,9 +112,16 @@ namespace Megamix{
     void persistentStorage(CTickflow* self, u32 arg0, u32* args) {
         //TODO: check string
         char* name = (char*)args[0];
+        if (name < (char*)0x0010000) {
+            // invalid string pointer, abort
+            OSD::Notify(Utils::Format("Error: invalid string pointer in 0x%x", PersistentStorage));
+            return;
+        }
 
         if (arg0 == 0) {
             // save 0xb2 slots to file
+
+            // resolve range
             u32 start = args[1];
             u32 end = args[2];
             if (end > 16 || start > 16 || start > end)
@@ -123,23 +130,25 @@ namespace Megamix{
             if (end == (u32)-1)
                 end = start;
             
+            // create directory if it doesn't exist
             Directory(MEGAMIX_STORAGE_PATH, true);
 
+            // write range
             File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::WRITE | File::CREATE);
             Result res = f.Write(&start, 4);
             if (res < 0) {
                 OSD::Notify(Utils::Format("Error on %d: %s", PersistentStorage, ErrorMessage(res)));
                 return;
-
             }
+
             res = f.Write(&end, 4);
-            if (res < 0) {
+            if (res < 0) {  
                 OSD::Notify(Utils::Format("Error on %d: %s", PersistentStorage, ErrorMessage(res)));
                 return;
             }
 
+            // write data
             for (u32 i = start; i <= end; i++) {
-                //OSD::Notify(Utils::Format("0xB2 slot 0x%x: 0x%08x", i, Region::GetU32VariableFunc()(i)));
                 u32 value = Region::GetU32VariableFunc()(i);
                 res = f.Write(&value, 4);
                 if (res < 0) {
@@ -152,6 +161,33 @@ namespace Megamix{
         } else if (arg0 == 1) {
             // load 0xb2 slots from file
 
+            File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::READ);
+            
+            u32 start, end;
+            Result res = f.Read(&start, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d<1>: %s", PersistentStorage, ErrorMessage(res)));
+                return;
+            }
+
+            res = f.Read(&end, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d<1>: %s", PersistentStorage, ErrorMessage(res)));
+                return;
+            }
+
+            for (u32 i = start; i <= end; i++) {
+                u32 value;
+                res = f.Read(&value, 4);
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d<1>: %s", PersistentStorage, ErrorMessage(res)));
+                    return;
+                }
+
+                Region::SetU32VariableFunc()(i, value);
+
+                OSD::Notify(Utils::Format("0xB2 slot 0x%x: 0x%08x", i, Region::GetU32VariableFunc()(i)));
+            }
         }
     }
 
