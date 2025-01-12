@@ -74,6 +74,7 @@ namespace Megamix{
     }
 
     void languageCheck(CTickflow* self, u32 arg0, u32* args) {
+        if (arg0 != 0) return;
         CSaveData** gSaveData = (CSaveData**)Region::GlobalSaveDataPointer();
         CFileManager** gFileManager = (CFileManager**)Region::GlobalFileManagerPointer();
         int saveLanguage = (*gSaveData)->fileData[(*gSaveData)->currentFile].locale;
@@ -97,7 +98,7 @@ namespace Megamix{
             } else if (localews.find(L"SP") != (unsigned int)-1) {
                 self->condvar = 5; 
             } else if (localews.find(L"KR") != (unsigned int)-1) {
-                self->condvar = 7; 
+                self->condvar = 6; 
             } else {
                 self->condvar = -1;
             }
