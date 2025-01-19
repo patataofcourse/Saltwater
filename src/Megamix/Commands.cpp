@@ -111,7 +111,6 @@ namespace Megamix{
     }
 
     void persistentStorage(CTickflow* self, u32 arg0, u32* args) {
-        //TODO: check string
         char* name = (char*)args[0];
         if (name < (char*)0x0010000) {
             // invalid string pointer, abort
@@ -189,6 +188,14 @@ namespace Megamix{
 
                 OSD::Notify(Utils::Format("0xB2 slot 0x%x: 0x%08x", i, Region::GetU32VariableFunc()(i)));
             }
+        } else if (arg0 == 2) {
+            int res = File::Exists(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name));
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d<2>: %s", PersistentStorage, ErrorMessage(res)));
+                self->condvar = res;
+            }
+                
+            self->condvar = res;
         }
     }
 
