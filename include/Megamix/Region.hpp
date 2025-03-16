@@ -5,6 +5,7 @@
 #include <string>
 
 #include "types.h"
+#include "Megamix/Types.hpp"
 
 extern u8 region;
 
@@ -59,6 +60,20 @@ namespace Region {
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
+
+    Megamix::UnkStruct0054ef10* D_0054ef10();
+
+    typedef bool (*IsGateGameValidSignature) (Megamix::GateGameIndex index);
+    typedef u16 (*GetGateScoreSignature) (Megamix::CSaveManager* self, Megamix::GateGameIndex index, int file);
+    typedef void (*SetGateScoreSignature) (Megamix::CSaveManager* self, Megamix::GateGameIndex index, u16 score, int file);
+    typedef void (*SaveGameSignature) (Megamix::CSaveManager* self);
+
+    IsGateGameValidSignature IsGateGameValidFunc();
+    GetGateScoreSignature GetGateScoreFunc();
+    SetGateScoreSignature SetGateScoreFunc();
+    SaveGameSignature SaveGameFunc();
+
+    Megamix::CSaveManager* SaveManager();
 }
 
 #endif

@@ -420,4 +420,81 @@ namespace Region {
 
         }
     }
+
+    // Endless stuff
+
+    Megamix::UnkStruct0054ef10* D_0054ef10() {
+        switch (region) {
+            case US:
+                return (Megamix::UnkStruct0054ef10*)0x54ef10;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    IsGateGameValidSignature IsGateGameValidFunc() {
+        switch (region) {
+            case US:
+                return (IsGateGameValidSignature)0x255550;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+
+    GetGateScoreSignature GetGateScoreFunc() {
+        switch (region) {
+            case US:
+                return (GetGateScoreSignature)0x261a6c;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SetGateScoreSignature SetGateScoreFunc() {
+        switch (region) {
+            case US:
+                return (SetGateScoreSignature)0x2366c0;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SaveGameSignature SaveGameFunc() {
+        switch (region) {
+            case US:
+                return (SaveGameSignature)0x28bf14;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    Megamix::CSaveManager* SaveManager() {
+        switch (region) {
+            case US:
+                return 0;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+
+        }
+    }
+
 }

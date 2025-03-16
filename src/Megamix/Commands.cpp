@@ -33,6 +33,9 @@ namespace Megamix{
             case LanguageCheck:
                 languageCheck(self, arg0, args);
                 break;
+            case EndlessSave:
+                endlessSave(self, arg0, args);
+                break;
             
             // 0x300 range - debugging commands
             case DisplayCondvar:
@@ -102,6 +105,25 @@ namespace Megamix{
             } else {
                 self->condvar = -1;
             }
+        }
+    }
+
+    void endlessSave(CTickflow* self, u32 arg0, u32* args) {
+        using enum Megamix::GateGameIndex;
+
+        if (arg0 != 0) return;
+
+        // alternatively, load the current slot loaded with the tickflow hook into a global, and use that instead
+        // that way we can avoid the UB on non-gate slots
+        GateGameIndex slot = Region::D_0054ef10()->currentGateSlot;
+        if ((u8)slot & Difficulty != Endless || !Region::IsGateGameValidFunc()(slot))
+            return;
+        
+        u32 oldScore = Region::GetGateScoreFunc()(Region::SaveManager(), slot, -1);
+        
+        if (oldScore < self->condvar) {
+            Region::SetGateScoreFunc()(Region::SaveManager(), slot, self->condvar, -1);
+            Region::SaveGameFunc()(Region::SaveManager());
         }
     }
 
