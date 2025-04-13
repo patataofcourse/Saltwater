@@ -115,15 +115,20 @@ namespace Megamix{
 
         // alternatively, load the current slot loaded with the tickflow hook into a global, and use that instead
         // that way we can avoid the UB on non-gate slots
-        GateGameIndex slot = Region::D_0054ef10()->currentGateSlot;
-        if ((u8)slot & Difficulty != Endless || !Region::IsGateGameValidFunc()(slot))
+        GateGameIndex slot = (*Region::D_0054ef10())->currentGateSlot;
+        OSD::Notify(Utils::Format("%d", slot), CTRPluginFramework::Color::Red);
+        if ((slot & Difficulty) != Endless || !Region::IsGateGameValidFunc()(slot))
             return;
         
-        u32 oldScore = Region::GetGateScoreFunc()(Region::SaveManager(), slot, -1);
+        CSaveManager* gSaveManager = *Region::SaveManager();
+
+        u32 oldScore = Region::GetGateScoreFunc()(gSaveManager, slot, -1);
+
+        OSD::Notify(Utils::Format("%x %d %d", gSaveManager, self->condvar, oldScore), CTRPluginFramework::Color::Blue);
         
         if (oldScore < self->condvar) {
-            Region::SetGateScoreFunc()(Region::SaveManager(), slot, self->condvar, -1);
-            Region::SaveGameFunc()(Region::SaveManager());
+            Region::SetGateScoreFunc()(gSaveManager, slot, self->condvar, -1);
+            Region::SaveGameFunc()(gSaveManager);
         }
     }
 

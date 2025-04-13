@@ -61,7 +61,7 @@ namespace Region {
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
 
-    Megamix::UnkStruct0054ef10* D_0054ef10();
+    Megamix::UnkStruct0054ef10** D_0054ef10();
 
     typedef bool (*IsGateGameValidSignature) (Megamix::GateGameIndex index);
     typedef u16 (*GetGateScoreSignature) (Megamix::CSaveManager* self, Megamix::GateGameIndex index, int file);
@@ -73,7 +73,7 @@ namespace Region {
     SetGateScoreSignature SetGateScoreFunc();
     SaveGameSignature SaveGameFunc();
 
-    Megamix::CSaveManager* SaveManager();
+    Megamix::CSaveManager** SaveManager();
 }
 
 #endif

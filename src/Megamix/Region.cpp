@@ -423,10 +423,10 @@ namespace Region {
 
     // Endless stuff
 
-    Megamix::UnkStruct0054ef10* D_0054ef10() {
+    Megamix::UnkStruct0054ef10** D_0054ef10() {
         switch (region) {
             case US:
-                return (Megamix::UnkStruct0054ef10*)0x54ef10;
+                return (Megamix::UnkStruct0054ef10**)0x54ef10;
             case JP:
             case EU:
             case KR:
@@ -484,10 +484,10 @@ namespace Region {
         }
     }
 
-    Megamix::CSaveManager* SaveManager() {
+    Megamix::CSaveManager** SaveManager() {
         switch (region) {
             case US:
-                return 0;
+                return (Megamix::CSaveManager**)0x54ef28;
             case JP:
             case EU:
             case KR:

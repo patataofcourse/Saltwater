@@ -553,6 +553,10 @@ namespace Megamix {
         Invalid = 0x11,
     };
 
+    inline GateGameIndex operator&(GateGameIndex lhs, GateGameIndex rhs) {
+        return (GateGameIndex)((u8)lhs & (u8)rhs);
+    }
+
     enum class GateGameRank : u8 {
         Unplayed = 0,
         Failed = 1,
