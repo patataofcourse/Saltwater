@@ -340,39 +340,39 @@ namespace Region {
 
     // Locations of global variables
 
-    u32 GlobalSaveDataPointer(){
+    Megamix::CSaveData** GlobalSaveDataPointer(){
         switch (region) {
             case US:
-                return 0x54d350;
+                return (Megamix::CSaveData**)0x54d350;
             case EU:
             case KR:
-                return 0x54d448;
+                return (Megamix::CSaveData**)0x54d448;
             case JP:
             default:
                 return 0;
         }
     }
 
-    u32 GlobalInputManagerPointer(){
+    Megamix::CInputManager** GlobalInputManagerPointer(){
         switch (region) {
             case US:
-                return 0x54eed0;
+                return (Megamix::CInputManager**)0x54eed0;
             case EU:
             case KR:
-                return 0x54efc8;
+                return (Megamix::CInputManager**)0x54efc8;
             case JP:
             default:
                 return 0;
         }
     }
 
-    u32 GlobalFileManagerPointer(){
+    Megamix::CFileManager** GlobalFileManagerPointer(){
         switch (region) {
             case US:
-                return 0x54eedc;
+                return (Megamix::CFileManager**)0x54eedc;
             case EU:
             case KR:
-                return 0x54efd4;
+                return (Megamix::CFileManager**)0x54efd4;
             case JP:
             default:
                 return 0;
