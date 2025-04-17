@@ -8,7 +8,8 @@ namespace Megamix{
         InputCheck = 0x200,
         VersionNumber = 0x201,
         LanguageCheck = 0x202,
-        PersistentStorage = 0x203,
+        PersistentStore = 0x203,
+        PersistentFetch = 0x204,
         
         DisplayCondvar = 0x300
     };
@@ -21,7 +22,7 @@ namespace Megamix{
     void versionCheck(CTickflow* self, u32 arg0, u32* args);
     void languageCheck(CTickflow* self, u32 arg0, u32* args);
     void displayCondvar(CTickflow* self, u32 arg0, u32* args);
-    void persistentStorage(CTickflow* self, u32 arg0, u32* args);
+    void persistentStorage(CTickflow* self, u32 arg0, u32* args, bool fetch);
 }
 
 #endif
