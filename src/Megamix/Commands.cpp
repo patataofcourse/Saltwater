@@ -117,7 +117,7 @@ namespace Megamix{
         char* name = (char*)args[0];
         if (name < (char*)0x0010000) {
             // invalid string pointer, abort
-            OSD::Notify(Utils::Format("Error: invalid string pointer in 0x%x", PersistentStore));
+            OSD::Notify(Utils::Format("Error: invalid string pointer in 0x%x", fetch ? PersistentFetch : PersistentStore));
             return;
         }
 
