@@ -420,4 +420,55 @@ namespace Region {
 
         }
     }
+
+    // 0xB2 / 0xB3 / 0xB4 variable functions
+
+    GetU32VariableSignature GetU32VariableFunc() {
+        switch (region) {
+            case US:
+                return (GetU32VariableSignature)0x203a60;
+            case EU:
+            case KR:
+            case JP:
+            default:
+                return 0;
+        }
+    }
+
+
+    SetU32VariableSignature SetU32VariableFunc() {
+        switch (region) {
+            case US:
+                return (SetU32VariableSignature)0x3701c0;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    GetU8VariableSignature GetU8VariableFunc() {
+        switch (region) {
+            case US:
+                return (GetU8VariableSignature)0x221e38;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SetU8VariableSignature SetU8VariableFunc() {
+        switch (region) {
+            case US:
+                return (SetU8VariableSignature)0x2346a0;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
 }

@@ -3,6 +3,8 @@
 
 #include "Megamix.hpp"
 
+using CTRPluginFramework::Directory;
+using CTRPluginFramework::File;
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
 
@@ -32,6 +34,12 @@ namespace Megamix{
                 break;
             case LanguageCheck:
                 languageCheck(self, arg0, args);
+                break;
+            case PersistentStore:
+                persistentStorage(self, arg0, args, false);
+                break;
+            case PersistentFetch:
+                persistentStorage(self, arg0, args, true);
                 break;
             
             // 0x300 range - debugging commands
@@ -101,6 +109,108 @@ namespace Megamix{
                 self->condvar = 6; 
             } else {
                 self->condvar = -1;
+            }
+        }
+    }
+
+    void persistentStorage(CTickflow* self, u32 arg0, u32* args, bool fetch) {
+        char* name = (char*)args[0];
+        if (name < (char*)0x0010000) {
+            // invalid string pointer, abort
+            OSD::Notify(Utils::Format("Error: invalid string pointer in 0x%x", fetch ? PersistentFetch : PersistentStore));
+            return;
+        }
+
+        // fetch = false - 0x203 / save to file
+        // fetch = true  - 0x204 / read from file
+
+        if (!fetch) {
+            if (arg0 == 0) {
+                // save 0xb2 slots to file
+
+                // resolve range
+                u32 start = args[1];
+                u32 end = args[2];
+                if (end > 16 || start > 16 || start > end)
+                    return;
+
+                if (end == (u32)-1)
+                    end = start;
+                
+                // create directory if it doesn't exist
+                Directory(MEGAMIX_STORAGE_PATH, true);
+
+                // write range
+                File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::WRITE | File::CREATE);
+                Result res = f.Write(&start, 4);
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res)));
+                    return;
+                }
+
+                res = f.Write(&end, 4);
+                if (res < 0) {  
+                    OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res)));
+                    return;
+                }
+
+                // write data
+                for (u32 i = start; i <= end; i++) {
+                    u32 value = Region::GetU32VariableFunc()(i);
+                    res = f.Write(&value, 4);
+                    if (res < 0) {
+                        OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res)));
+                        return;
+                    }
+                }
+
+                f.Close();
+            } else if (arg0 == 1) {
+                //TODO: save 0xb2<1> slots to file
+            }
+        } else {
+            if (arg0 == 0) {
+                // load 0xb2 slots from file
+    
+                File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::READ);
+                
+                u32 start, end;
+                Result res = f.Read(&start, 4);
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d<1>: %s", PersistentFetch, ErrorMessage(res)));
+                    return;
+                }
+    
+                res = f.Read(&end, 4);
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d<1>: %s", PersistentFetch, ErrorMessage(res)));
+                    return;
+                }
+    
+                for (u32 i = start; i <= end; i++) {
+                    u32 value;
+                    res = f.Read(&value, 4);
+                    if (res < 0) {
+                        OSD::Notify(Utils::Format("Error on %d<1>: %s", PersistentFetch, ErrorMessage(res)));
+                        return;
+                    }
+    
+                    Region::SetU32VariableFunc()(i, value);
+    
+                    OSD::Notify(Utils::Format("0xB2 slot 0x%x: 0x%08x", i, Region::GetU32VariableFunc()(i)));
+                }
+            } else if (arg0 == 1) {
+                //TODO: load 0xb2<1> slots from file
+            } else if (arg0 == 2) {
+                // returns to condvar whether specified file exists
+                
+                int res = File::Exists(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name));
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d<2>: %s", PersistentFetch, ErrorMessage(res)));
+                    self->condvar = res;
+                }
+                    
+                self->condvar = res;
             }
         }
     }

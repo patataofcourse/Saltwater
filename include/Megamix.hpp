@@ -5,6 +5,7 @@
 #define MEGAMIX_BIN_PATH "/spicerack/bin/"
 #define MEGAMIX_CRASH_PATH "/spicerack/crash/"
 #define MEGAMIX_MODS_PATH "/spicerack/mods/"
+#define MEGAMIX_STORAGE_PATH "/spicerack/storage/"
 #define MEGAMIX_CONFIG_PATH MEGAMIX_BIN_PATH "saltwater.cfg"
 
 #endif

@@ -59,6 +59,16 @@ namespace Region {
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
+
+    typedef u32 (*GetU32VariableSignature) (u32 pos);
+    typedef void (*SetU32VariableSignature) (u32 pos, u32 value);
+    typedef u8 (*GetU8VariableSignature) (u32 pos);
+    typedef void (*SetU8VariableSignature) (u32 pos, u8 value);
+
+    GetU32VariableSignature GetU32VariableFunc();
+    SetU32VariableSignature SetU32VariableFunc();
+    GetU8VariableSignature GetU8VariableFunc();
+    SetU8VariableSignature SetU8VariableFunc();
 }
 
 #endif
