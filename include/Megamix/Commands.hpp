@@ -8,6 +8,7 @@ namespace Megamix{
         InputCheck = 0x200,
         VersionNumber = 0x201,
         LanguageCheck = 0x202,
+        MSBTWithNum = 0x207,
         
         DisplayCondvar = 0x300
     };
@@ -20,6 +21,7 @@ namespace Megamix{
     void versionCheck(CTickflow* self, u32 arg0, u32* args);
     void languageCheck(CTickflow* self, u32 arg0, u32* args);
     void displayCondvar(CTickflow* self, u32 arg0, u32* args);
+    void msbtWithNum(CTickflow* self, u32 arg0, u32* args);
 }
 
 #endif

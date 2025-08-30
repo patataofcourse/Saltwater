@@ -420,4 +420,25 @@ namespace Region {
 
         }
     }
+
+    Megamix::CBlackBarManager** BlackbarLayout() {
+        switch(region) {
+            case US:
+                return (Megamix::CBlackBarManager**)0x52f3f8;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SWPrintfSignature SWPrintfFunc() {
+        switch (region) {
+            case US:
+                return (SWPrintfSignature)(0x28a2d0 + 1);
+            default:
+                return nullptr;
+        }
+    }
 }

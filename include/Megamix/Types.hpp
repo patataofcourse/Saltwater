@@ -517,6 +517,19 @@ namespace Megamix {
         s32 id;
     };
 
+    struct TextBox {
+        u8 parent[0xa4];
+        char16_t* textBuf;
+        u8 pad2[0x80];
+        u16 textBufLen;
+        u16 textLen;
+    };
+
+    struct CBlackBarManager {
+        u8 pad[0x48];
+        TextBox* textBox;
+    };
+
 } // namespace Megamix
 
 #endif

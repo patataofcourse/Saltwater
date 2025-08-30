@@ -6,7 +6,7 @@
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
 
-namespace Megamix{
+namespace Megamix {
 
     void tickflowCommandsHookWrapper() {
         asm(
@@ -32,6 +32,9 @@ namespace Megamix{
                 break;
             case LanguageCheck:
                 languageCheck(self, arg0, args);
+                break;
+            case MSBTWithNum:
+                msbtWithNum(self, arg0, args);
                 break;
             
             // 0x300 range - debugging commands
@@ -103,6 +106,22 @@ namespace Megamix{
                 self->condvar = -1;
             }
         }
+    }
+
+    void msbtWithNum(CTickflow* self, u32 arg0, u32* args) {
+        if (arg0 != 0) return;
+
+        TextBox* textBox = (*Region::BlackbarLayout())->textBox;
+
+        char16_t* out = (char16_t*)aligned_alloc(2,0x200);
+
+        Region::SWPrintfFunc()(out, 0x100, textBox->textBuf, self->condvar);
+
+        // i'll make this good later
+        auto setTextBoxString = (u32(*)(TextBox*, const char16_t*, u32))0x31fcd8;
+        setTextBoxString(textBox, out, 0);
+
+        free(out);
     }
 
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {

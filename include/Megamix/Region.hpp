@@ -6,6 +6,8 @@
 
 #include "types.h"
 
+#include "Megamix.hpp"
+
 extern u8 region;
 
 namespace Region {
@@ -59,6 +61,12 @@ namespace Region {
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
+
+    Megamix::CBlackBarManager** BlackbarLayout();
+
+    typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
+
+    SWPrintfSignature SWPrintfFunc();
 }
 
 #endif
