@@ -343,6 +343,9 @@ namespace Megamix {
         u32 currentFile;
     };
 
+    // TODO
+    struct CSaveManager {};
+
     //-----------------
     //Input Manager
     //-----------------
@@ -474,7 +477,7 @@ namespace Megamix {
 
 
     //-----------------
-    //File Manager
+    // File Manager
     //-----------------
 
     struct CFileManager {
@@ -516,6 +519,61 @@ namespace Megamix {
         u8 field15_0x123;
         s32 id;
     };
+
+    enum class GateGameIndex: u8 {
+        Game = 0xC,
+        AgbVirus = 0,
+        NtrCoinToss = 4,
+        RvlSword = 8,
+        CtrChicken = 0xC,
+
+        Difficulty = 0x3,
+        Easy = 0,
+        Medium = 1,
+        Hard = 2,
+        Endless = 3,
+
+        AgbVirusEasy = AgbVirus | Easy,
+        AgbVirusMedium = AgbVirus | Medium,
+        AgbVirusHard = AgbVirus | Hard,
+        AgbVirusEndless = AgbVirus | Endless,
+        NtrCoinTossEasy = NtrCoinToss | Easy,
+        NtrCoinTossMedium = NtrCoinToss | Medium,
+        NtrCoinTossHard = NtrCoinToss | Hard,
+        NtrCoinTossEndless = NtrCoinToss | Endless,
+        RvlSwordEasy = RvlSword | Easy,
+        RvlSwordMedium = RvlSword | Medium,
+        RvlSwordHard = RvlSword | Hard,
+        RvlSwordEndless = RvlSword | Endless,
+        CtrChickenEasy = CtrChicken | Easy,
+        CtrChickenMedium = CtrChicken | Medium,
+        CtrChickenHard = CtrChicken | Hard,
+        CtrChickenEndless = CtrChicken | Endless,
+
+        Invalid = 0x11,
+    };
+
+    inline GateGameIndex operator&(GateGameIndex lhs, GateGameIndex rhs) {
+        return (GateGameIndex)((u8)lhs & (u8)rhs);
+    }
+
+    enum class GateGameRank : u8 {
+        Unplayed = 0,
+        Failed = 1,
+        Beaten = 2,
+        Invalid = 4,
+    };
+
+    // Not really sure what this is, and it's undocumented
+    struct UnkStruct0054ef10 {
+        u8 padding[0x4c];
+        GateGameIndex currentGateSlot;
+        GateGameRank currentGateState;
+    };
+
+    //-----------------
+    // TextBox and its derivates
+    //-----------------
 
     struct TextBox {
         u8 parent[0xa4];

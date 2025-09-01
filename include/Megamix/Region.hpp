@@ -5,6 +5,7 @@
 #include <string>
 
 #include "types.h"
+#include "Megamix/Types.hpp"
 
 #include "Megamix.hpp"
 
@@ -53,15 +54,16 @@ namespace Region {
     u32 TickflowCommandsEnd();
     u32 TickflowAsyncSubLocation();
 
-    u32 GlobalSaveDataPointer();
-    u32 GlobalInputManagerPointer();
-    u32 GlobalFileManagerPointer();
+    Megamix::CSaveData** GlobalSaveDataPointer();
+    Megamix::CInputManager** GlobalInputManagerPointer();
+    Megamix::CFileManager** GlobalFileManagerPointer();
 
     std::vector<u32> RetryRemixLocs();
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
 
+    Megamix::CSaveManager** SaveManager();
     Megamix::CBlackBarManager** BlackbarLayout();
 
     typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
@@ -69,6 +71,19 @@ namespace Region {
 
     SWPrintfSignature SWPrintfFunc();
     SetTextBoxStringSignature SetTextBoxStringFunc();
+
+    Megamix::UnkStruct0054ef10** D_0054ef10();
+
+    typedef bool (*IsGateGameValidSignature) (Megamix::GateGameIndex index);
+    typedef u16 (*GetGateScoreSignature) (Megamix::CSaveData* self, Megamix::GateGameIndex index, s32 file);
+    typedef void (*SetGateScoreSignature) (Megamix::CSaveData* self, Megamix::GateGameIndex index, u16 score, s32 file);
+    typedef void (*SaveGameSignature) (Megamix::CSaveManager* self);
+
+    IsGateGameValidSignature IsGateGameValidFunc();
+    GetGateScoreSignature GetGateScoreFunc();
+    SetGateScoreSignature SetGateScoreFunc();
+    SaveGameSignature SaveGameFunc();
+
 }
 
 #endif

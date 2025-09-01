@@ -340,39 +340,39 @@ namespace Region {
 
     // Locations of global variables
 
-    u32 GlobalSaveDataPointer(){
+    Megamix::CSaveData** GlobalSaveDataPointer(){
         switch (region) {
             case US:
-                return 0x54d350;
+                return (Megamix::CSaveData**)0x54d350;
             case EU:
             case KR:
-                return 0x54d448;
+                return (Megamix::CSaveData**)0x54d448;
             case JP:
             default:
                 return 0;
         }
     }
 
-    u32 GlobalInputManagerPointer(){
+    Megamix::CInputManager** GlobalInputManagerPointer(){
         switch (region) {
             case US:
-                return 0x54eed0;
+                return (Megamix::CInputManager**)0x54eed0;
             case EU:
             case KR:
-                return 0x54efc8;
+                return (Megamix::CInputManager**)0x54efc8;
             case JP:
             default:
                 return 0;
         }
     }
 
-    u32 GlobalFileManagerPointer(){
+    Megamix::CFileManager** GlobalFileManagerPointer(){
         switch (region) {
             case US:
-                return 0x54eedc;
+                return (Megamix::CFileManager**)0x54eedc;
             case EU:
             case KR:
-                return 0x54efd4;
+                return (Megamix::CFileManager**)0x54efd4;
             case JP:
             default:
                 return 0;
@@ -421,6 +421,84 @@ namespace Region {
         }
     }
 
+    // Endless stuff
+
+    Megamix::UnkStruct0054ef10** D_0054ef10() {
+        switch (region) {
+            case US:
+                return (Megamix::UnkStruct0054ef10**)0x54ef10;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+
+
+    IsGateGameValidSignature IsGateGameValidFunc() {
+        switch (region) {
+            case US:
+                return (IsGateGameValidSignature)0x255550;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+
+    GetGateScoreSignature GetGateScoreFunc() {
+        switch (region) {
+            case US:
+                return (GetGateScoreSignature)0x261a6c;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SetGateScoreSignature SetGateScoreFunc() {
+        switch (region) {
+            case US:
+                return (SetGateScoreSignature)0x2366c0;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SaveGameSignature SaveGameFunc() {
+        switch (region) {
+            case US:
+                return (SaveGameSignature)0x28bf14;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    Megamix::CSaveManager** SaveManager() {
+        switch (region) {
+            case US:
+                return (Megamix::CSaveManager**)0x54ef28;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+
+        }
+    }
+    
     // printf to MSBT
 
     Megamix::CBlackBarManager** BlackbarLayout() {
