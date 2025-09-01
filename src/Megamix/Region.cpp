@@ -421,13 +421,16 @@ namespace Region {
         }
     }
 
+    // printf to MSBT
+
     Megamix::CBlackBarManager** BlackbarLayout() {
         switch(region) {
-            case US:
-                return (Megamix::CBlackBarManager**)0x52f3f8;
             case JP:
+                return (Megamix::CBlackBarManager**)0x526404;
+            case US:
             case EU:
             case KR:
+                return (Megamix::CBlackBarManager**)0x52f3f8;
             default:
                 return 0;
         }
