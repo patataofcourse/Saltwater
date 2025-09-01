@@ -420,4 +420,43 @@ namespace Region {
 
         }
     }
+
+    Megamix::CBlackBarManager** BlackbarLayout() {
+        switch(region) {
+            case US:
+                return (Megamix::CBlackBarManager**)0x52f3f8;
+            case JP:
+            case EU:
+            case KR:
+            default:
+                return 0;
+        }
+    }
+
+    SWPrintfSignature SWPrintfFunc() {
+        switch (region) {
+            case JP:
+                return (SWPrintfSignature)(0x100914 + 1);
+            case US:
+            case EU:
+                return (SWPrintfSignature)(0x28a2d0 + 1);
+            case KR:
+                return (SWPrintfSignature)(0x28a2a8 + 1);
+            default:
+                return nullptr;
+        }
+    }
+
+    SetTextBoxStringSignature SetTextBoxStringFunc() {
+        switch (region) {
+            case JP:
+                return (SetTextBoxStringSignature)0x3204f8;
+            case US:
+            case EU:
+            case KR:
+                return (SetTextBoxStringSignature)0x31fcd8;
+            default:
+                return nullptr;
+        }
+    }
 }
