@@ -113,9 +113,13 @@ re: clean all
 
 #---------------------------------------------------------------------------------
 
-test: all
+load: all
 	@mkdir -p $(CITRA_DIR)/spicerack/bin/
 	@cp $(OUTPUT).3gx $(CITRA_DIR)/spicerack/bin/
+
+#---------------------------------------------------------------------------------
+
+test: load
 	@make -C $(BARISTA_DIR) test
 	
 

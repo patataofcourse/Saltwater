@@ -6,7 +6,7 @@
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
 
-namespace Megamix{
+namespace Megamix {
 
     void tickflowCommandsHookWrapper() {
         asm(
@@ -35,6 +35,9 @@ namespace Megamix{
                 break;
             case EndlessSave:
                 endlessSave(self, arg0, args);
+                break;
+            case MSBTWithNum:
+                msbtWithNum(self, arg0, args);
                 break;
             
             // 0x300 range - debugging commands
@@ -128,6 +131,18 @@ namespace Megamix{
             Region::SetGateScoreFunc()(gSaveData, slot, self->condvar, -1);
             Region::SaveGameFunc()(gSaveManager);
         }
+    }
+    
+    void msbtWithNum(CTickflow* self, u32 arg0, u32* args) {
+        if (arg0 != 0) return;
+
+        TextBox* textBox = (*Region::BlackbarLayout())->textBox;
+        char16_t* out = new char16_t[0x100];
+
+        Region::SWPrintfFunc()(out, 0x100, textBox->textBuf, self->condvar);
+        Region::SetTextBoxStringFunc()(textBox, out, 0);
+
+        delete[] out;
     }
 
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {

@@ -7,6 +7,8 @@
 #include "types.h"
 #include "Megamix/Types.hpp"
 
+#include "Megamix.hpp"
+
 extern u8 region;
 
 namespace Region {
@@ -61,6 +63,15 @@ namespace Region {
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();
 
+    Megamix::CSaveManager** SaveManager();
+    Megamix::CBlackBarManager** BlackbarLayout();
+
+    typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
+    typedef u32 (*SetTextBoxStringSignature) (Megamix::TextBox *, const char16_t *, u32);
+
+    SWPrintfSignature SWPrintfFunc();
+    SetTextBoxStringSignature SetTextBoxStringFunc();
+
     Megamix::UnkStruct0054ef10** D_0054ef10();
 
     typedef bool (*IsGateGameValidSignature) (Megamix::GateGameIndex index);
@@ -73,7 +84,6 @@ namespace Region {
     SetGateScoreSignature SetGateScoreFunc();
     SaveGameSignature SaveGameFunc();
 
-    Megamix::CSaveManager** SaveManager();
 }
 
 #endif
