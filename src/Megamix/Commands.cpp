@@ -112,16 +112,12 @@ namespace Megamix {
         if (arg0 != 0) return;
 
         TextBox* textBox = (*Region::BlackbarLayout())->textBox;
-
-        char16_t* out = (char16_t*)aligned_alloc(2,0x200);
+        char16_t* out = new char16_t[0x100];
 
         Region::SWPrintfFunc()(out, 0x100, textBox->textBuf, self->condvar);
+        Region::SetTextBoxStringFunc()(textBox, out, 0);
 
-        // i'll make this good later
-        auto setTextBoxString = (u32(*)(TextBox*, const char16_t*, u32))0x31fcd8;
-        setTextBoxString(textBox, out, 0);
-
-        free(out);
+        delete[] out;
     }
 
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {

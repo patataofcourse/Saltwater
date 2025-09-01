@@ -435,8 +435,26 @@ namespace Region {
 
     SWPrintfSignature SWPrintfFunc() {
         switch (region) {
+            case JP:
+                return (SWPrintfSignature)(0x100914 + 1);
             case US:
+            case EU:
                 return (SWPrintfSignature)(0x28a2d0 + 1);
+            case KR:
+                return (SWPrintfSignature)(0x28a2a8 + 1);
+            default:
+                return nullptr;
+        }
+    }
+
+    SetTextBoxStringSignature SetTextBoxStringFunc() {
+        switch (region) {
+            case JP:
+                return (SetTextBoxStringSignature)0x3204f8;
+            case US:
+            case EU:
+            case KR:
+                return (SetTextBoxStringSignature)0x31fcd8;
             default:
                 return nullptr;
         }
