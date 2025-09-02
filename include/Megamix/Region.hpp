@@ -1,14 +1,53 @@
 #ifndef RHMREGION_H
 #define RHMREGION_H
 
+#include <CTRPluginFramework/Menu/MessageBox.hpp>
+#include <cstdlib>
+#include <expected>
 #include <vector>
 #include <string>
 
 #include "types.h"
 
-#include "Megamix.hpp"
+#include "Megamix/Error.hpp"
+#include "Megamix/Types.hpp"
 
 extern u8 region;
+
+namespace Megamix {
+    struct GameInterface {
+        u32 gameCode;
+        u32 revision; // for potential future use?
+        const char* regionName;
+
+        // general code regions
+        u32 textEnd;
+        u32 rodataEnd;
+        u32 dataEnd;
+        u32 bssEnd;
+    };
+
+    // Rhythm Tengoku: The Best + (Japan) (0004000000155a00) (rev0)
+    extern const GameInterface jpCode;
+    // Rhythm Heaven Megamix (Americas) (000400000018a400) (rev0)
+    extern const GameInterface usCode;
+    // Rhythm Paradise Megamix (Europe) (000400000018a500) (rev0)
+    extern const GameInterface euCode;
+    // Rhythm Sesang: The Best + (Korea) (000400000018a600) (rev0)
+    extern const GameInterface krCode;
+
+    extern const GameInterface* pointers;
+
+    std::expected<Void, u32> initGameInterface(u32 gameCode);
+
+    namespace Game {
+        inline u32 _textEnd () { return pointers->textEnd; }
+        inline u32 _rodataEnd() { return pointers->rodataEnd; }
+        inline u32 _dataEnd() { return pointers->dataEnd; }
+        inline u32 _bssEnd() { return pointers->dataEnd; }
+    }
+}
+
 
 namespace Region {
 
@@ -43,11 +82,6 @@ namespace Region {
     u32 StrmTempoHookFunc();
     u32 SeqTempoHookFunc();
     u32 AllTempoHookFunc();
-
-    u32 TextEnd();
-    u32 RodataEnd();
-    u32 DataEnd();
-    u32 BssEnd();
 
     u32 TickflowCommandsSwitch();
     u32 TickflowCommandsEnd();

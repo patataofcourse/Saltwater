@@ -1,0 +1,9 @@
+CompileFlags:
+  Add:
+    - "-D__INT32_TYPE__=long"
+    - "-D__UINT32_TYPE__=unsigned long"
+  Remove:
+    - "-mword-relocations"
+Diagnostics:
+  Suppress:
+    - unused-includes

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Megamix.hpp"
+#include "Megamix/Region.hpp"
 
 using CTRPluginFramework::Process;
 using CTRPluginFramework::Utils;
@@ -65,13 +66,13 @@ namespace Megamix {
     static const char* MemSection(u32 far) {
         if (far < 0x00100000) {
             return "NULL";
-        } else if (far < Region::TextEnd()) {
+        } else if (far < Game::_textEnd()) {
             return "TEXT";
-        } else if (far < Region::RodataEnd()) {
+        } else if (far < Game::_rodataEnd()) {
             return "RODA";
-        } else if (far < Region::DataEnd()) {
+        } else if (far < Game::_dataEnd()) {
             return "DATA";
-        } else if (far < Region::BssEnd()) {
+        } else if (far < Game::_bssEnd()) {
             return "BSSO";
         } else if (far >= 0x06000000 && far < 0x07000000) {
             return "SLWM";
@@ -166,7 +167,7 @@ namespace Megamix {
             for (int i = 0; i < CALL_STACK_SIZE; i++) {
                 while ((u32)stack >= 0x06000000 || (u32)(stack + stack_offset) < 0x01000000) {
                     u32 val = *(u32*)(regs->sp + stack_offset);
-                    if ((val >= 0x0010000 && val < Region::TextEnd() || (val >= (u32)_start && val < _TEXT_END))) {
+                    if ((val >= 0x0010000 && val < Game::_textEnd() || (val >= (u32)_start && val < _TEXT_END))) {
                         crash.info.callStack[i] = val;
                         stack_offset += 4;
                         break;

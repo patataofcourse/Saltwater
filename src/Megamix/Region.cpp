@@ -3,7 +3,80 @@
 
 #include "Megamix.hpp"
 
+#include <expected>
+
 u8 region;
+
+namespace Megamix {
+    const GameInterface* pointers = nullptr;
+
+    std::expected<Void, u32> initGameInterface(u32 gameCode) {
+        switch (gameCode) {
+            case 0x155a00:
+                pointers = &jpCode;
+                break;
+            case 0x18a400:
+                pointers = &usCode;
+                break;
+            case 0x18a500:
+                pointers = &euCode;
+                break;
+            case 0x18a600:
+                pointers = &krCode;
+                break;
+            default:
+                return std::unexpected(gameCode);
+        }
+        return {};
+    }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic error "-Wmissing-field-initializers"
+    const GameInterface jpCode = {
+        0x155a00,
+        0,
+        "Japan",
+
+        0x39a000,
+        0x518000,
+        0x540754,
+        0x5ce1f0,
+    };
+
+    const GameInterface usCode = {
+        0x18a400,
+        0,
+        "Americas",
+
+        0x39a000,
+        0x521000,
+        0x54f074,
+        0x5dc2f0,
+    };
+
+    const GameInterface euCode = {
+        0x18a500,
+        0,
+        "Europe",
+
+        0x39a000,
+        0x521000,
+        0x54f16c,
+        0x5dc2f0,
+    };
+
+    const GameInterface krCode = {
+        0x18a600,
+        0,
+        "Korea",
+
+        0x39a000,
+        0x521000,
+        0x54f16c, //TODO: check
+        0x5dc2f0,
+    };
+#pragma GCC diagnostic pop
+}
 
 namespace Region {
     u8 FromCode(u32 code) {
@@ -245,52 +318,6 @@ namespace Region {
         }
     }
 
-    // Code sections
-
-    u32 TextEnd() {
-        return 0x39a000;
-    }
-
-    u32 RodataEnd() {
-        switch (region) {
-            case JP:
-                return 0x518000;
-            case US:
-            case EU:
-            case KR:
-                return 0x521000;
-            default:
-                return 0;
-        }
-    }
-
-    u32 DataEnd() {
-        switch (region) {
-            case JP:
-                return 0x540754;
-            case US:
-                return 0x54f074;
-            case EU:
-                return 0x54f16c;
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-    u32 BssEnd() {
-        switch (region) {
-            case JP:
-                return 0x5ce1f0;
-            case US:
-                return 0x5dc2f0;
-            case EU:
-            case KR:
-                return 0x5dc2f0;
-            default:
-                return 0;
-        }
-    }
 
     // Various locations used for the Tickflow Command flow
 

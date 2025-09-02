@@ -1,12 +1,15 @@
 #ifndef MEGAMIX_ERROR_HPP
 #define MEGAMIX_ERROR_HPP
 
+#include <CTRPluginFramework/Menu/MessageBox.hpp>
 #include <string>
 #include <CTRPluginFramework.hpp>
 
 #define CALL_STACK_SIZE 5
 
 using CTRPluginFramework::Process;
+
+struct Void{};
 
 namespace Megamix {
     std::string ErrorMessage(int code);
@@ -19,6 +22,16 @@ namespace Megamix {
         Extended,
         Short,
     };
+
+    inline void panic(std::string info) {
+        CTRPluginFramework::MessageBox(
+            "Unrecoverable internal error!",
+            info,
+            CTRPluginFramework::DialogType::DialogOk,
+            CTRPluginFramework::ClearScreen::Both
+        )();
+        Process::ReturnToHomeMenu();
+    }
 
     struct ShortCrashInfo {
         CrashType type;

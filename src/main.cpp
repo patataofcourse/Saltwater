@@ -1,6 +1,8 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
+#include <CTRPluginFramework/Menu/MessageBox.hpp>
 
+#include "Megamix/Region.hpp"
 #include "csvc.h"
 #include "external/plgldr.h"
 
@@ -94,7 +96,17 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     }
 
     // Init region and config
-    region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: what if US code in JP?
+    auto region_res = Megamix::initGameInterface(ctrpf::Process::GetTitleID());
+    if (!region_res.has_value()) {
+        MessageBox(
+            "panic!", 
+            "what the hell how did you get this\nyou're running saltwater on something that isn't megamix", 
+            DialogType::DialogOk, 
+            ClearScreen::Both
+        )();
+        Process::ReturnToHomeMenu();
+    }
+    region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: remove
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
     // Remix retry sub patch
