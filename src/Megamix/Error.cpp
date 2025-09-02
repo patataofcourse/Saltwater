@@ -217,7 +217,7 @@ namespace Megamix {
 
             u32 posY = 20;
 
-            posY = screen.Draw("Debug info", 20, posY);
+            posY = screen.Draw(Utils::Format("Debug info (%s)", Game::_regionName()), 20, posY);
             posY = screen.Draw(Utils::Format("@ %08x -> %08x (@ PC -> LR)", regs->pc, regs->lr), 20, posY);
             posY = screen.Draw(Utils::Format("Exception type %d", info->type), 20, posY);
             

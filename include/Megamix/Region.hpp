@@ -21,10 +21,26 @@ namespace Megamix {
         const char* regionName;
 
         // general code regions
+
         u32 textEnd;
         u32 rodataEnd;
         u32 dataEnd;
         u32 bssEnd;
+
+        // game definitions
+
+        GameDef* gameTable;
+        GateGameDef* gateTable;
+
+        // tickflow loading
+
+        u32 tickflowHookPos;
+        u32 gateHookPos;
+        u32 gatePracHookPos;
+
+        // music tempo
+
+        TempoTable* tempoTable;
     };
 
     // Rhythm Tengoku: The Best + (Japan) (0004000000155a00) (rev0)
@@ -45,6 +61,18 @@ namespace Megamix {
         inline u32 _rodataEnd() { return pointers->rodataEnd; }
         inline u32 _dataEnd() { return pointers->dataEnd; }
         inline u32 _bssEnd() { return pointers->dataEnd; }
+
+        inline const char* _regionName() { return pointers->regionName; }
+
+        inline GameDef* gGameTable() { return pointers->gameTable; }
+        inline GateGameDef* gGateTable() { return pointers->gateTable; }
+        inline TempoTable* gTempoTable() { return pointers->tempoTable; }
+
+        namespace Hooks {
+            inline u32 tickflow() { return pointers->tickflowHookPos; }
+            inline u32 gate() { return pointers->gateHookPos; }
+            inline u32 gatePractice() { return pointers->gatePracHookPos; }
+        }
     }
 }
 
@@ -70,14 +98,6 @@ namespace Region {
     // map of int -> vector<u8> other regions might use different registers
     std::vector<u32> MuseumRowsR1Cmps();
     std::vector<u32> MuseumRowsR8Cmps();
-
-    u32 GameTable();
-    u32 TempoTable();
-    u32 GateTable();
-
-    u32 TickflowHookFunc();
-    u32 GateHookFunc();
-    u32 GatePracHookFunc();
 
     u32 StrmTempoHookFunc();
     u32 SeqTempoHookFunc();

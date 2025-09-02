@@ -1,6 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include "Megamix/Region.hpp"
 #include "external/rt.h"
 
 #include "Megamix.hpp"
@@ -33,7 +34,7 @@ namespace Megamix::Hooks {
                 OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
-        return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
+        return Game::gGameTable()[index].tfStart;  // og code
     }
 
     void* getGateTickflowOffset(int index) {
@@ -45,7 +46,7 @@ namespace Megamix::Hooks {
                 OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
             }
         }
-        return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
+        return Game::gGateTable()[index].tfStart; // og code
     }
 
     void* getGatePracticeTickflowOffset(int index) {
@@ -57,7 +58,7 @@ namespace Megamix::Hooks {
                 OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
             }
         }
-        return *(void**)(Region::GateTable() + index * 0x24 + 8); // og code
+        return Game::gGateTable()[index].tfGatePractice; // og code
     }
 
     TempoTable* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
@@ -117,11 +118,11 @@ namespace Megamix::Hooks {
 
 
     void TickflowHooks() {
-        rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
+        rtInitHook(&tickflowHook, Game::Hooks::tickflow(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
-        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset);
+        rtInitHook(&gateHook, Game::Hooks::gate(), (u32)getGateTickflowOffset);
         rtEnableHook(&gateHook);
-        rtInitHook(&gatePracHook, Region::GatePracHookFunc(), (u32)getGatePracticeTickflowOffset);
+        rtInitHook(&gatePracHook, Game::Hooks::gatePractice(), (u32)getGatePracticeTickflowOffset);
         rtEnableHook(&gatePracHook);
     }
 

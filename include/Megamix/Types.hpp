@@ -6,6 +6,36 @@
 #include "types.h"
 
 namespace Megamix {
+    struct GameDef {
+        u8 console;
+        void* tfStart;
+        void* tfAsset;
+        char16_t* prologueArc;
+        char16_t* epilogueArc;
+        char* titleEntry;
+        char* infoEntry;
+        char* scoreHiEntry;
+        char* scoreOkEntry;
+        char* scoreNgEntry;
+        u32 prologueSfx;
+        u32 x2C;
+        u8 x30;
+        u8 x31;
+        u8 x32;
+    };
+
+    struct GateGameDef {
+        u8 console;
+        void* tfStart;
+        void* tfGatePractice;
+        char16_t* prologueArc;
+        char* titleEntry;
+        char* infoEntry;
+        char* unkEntry;
+        u32 prologueSfx;
+        u32 x20;
+    };
+
     struct Tempo {
         float beats;
         u32 time;

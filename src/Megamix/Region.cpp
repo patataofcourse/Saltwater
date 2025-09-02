@@ -2,6 +2,7 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
+#include "Megamix/Types.hpp"
 
 #include <expected>
 
@@ -33,47 +34,79 @@ namespace Megamix {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic error "-Wmissing-field-initializers"
     const GameInterface jpCode = {
-        0x155a00,
-        0,
-        "Japan",
+        .gameCode=  0x155a00,
+        .revision=  0,
+        .regionName="Japan",
 
-        0x39a000,
-        0x518000,
-        0x540754,
-        0x5ce1f0,
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x518000,
+        .dataEnd=   0x540754,
+        .bssEnd=    0x5ce1f0,
+
+        .gameTable=       (GameDef*)0x522498,
+        .gateTable=       (GateGameDef*)0x525488,
+        .tickflowHookPos= 0x25a1b4,
+        .gateHookPos=     0x242510,
+        .gatePracHookPos= 0x32e01c,
+
+        .tempoTable= (TempoTable*)0x5324B0,
     };
 
     const GameInterface usCode = {
-        0x18a400,
-        0,
-        "Americas",
+        .gameCode=  0x18a400,
+        .revision=  0,
+        .regionName="Americas",
 
-        0x39a000,
-        0x521000,
-        0x54f074,
-        0x5dc2f0,
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f074,
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258df4,
+        .gateHookPos=     0x240f9c,
+        .gatePracHookPos= 0x32d630,
+
+        .tempoTable= (TempoTable*)0x53EF54,
     };
 
     const GameInterface euCode = {
-        0x18a500,
-        0,
-        "Europe",
+        .gameCode=  0x18a500,
+        .revision=  0,
+        .regionName="Europe",
 
-        0x39a000,
-        0x521000,
-        0x54f16c,
-        0x5dc2f0,
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f16c,
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258df4,
+        .gateHookPos=     0x240f9c,
+        .gatePracHookPos= 0x32d630,
+
+        .tempoTable= (TempoTable*)0x53F04C,
     };
 
     const GameInterface krCode = {
-        0x18a600,
-        0,
-        "Korea",
+        .gameCode=  0x18a600,
+        .revision=  0,
+        .regionName="Korea",
 
-        0x39a000,
-        0x521000,
-        0x54f16c, //TODO: check
-        0x5dc2f0,
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f16c, //TODO: check
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258dcc,
+        .gateHookPos=     0x240f74,
+        .gatePracHookPos= 0x32d630,
+
+        .tempoTable= (TempoTable*)0x53F04C,
     };
 #pragma GCC diagnostic pop
 }
@@ -188,91 +221,6 @@ namespace Region {
             case JP:
 
             default: return {};
-        }
-    }
-
-    // Tables and stuff
-
-    u32 GameTable() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return 0x52b498;
-            case JP:
-                return 0x522498;
-            default:
-                return 0;
-        }
-    }
-
-    u32 TempoTable() {
-        switch (region) {
-            case US:
-                return 0x53EF54;
-            case EU:
-            case KR:
-                return 0x53F04C;
-            case JP:
-                return 0x5324B0;
-            default:
-                return 0;
-        }
-    }
-
-    u32 GateTable() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return 0x52E488;
-            case JP:
-                return 0x525488;
-            default:
-                return 0;
-        }
-    }
-
-    // Hooks - Tickflow
-
-    u32 TickflowHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x25a1b4;
-            case US:
-            case EU:
-                return 0x258df4;
-            case KR:
-                return 0x258dcc;
-            default:
-                return 0;
-        }
-    }
-
-    u32 GateHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x242510;
-            case US:
-            case EU:
-                return 0x240f9c;
-            case KR:
-                return 0x240f74;
-            default:
-                return 0;
-        }
-    }
-
-    u32 GatePracHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x32e01c;
-            case US:
-            case EU:
-            case KR:
-                return 0x32d630;
-            default:
-                return 0;
         }
     }
 

@@ -19,7 +19,7 @@ SOURCES 	:= 	src src/Megamix src/external #src/Helpers
 RELEASE		?= 0
 
 FLATPAK 	:= 0
-BARISTA_DIR	?= ../Barista/Barista
+BARISTA_DIR	?= ../Barista
 
 # Assume flatpak
 ifeq ($(shell which citra 2> /dev/null || which citra-qt 2> /dev/null || true),)
