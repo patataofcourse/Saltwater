@@ -2,6 +2,7 @@
 #include <CTRPluginFramework.hpp>
 #include <CTRPluginFramework/Menu/MessageBox.hpp>
 
+#include "Megamix/Error.hpp"
 #include "Megamix/Region.hpp"
 #include "csvc.h"
 #include "external/plgldr.h"
@@ -98,13 +99,7 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     // Init region and config
     auto region_res = Megamix::initGameInterface(ctrpf::Process::GetTitleID());
     if (!region_res.has_value()) {
-        MessageBox(
-            "panic!", 
-            "what the hell how did you get this\nyou're running saltwater on something that isn't megamix", 
-            DialogType::DialogOk, 
-            ClearScreen::Both
-        )();
-        Process::ReturnToHomeMenu();
+        Megamix::panic("what the hell how did you get this\nyou're running saltwater on something that isn't megamix");
     }
     region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: remove
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
@@ -159,7 +154,7 @@ void InitMenu(ctrpf::PluginMenu &menu) {
     });
 
     menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry *entry) {
-        *(int*)nullptr = 100;
+        *(volatile int*)nullptr = 100;
     });
 }
 #endif
@@ -169,8 +164,7 @@ int ctrpf::main(void) {
     Process::exceptionCallback = Megamix::CrashHandler;
 
     if (params.barista != 0xD06) {
-        ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();
-        Process::ReturnToHomeMenu();
+        Megamix::panic("You seem to be running Saltwater as a regular CTRPlugin. You must run Saltwater from the Barista launcher!");
     }
 
 #ifdef RELEASE
