@@ -25,6 +25,17 @@ namespace Megamix::Patches {
 
             return cond | cmp_imm_base | reg | value;
         }
+
+        // register is 4 bits, value is 12 bits
+        // see F5.1.122
+        static constexpr u32 mov_immediate(u32 reg, u32 value) {
+            // 1110 == no condition
+            const u32 cond = 0b1110 << 28;
+            const u32 cmp_imm_base = 0b0000'00111'01'0 << 20;
+            reg <<= 12;
+
+            return cond | cmp_imm_base | reg | value;
+        }
     }
 
     std::vector<MuseumRow> museumRows {
@@ -221,20 +232,9 @@ namespace Megamix::Patches {
         }
     }
 
-    // see section F5.1.122 in the arm A-profile reference manual
-    // register is 4 bits, value is 12 bits
-    constexpr u32 make_mov_immediate_instruction(u32 reg, u32 value) {
-        // 1110 == no condition
-        const u32 cond = 0b1110 << 28;
-        const u32 cmp_imm_base = 0b0000'00111'01'0 << 20;
-        reg <<= 12;
-
-        return cond | cmp_imm_base | reg | value;
-    }
-
     void PatchRetryRemix() {
         u32 instr = // mov r2, #0xE
-            make_mov_immediate_instruction(2, 0xE);
+            BuildInstr::mov_immediate(2, 0xE);
 
         for (auto loc: Game::Patches::ptrsToRetryRemix()){
             Process::Patch(loc, instr); 
