@@ -127,11 +127,11 @@ namespace Megamix::Hooks {
     }
 
     void TempoHooks() {
-        rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm);
+        rtInitHook(&tempoStrmHook, Game::Hooks::strmTempo(), (u32)getTempoStrm);
         rtEnableHook(&tempoStrmHook);
-        rtInitHook(&tempoSeqHook, Region::SeqTempoHookFunc(), (u32)getTempoSeq);
+        rtInitHook(&tempoSeqHook, Game::Hooks::seqTempo(), (u32)getTempoSeq);
         rtEnableHook(&tempoSeqHook);
-        rtInitHook(&tempoAllHook, Region::AllTempoHookFunc(), (u32)getTempoAll);
+        rtInitHook(&tempoAllHook, Game::Hooks::allTempo(), (u32)getTempoAll);
         rtEnableHook(&tempoAllHook);
     }
 

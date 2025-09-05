@@ -2,13 +2,142 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
-#include "Megamix/Types.hpp"
 
 #include <expected>
 
 u8 region;
 
 namespace Megamix {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic error "-Wmissing-field-initializers"
+    const GameInterface jpCode = {
+        .gameCode=  0x155a00,
+        .revision=  0,
+        .regionName="Japan",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x518000,
+        .dataEnd=   0x540754,
+        .bssEnd=    0x5ce1f0,
+
+        .gameTable=       (GameDef*)0x522498,
+        .gateTable=       (GateGameDef*)0x525488,
+        .tickflowHookPos= 0x25a1b4,
+        .gateHookPos=     0x242510,
+        .gatePracHookPos= 0x32e01c,
+
+        .tempoTable=       (TempoTable*)0x5324B0,
+        .strmTempoHookPos= GameInterface::NO_PTR,
+        .seqTempoHookPos=  GameInterface::NO_PTR,
+        // TODO: this function combines getTempoFromTable and US' func_0024f47c, adapt the hook
+        .allTempoHookPos=  GameInterface::UNIMPLEMENTED, // 0x25098c
+
+        // TODO: museum rows.......... in japan
+        .ptrsToMuseumRowInfo=   {GameInterface::UNIMPLEMENTED},
+        .ptrsToMuseumRowColors= {GameInterface::UNIMPLEMENTED},
+        .rowColorsInitHookPos=  GameInterface::UNIMPLEMENTED,
+        .museumRowsR1Cmps=      {GameInterface::UNIMPLEMENTED},
+        .museumRowsR8Cmps=      {GameInterface::UNIMPLEMENTED},
+    };
+
+    const GameInterface usCode = {
+        .gameCode=  0x18a400,
+        .revision=  0,
+        .regionName="Americas",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f074,
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258df4,
+        .gateHookPos=     0x240f9c,
+        .gatePracHookPos= 0x32d630,
+
+        .tempoTable=       (TempoTable*)0x53EF54,
+        .strmTempoHookPos= 0x276424,
+        .seqTempoHookPos=  0x2763c8,
+        .allTempoHookPos=  0x203c08,
+
+        .ptrsToMuseumRowInfo =   {
+                    0x2421e8, 0x24c480, 0x24d408,                     // gRowInfo
+                    0x1979e0, 0x1983fc, 0x242350, 0x2424bc, 0x24e010, // gRowInfo1
+                    0x2423d4, 0x2619c0,                               // gRowInfo2
+                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
+        },
+        .ptrsToMuseumRowColors = { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
+        .rowColorsInitHookPos =  0x38de58,
+        .museumRowsR1Cmps =      { 0x2423c4, 0x2423DC, 0x2619B0 },
+        .museumRowsR8Cmps =      { 0x242400, 0x2424a0 },
+    };
+
+    const GameInterface euCode = {
+        .gameCode=  0x18a500,
+        .revision=  0,
+        .regionName="Europe",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f16c,
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258df4,
+        .gateHookPos=     0x240f9c,
+        .gatePracHookPos= 0x32d630,
+
+        .tempoTable=       (TempoTable*)0x53F04C,
+        .strmTempoHookPos= 0x276424,
+        .seqTempoHookPos=  0x2763c8,
+        .allTempoHookPos=  0x203c08,
+
+        .ptrsToMuseumRowInfo =   usCode.ptrsToMuseumRowInfo,
+        .ptrsToMuseumRowColors = usCode.ptrsToMuseumRowColors,
+        .rowColorsInitHookPos =  0x38de58,
+        .museumRowsR1Cmps =      usCode.museumRowsR1Cmps,
+        .museumRowsR8Cmps =      usCode.museumRowsR8Cmps,
+    };
+
+    const GameInterface krCode = {
+        .gameCode=  0x18a600,
+        .revision=  0,
+        .regionName="Korea",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f16c, //TODO: check
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258dcc,
+        .gateHookPos=     0x240f74,
+        .gatePracHookPos= 0x32d630,
+
+        .tempoTable=       (TempoTable*)0x53F04C,
+        .strmTempoHookPos= 0x276424,
+        .seqTempoHookPos=  0x2763c8,
+        .allTempoHookPos=  0x203c08,
+
+
+        .ptrsToMuseumRowInfo =   {
+                    0x2421c0, 0x24c458, 0x24d3e0,                     // gRowInfo
+                    0x1979e0, 0x1983fc, 0x242328, 0x242494, 0x24dfe8, // gRowInfo1
+                    0x2423ac, 0x261998,                               // gRowInfo2
+                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
+                },
+        .ptrsToMuseumRowColors = { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
+        .rowColorsInitHookPos =  0x38de58,
+        .museumRowsR1Cmps =      { 0x24239c, 0x2423b4, 0x261988 },
+        .museumRowsR8Cmps =      { 0x2423d8, 0x242478 },
+    };
+#pragma GCC diagnostic pop
+
+    // everything down here is initializing code - don't pay it any mind unless you have any struct that allocates heap mem
+
     const GameInterface* pointers = nullptr;
 
     std::expected<Void, u32> initGameInterface(u32 gameCode) {
@@ -28,87 +157,25 @@ namespace Megamix {
             default:
                 return std::unexpected(gameCode);
         }
+
+        // return memory by freeing all heap data in the unused GameInterfaces
+
+        for (auto region: allRegions) {
+            if (region == pointers) continue;
+
+            auto free_vec = []<typename V>(std::vector<V> vec){
+                vec.resize(0);
+                vec.shrink_to_fit();
+            };
+
+            free_vec(region->ptrsToMuseumRowInfo);
+            free_vec(region->ptrsToMuseumRowColors);
+            free_vec(region->museumRowsR1Cmps);
+            free_vec(region->museumRowsR8Cmps);
+        }
+
         return {};
     }
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic error "-Wmissing-field-initializers"
-    const GameInterface jpCode = {
-        .gameCode=  0x155a00,
-        .revision=  0,
-        .regionName="Japan",
-
-        .textEnd=   0x39a000,
-        .rodataEnd= 0x518000,
-        .dataEnd=   0x540754,
-        .bssEnd=    0x5ce1f0,
-
-        .gameTable=       (GameDef*)0x522498,
-        .gateTable=       (GateGameDef*)0x525488,
-        .tickflowHookPos= 0x25a1b4,
-        .gateHookPos=     0x242510,
-        .gatePracHookPos= 0x32e01c,
-
-        .tempoTable= (TempoTable*)0x5324B0,
-    };
-
-    const GameInterface usCode = {
-        .gameCode=  0x18a400,
-        .revision=  0,
-        .regionName="Americas",
-
-        .textEnd=   0x39a000,
-        .rodataEnd= 0x521000,
-        .dataEnd=   0x54f074,
-        .bssEnd=    0x5dc2f0,
-
-        .gameTable=       (GameDef*)0x52b498,
-        .gateTable=       (GateGameDef*)0x52e488,
-        .tickflowHookPos= 0x258df4,
-        .gateHookPos=     0x240f9c,
-        .gatePracHookPos= 0x32d630,
-
-        .tempoTable= (TempoTable*)0x53EF54,
-    };
-
-    const GameInterface euCode = {
-        .gameCode=  0x18a500,
-        .revision=  0,
-        .regionName="Europe",
-
-        .textEnd=   0x39a000,
-        .rodataEnd= 0x521000,
-        .dataEnd=   0x54f16c,
-        .bssEnd=    0x5dc2f0,
-
-        .gameTable=       (GameDef*)0x52b498,
-        .gateTable=       (GateGameDef*)0x52e488,
-        .tickflowHookPos= 0x258df4,
-        .gateHookPos=     0x240f9c,
-        .gatePracHookPos= 0x32d630,
-
-        .tempoTable= (TempoTable*)0x53F04C,
-    };
-
-    const GameInterface krCode = {
-        .gameCode=  0x18a600,
-        .revision=  0,
-        .regionName="Korea",
-
-        .textEnd=   0x39a000,
-        .rodataEnd= 0x521000,
-        .dataEnd=   0x54f16c, //TODO: check
-        .bssEnd=    0x5dc2f0,
-
-        .gameTable=       (GameDef*)0x52b498,
-        .gateTable=       (GateGameDef*)0x52e488,
-        .tickflowHookPos= 0x258dcc,
-        .gateHookPos=     0x240f74,
-        .gatePracHookPos= 0x32d630,
-
-        .tempoTable= (TempoTable*)0x53F04C,
-    };
-#pragma GCC diagnostic pop
 }
 
 namespace Region {
@@ -126,146 +193,6 @@ namespace Region {
                 return UNK;
         }
     }
-
-    std::string Name() {
-        switch (region) {
-            case US: return "US";
-            case EU: return "EU";
-            case JP: return "JP";
-            case KR: return "KR";
-            default: return "UNK";
-        }
-    }
-
-    // Extra museum rows patch
-
-    std::vector<u32> MuseumRowsInfoAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-                return {
-                    0x2421e8, 0x24c480, 0x24d408,                     // gRowInfo
-                    0x1979e0, 0x1983fc, 0x242350, 0x2424bc, 0x24e010, // gRowInfo1
-                    0x2423d4, 0x2619c0,                               // gRowInfo2
-                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
-                };
-            case KR:
-                return {
-                    0x2421c0, 0x24c458, 0x24d3e0,                     // gRowInfo
-                    0x1979e0, 0x1983fc, 0x242328, 0x242494, 0x24dfe8, // gRowInfo1
-                    0x2423ac, 0x261998,                               // gRowInfo2
-                    0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
-                };
-
-            // TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    u32 MuseumRowsColorsInitFunc() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return 0x38de58;
-
-            // TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    std::vector<u32> MuseumRowsColorsAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 };
-            case KR:
-                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241f9c, 0x38e6d8 };
-
-            // TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    std::vector<u32> MuseumRowsR1Cmps() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x2423c4, 0x2423DC, 0x2619B0 };
-
-            case KR:
-                return { 0x24239c, 0x2423b4, 0x261988 };
-
-            // TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    std::vector<u32> MuseumRowsR8Cmps() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x242400, 0x2424a0 };
-            case KR:
-                return { 0x2423d8, 0x242478 };
-
-            //TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    // Hooks - Tempo
-
-    u32 StrmTempoHookFunc() {
-        switch (region) {
-            // can't seem to find a JP equivalent?
-            case US:
-            case EU:
-                return 0x276424;
-            case KR:
-                return 0x2763fc;
-            default:
-                return 0;
-        }
-    }
-
-    u32 SeqTempoHookFunc() {
-        switch (region) {
-            // can't seem to find a JP equivalent?
-            case US:
-            case EU:
-                return 0x2763c8;
-            case KR:
-                return 0x2763a0;
-            default:
-                return 0;
-        }
-    }
-
-    u32 AllTempoHookFunc() {
-        switch (region) {
-            case JP:
-                // TODO: this function combines getTempoFromTable and US' func_0024f47c, adapt the hook
-                return 0x25098c;
-            case US:
-            case EU:
-            case KR:
-                return 0x203c08;
-            default:
-                return 0;
-        }
-    }
-
 
     // Various locations used for the Tickflow Command flow
 

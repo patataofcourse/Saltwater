@@ -190,28 +190,28 @@ namespace Megamix::Patches {
         AddExtraRowsToFront();
 
         // patch in new museum rows
-        for (auto address : Region::MuseumRowsInfoAddresses()) {
+        for (auto address : Game::pMuseumRows::ptrsToInfo()) {
             Process::Patch(address, (u32) museumRows.data());
         }
 
         u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
             make_cmp_immediate_instruction(1, museumRows.size());
 
-        for (auto address : Region::MuseumRowsR1Cmps()) {
+        for (auto address : Game::pMuseumRows::r1Cmps()) {
             Process::Patch(address, compare_r1_instruction);
         }
 
         u32 compare_r8_instruction = // cmp r8, MUSEUM_ROW_COUNT
             make_cmp_immediate_instruction(8, museumRows.size());
 
-        for (auto address : Region::MuseumRowsR8Cmps()) {
+        for (auto address : Game::pMuseumRows::r8Cmps()) {
             Process::Patch(address, compare_r8_instruction);
         }
 
-        Hooks::StubFunction<void>(Region::MuseumRowsColorsInitFunc());
+        Hooks::StubFunction<void>(Game::pMuseumRows::colorInitHookPos());
 
-        for (auto address : Region::MuseumRowsColorsAddresses()) {
+        for (auto address : Game::pMuseumRows::ptrsToColors()) {
             Process::Patch(address, (u32) museumRowColors.data());
         }
     }
-}
+} // namespace Megamix::Patches
