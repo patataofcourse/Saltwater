@@ -98,14 +98,14 @@ void CTRPF::PatchProcess(CTRPF::FwkSettings&) {
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
     // Start hooks, apply patches
-    Megamix::Hooks::TickflowHooks();
-    Megamix::Hooks::RegionHooks();
+    Megamix::Hooks::initTickflowHooks();
+    Megamix::Hooks::initRegionHooks();
     Megamix::Patches::PatchRetryRemix();
     if (region != Region::JP) {
         //TODO: find out how to make the tempo hooks JP-compatible
-        Megamix::Hooks::TempoHooks();
+        Megamix::Hooks::initTempoHooks();
         //TODO: find out how to make the tickflow commands hook JP-compatible
-        Megamix::Hooks::CommandHook();
+        Megamix::Hooks::initCommandHooks();
     }
 
     if (region != Region::JP && params.extra_rows) {
@@ -116,7 +116,7 @@ void CTRPF::PatchProcess(CTRPF::FwkSettings&) {
 // This function is called when the process exits
 // Useful to save settings, undo patchs or clean up things
 void CTRPF::OnProcessExit(void) {
-    Megamix::Hooks::DisableAllHooks(); // Probably not needed, but still
+    Megamix::Hooks::disableAllHooks(); // Probably not needed, but still
     ToggleTouchscreenForceOn();
 }
 

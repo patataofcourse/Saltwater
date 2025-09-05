@@ -3,6 +3,7 @@
 
 #include "Megamix.hpp"
 #include "Config.hpp"
+#include "Stuff.hpp"
 
 #include <map>
 
@@ -11,11 +12,6 @@ using CTRPluginFramework::File;
 int configResult;
 
 Config config;
-
-#define CHAR4_LE(char1, char2, char3, char4) ( \
-    ((u32)(char4) << 24) | ((u32)(char3) << 16) | \
-    ((u32)(char2) <<  8) | ((u32)(char1) <<  0) \
-)
 
 Config::Config() {
     tickflows = {};

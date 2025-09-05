@@ -1,7 +1,6 @@
 #include <3ds.h>
 #include "CTRPF.hpp"
 
-#include "Megamix/Region.hpp"
 #include "external/rt.h"
 
 #include "Megamix.hpp"
@@ -116,8 +115,9 @@ namespace Megamix::Hooks {
         return region;
     }
 
+    // ---
 
-    void TickflowHooks() {
+    void initTickflowHooks() {
         rtInitHook(&tickflowHook, Game::Hooks::tickflow(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
         rtInitHook(&gateHook, Game::Hooks::gate(), (u32)getGateTickflowOffset);
@@ -126,7 +126,7 @@ namespace Megamix::Hooks {
         rtEnableHook(&gatePracHook);
     }
 
-    void TempoHooks() {
+    void initTempoHooks() {
         rtInitHook(&tempoStrmHook, Game::Hooks::strmTempo(), (u32)getTempoStrm);
         rtEnableHook(&tempoStrmHook);
         rtInitHook(&tempoSeqHook, Game::Hooks::seqTempo(), (u32)getTempoSeq);
@@ -135,8 +135,9 @@ namespace Megamix::Hooks {
         rtEnableHook(&tempoAllHook);
     }
 
-    void RegionHooks() {
+    void initRegionHooks() {
         if (region != Region::JP){
+            // TODO: remove when the FS stuff is replaced
             rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegionMegamix);
             rtEnableHook(&regionFSHook);
         }
@@ -144,19 +145,28 @@ namespace Megamix::Hooks {
         rtEnableHook(&regionOtherHook);
     }
 
-    void CommandHook() {
-        rtInitHook(&tickflowCommandsHook, Region::TickflowCommandsSwitch(), (u32)tickflowCommandsHookWrapper);
+    void initCommandHooks() {
+        rtInitHook(&tickflowCommandsHook, Region::TickflowCommandsSwitch(), (u32)Megamix::tickflowCommandsHook);
         rtEnableHook(&tickflowCommandsHook);
     }
 
-    void DisableAllHooks() {
+    void disableTickflowHooks() {
         rtDisableHook(&tickflowHook);
         rtDisableHook(&gateHook);
+    }
+
+    void disableTempoHooks() {
         rtDisableHook(&tempoStrmHook);
         rtDisableHook(&tempoSeqHook);
         rtDisableHook(&tempoAllHook);
+    }
+
+    void disableRegionHooks() {
         rtDisableHook(&regionFSHook);
         rtDisableHook(&regionOtherHook);
+    }
+
+    void disableCommandHooks() {
         rtDisableHook(&tickflowCommandsHook);
     }
 

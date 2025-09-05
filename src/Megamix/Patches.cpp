@@ -10,7 +10,23 @@
 #include "Config.hpp"
 #include "Megamix/Region.hpp"
 
+// TODO: these currently have no way to unpatch. should we not do that?
+
 namespace Megamix::Patches {
+    // see specified sections in the arm A-profile reference manual
+    namespace BuildInstr {
+        // register is 4 bits, value is 12 bits
+        // see F5.1.35
+        static constexpr u32 cmp_immediate(u32 reg, u32 value) {
+            // 1110 == no condition
+            const u32 cond = 0b1110 << 28;
+            const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
+            reg <<= 16;
+
+            return cond | cmp_imm_base | reg | value;
+        }
+    }
+
     std::vector<MuseumRow> museumRows {
         /* 0  */ MuseumRow({ RvlKarate0,     NtrRobotS,     RvlBadmintonS, CtrStepS,        None       }, "stage_gr00",    0, 0),
         /* 1  */ MuseumRow({ AgbHairS,       NtrChorusS,    RvlMuscleS,    CtrFruitbasketS, None       }, "stage_gr01",    0, 1),
@@ -74,17 +90,6 @@ namespace Megamix::Patches {
         /* 27 */ MuseumRowColor(0x78500AFF, 0x643C3200),
         /* 28 */ MuseumRowColor(0x78500AFF, 0x643C3200),
     };
-
-    // see section F5.1.35 in the arm A-profile reference manual
-    // register is 4 bits, value is 12 bits
-    constexpr u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
-        // 1110 == no condition
-        const u32 cond = 0b1110 << 28;
-        const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
-        reg <<= 16;
-
-        return cond | cmp_imm_base | reg | value;
-    }
 
     std::optional<u16> SlotIdToMuseumGameId(u16 gameId) {
         if (gameId < 0x100) {
@@ -196,14 +201,14 @@ namespace Megamix::Patches {
         }
 
         u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, museumRows.size());
+            BuildInstr::cmp_immediate(1, museumRows.size());
 
         for (auto address : Game::pMuseumRows::r1Cmps()) {
             Process::Patch(address, compare_r1_instruction);
         }
 
         u32 compare_r8_instruction = // cmp r8, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(8, museumRows.size());
+            BuildInstr::cmp_immediate(8, museumRows.size());
 
         for (auto address : Game::pMuseumRows::r8Cmps()) {
             Process::Patch(address, compare_r8_instruction);

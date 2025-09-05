@@ -20,8 +20,8 @@ namespace Megamix {
             char* tickflow = nullptr;
             char* strings = nullptr;
             std::map<u32, TempoTable*> tempos = std::map<u32, TempoTable*>();
-            u32 tickflowSize;
-            u32 stringSize;
+            u32 tickflowSize = 0;
+            u32 stringSize = 0;
 
             int LoadFile(std::string filename);
             void Unload();

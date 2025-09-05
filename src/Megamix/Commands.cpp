@@ -6,21 +6,23 @@
 #include "Megamix.hpp"
 #include "Saltwater.hpp"
 
-using CTRPluginFramework::OSD;
-using CTRPluginFramework::Utils;
-
 namespace Megamix {
+    void input_cmd(CTickflow* self, u32 arg0, u32* args);
+    void versionCheck(CTickflow* self, u32 arg0, u32* args);
+    void languageCheck(CTickflow* self, u32 arg0, u32* args);
+    void displayCondvar(CTickflow* self, u32 arg0, u32* args);
+    void msbtWithNum(CTickflow* self, u32 arg0, u32* args);
 
-    void tickflowCommandsHookWrapper() {
+    void tickflowCommandsHook() {
         asm(
             "mov r0, r6\n"
-            "bl tickflowCommandsHook\n"
+            "bl tickflowCommandsHookImpl\n"
             "bx r0\n"
         );
     }
 
-    extern "C" __attribute__((used)) 
-    int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
+    extern "C" __attribute__((used))
+    int tickflowCommandsHookImpl(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
         switch(cmd_num){
              // Necessary, as our hook overrides case 0.
             case 0:
@@ -124,11 +126,11 @@ namespace Megamix {
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {
         // Keeping that just in case
         // Screen bottomScreen = OSD::GetBottomScreen();
-        // bottomScreen.Draw("Condvar:"+Utils::Format("0x%08x",self->condvar), 0, 0, Color::White, Color::Black);
+        // bottomScreen.Draw("Condvar:"+Format("0x%08x",self->condvar), 0, 0, Color::White, Color::Black);
         if(arg0 == 0) {
-            OSD::Notify("Condvar:"+Utils::Format("0x%08x",self->condvar));
+            OSD::Notify("Condvar:"+Format("0x%08x",self->condvar));
         } else if (arg0 == 1){ 
-            OSD::Notify("Condvar:"+Utils::Format("%08d",self->condvar));
+            OSD::Notify("Condvar:"+Format("%08d",self->condvar));
         }
     }
 

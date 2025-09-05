@@ -4,13 +4,22 @@
 #include <3ds/types.h>
 
 namespace Megamix::Hooks {
-    void TickflowHooks();
-    void TempoHooks();
-    void RegionHooks();
-    void CommandHook();
-    void DisableAllHooks();
+    void initTickflowHooks();
+    void initTempoHooks();
+    void initRegionHooks();
+    void initCommandHooks();
 
-    template<typename T> T StubbedFunction();
+    void disableTickflowHooks();
+    void disableTempoHooks();
+    void disableRegionHooks();
+    void disableCommandHooks();
+    inline void disableAllHooks() {
+        disableTickflowHooks();
+        disableTempoHooks();
+        disableRegionHooks();
+        disableCommandHooks();
+    }
+
     template<typename T> void StubFunction(u32 address);
 }
 

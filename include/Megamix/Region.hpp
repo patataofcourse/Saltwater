@@ -127,7 +127,7 @@ namespace Megamix {
 
 
 namespace Region {
-
+    // TODO: split into two enum classes
     enum {
         JP = 0,
         US = 1,

@@ -6,6 +6,11 @@
 
 using Megamix::BTKS;
 
+#define CHAR4_LE(char1, char2, char3, char4) ( \
+    ((u32)(char4) << 24) | ((u32)(char3) << 16) | \
+    ((u32)(char2) <<  8) | ((u32)(char1) <<  0) \
+)
+
 namespace Stuff {
     static inline std::string FileMapToString(Config::TickflowMap in) {
         std::string out = "{";

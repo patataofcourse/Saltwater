@@ -13,15 +13,7 @@ namespace Megamix{
         DisplayCondvar = 0x300
     };
 
-    void tickflowCommandsHookWrapper();
-
-    extern "C" int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args);
-
-    void input_cmd(CTickflow* self, u32 arg0, u32* args);
-    void versionCheck(CTickflow* self, u32 arg0, u32* args);
-    void languageCheck(CTickflow* self, u32 arg0, u32* args);
-    void displayCondvar(CTickflow* self, u32 arg0, u32* args);
-    void msbtWithNum(CTickflow* self, u32 arg0, u32* args);
+    void tickflowCommandsHook();
 }
 
 #endif
