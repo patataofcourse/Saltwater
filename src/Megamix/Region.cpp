@@ -1,9 +1,7 @@
-#include "Megamix/Region.hpp"
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "Megamix.hpp"
-#include "Megamix/Types.hpp"
 
 #include <expected>
 

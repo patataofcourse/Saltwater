@@ -1,13 +1,10 @@
 #ifndef MEGAMIX_ERROR_HPP
 #define MEGAMIX_ERROR_HPP
 
-#include <CTRPluginFramework/Menu/MessageBox.hpp>
 #include <string>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #define CALL_STACK_SIZE 5
-
-using CTRPluginFramework::Process;
 
 struct Void{};
 

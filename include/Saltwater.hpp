@@ -1,7 +1,9 @@
 #ifndef SALTWATER_H
 #define SALTWATER_H
 
+#include "external/plgldr.h"
 #include <3ds.h>
+#include <assert.h>
 
 // Saltwater version
 
@@ -19,7 +21,6 @@
 
 #ifdef RELEASE
 
-
 #define VERSION "v" STRC(VERSION_MAJOR) "." STRC(VERSION_MINOR) "." STRC(VERSION_PATCH)
 
 #else
@@ -29,17 +30,15 @@
 
 #endif
 
-// Params struct
-extern "C" {
-    struct SaltwaterParams {
-        u16 barista;
-        bool rhmpatch;
-        bool plgldr;
-        bool mod_loaded_msg;
-        bool extra_rows;
-        u32 null[30];
-    };
-}
+struct SaltwaterParams {
+    u16 barista;
+    bool rhmpatch;
+    bool plgldr;
+    bool mod_loaded_msg;
+    bool extra_rows;
+    u32 null[30];
+};
+static_assert(sizeof(SaltwaterParams) == sizeof(PluginLoadParameters::config));
 
 extern SaltwaterParams params;
 

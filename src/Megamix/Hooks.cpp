@@ -1,5 +1,5 @@
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "Megamix/Region.hpp"
 #include "external/rt.h"
@@ -31,7 +31,7 @@ namespace Megamix::Hooks {
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
-                OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
+                OSD::Notify(Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
         return Game::gGameTable()[index].tfStart;  // og code
@@ -43,7 +43,7 @@ namespace Megamix::Hooks {
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
-                OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
+                OSD::Notify(Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
         return Game::gGateTable()[index].tfStart; // og code
@@ -55,7 +55,7 @@ namespace Megamix::Hooks {
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
-                OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
+                OSD::Notify(Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
         return Game::gGateTable()[index].tfGatePractice; // og code

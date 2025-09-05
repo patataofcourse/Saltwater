@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include <string>
 #include <map>

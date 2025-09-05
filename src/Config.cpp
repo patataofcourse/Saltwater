@@ -1,5 +1,5 @@
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "Megamix.hpp"
 #include "Config.hpp"
