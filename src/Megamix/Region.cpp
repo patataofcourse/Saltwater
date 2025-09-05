@@ -1,7 +1,9 @@
+#include "Megamix/Region.hpp"
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
+#include "Megamix/Types.hpp"
 
 #include <expected>
 
@@ -20,11 +22,12 @@ namespace Megamix {
         .dataEnd=   0x540754,
         .bssEnd=    0x5ce1f0,
 
-        .gameTable=       (GameDef*)0x522498,
-        .gateTable=       (GateGameDef*)0x525488,
-        .tickflowHookPos= 0x25a1b4,
-        .gateHookPos=     0x242510,
-        .gatePracHookPos= 0x32e01c,
+        .gameTable=        (GameDef*)0x522498,
+        .gateTable=        (GateGameDef*)0x525488,
+        .tickflowHookPos=  0x25a1b4,
+        .gateHookPos=      0x242510,
+        .gatePracHookPos=  0x32e01c,
+        .ptrsToRetryRemix= {0x19a180, 0x16485c, 0x1f8e78},
 
         .tempoTable=       (TempoTable*)0x5324B0,
         .strmTempoHookPos= GameInterface::NO_PTR,
@@ -38,6 +41,11 @@ namespace Megamix {
         .rowColorsInitHookPos=  GameInterface::UNIMPLEMENTED,
         .museumRowsR1Cmps=      {GameInterface::UNIMPLEMENTED},
         .museumRowsR8Cmps=      {GameInterface::UNIMPLEMENTED},
+
+        // TODO: any of these could have been made incompatible by version differences
+        .saveData=     (CSaveData**)GameInterface::UNIMPLEMENTED,
+        .inputManager= (CInputManager**)GameInterface::UNIMPLEMENTED,
+        .fileManager=  (CFileManager**)GameInterface::UNIMPLEMENTED,
     };
 
     const GameInterface usCode = {
@@ -50,27 +58,32 @@ namespace Megamix {
         .dataEnd=   0x54f074,
         .bssEnd=    0x5dc2f0,
 
-        .gameTable=       (GameDef*)0x52b498,
-        .gateTable=       (GateGameDef*)0x52e488,
-        .tickflowHookPos= 0x258df4,
-        .gateHookPos=     0x240f9c,
-        .gatePracHookPos= 0x32d630,
+        .gameTable=        (GameDef*)0x52b498,
+        .gateTable=        (GateGameDef*)0x52e488,
+        .tickflowHookPos=  0x258df4,
+        .gateHookPos=      0x240f9c,
+        .gatePracHookPos=  0x32d630,
+        .ptrsToRetryRemix= {0x198c9c, 0x16302c, 0x1f7f84},
 
         .tempoTable=       (TempoTable*)0x53EF54,
         .strmTempoHookPos= 0x276424,
         .seqTempoHookPos=  0x2763c8,
         .allTempoHookPos=  0x203c08,
 
-        .ptrsToMuseumRowInfo =   {
+        .ptrsToMuseumRowInfo=   {
                     0x2421e8, 0x24c480, 0x24d408,                     // gRowInfo
                     0x1979e0, 0x1983fc, 0x242350, 0x2424bc, 0x24e010, // gRowInfo1
                     0x2423d4, 0x2619c0,                               // gRowInfo2
                     0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
         },
-        .ptrsToMuseumRowColors = { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
-        .rowColorsInitHookPos =  0x38de58,
-        .museumRowsR1Cmps =      { 0x2423c4, 0x2423DC, 0x2619B0 },
-        .museumRowsR8Cmps =      { 0x242400, 0x2424a0 },
+        .ptrsToMuseumRowColors= { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
+        .rowColorsInitHookPos=  0x38de58,
+        .museumRowsR1Cmps=      { 0x2423c4, 0x2423DC, 0x2619B0 },
+        .museumRowsR8Cmps=      { 0x242400, 0x2424a0 },
+
+        .saveData=     (CSaveData**)0x54d350,
+        .inputManager= (CInputManager**)0x54eed0,
+        .fileManager=  (CFileManager**)0x54eedc,
     };
 
     const GameInterface euCode = {
@@ -88,17 +101,22 @@ namespace Megamix {
         .tickflowHookPos= 0x258df4,
         .gateHookPos=     0x240f9c,
         .gatePracHookPos= 0x32d630,
+        .ptrsToRetryRemix= usCode.ptrsToRetryRemix,
 
         .tempoTable=       (TempoTable*)0x53F04C,
         .strmTempoHookPos= 0x276424,
         .seqTempoHookPos=  0x2763c8,
         .allTempoHookPos=  0x203c08,
 
-        .ptrsToMuseumRowInfo =   usCode.ptrsToMuseumRowInfo,
-        .ptrsToMuseumRowColors = usCode.ptrsToMuseumRowColors,
-        .rowColorsInitHookPos =  0x38de58,
-        .museumRowsR1Cmps =      usCode.museumRowsR1Cmps,
-        .museumRowsR8Cmps =      usCode.museumRowsR8Cmps,
+        .ptrsToMuseumRowInfo=   usCode.ptrsToMuseumRowInfo,
+        .ptrsToMuseumRowColors= usCode.ptrsToMuseumRowColors,
+        .rowColorsInitHookPos=  0x38de58,
+        .museumRowsR1Cmps=      usCode.museumRowsR1Cmps,
+        .museumRowsR8Cmps=      usCode.museumRowsR8Cmps,
+
+        .saveData=     (CSaveData**)0x54d448, 
+        .inputManager= (CInputManager**)0x54efc8, 
+        .fileManager=  (CFileManager**)0x54efd4,
     };
 
     const GameInterface krCode = {
@@ -116,23 +134,27 @@ namespace Megamix {
         .tickflowHookPos= 0x258dcc,
         .gateHookPos=     0x240f74,
         .gatePracHookPos= 0x32d630,
+        .ptrsToRetryRemix= usCode.ptrsToRetryRemix,
 
         .tempoTable=       (TempoTable*)0x53F04C,
         .strmTempoHookPos= 0x276424,
         .seqTempoHookPos=  0x2763c8,
         .allTempoHookPos=  0x203c08,
 
-
-        .ptrsToMuseumRowInfo =   {
+        .ptrsToMuseumRowInfo=   {
                     0x2421c0, 0x24c458, 0x24d3e0,                     // gRowInfo
                     0x1979e0, 0x1983fc, 0x242328, 0x242494, 0x24dfe8, // gRowInfo1
                     0x2423ac, 0x261998,                               // gRowInfo2
                     0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
                 },
-        .ptrsToMuseumRowColors = { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
-        .rowColorsInitHookPos =  0x38de58,
-        .museumRowsR1Cmps =      { 0x24239c, 0x2423b4, 0x261988 },
-        .museumRowsR8Cmps =      { 0x2423d8, 0x242478 },
+        .ptrsToMuseumRowColors= { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
+        .rowColorsInitHookPos=  0x38de58,
+        .museumRowsR1Cmps=      { 0x24239c, 0x2423b4, 0x261988 },
+        .museumRowsR8Cmps=      { 0x2423d8, 0x242478 },
+
+        .saveData=     (CSaveData**)0x54d448, 
+        .inputManager= (CInputManager**)0x54efc8, 
+        .fileManager=  (CFileManager**)0x54efd4,
     };
 #pragma GCC diagnostic pop
 
@@ -168,6 +190,8 @@ namespace Megamix {
                 vec.shrink_to_fit();
             };
 
+            free_vec(region->ptrsToRetryRemix);
+            
             free_vec(region->ptrsToMuseumRowInfo);
             free_vec(region->ptrsToMuseumRowColors);
             free_vec(region->museumRowsR1Cmps);
@@ -237,61 +261,6 @@ namespace Region {
                 return 0x25c698;
             default:
                 return 0;
-        }
-    }
-
-    // Locations of global variables
-
-    u32 GlobalSaveDataPointer(){
-        switch (region) {
-            case US:
-                return 0x54d350;
-            case EU:
-            case KR:
-                return 0x54d448;
-            case JP:
-            default:
-                return 0;
-        }
-    }
-
-    u32 GlobalInputManagerPointer(){
-        switch (region) {
-            case US:
-                return 0x54eed0;
-            case EU:
-            case KR:
-                return 0x54efc8;
-            case JP:
-            default:
-                return 0;
-        }
-    }
-
-    u32 GlobalFileManagerPointer(){
-        switch (region) {
-            case US:
-                return 0x54eedc;
-            case EU:
-            case KR:
-                return 0x54efd4;
-            case JP:
-            default:
-                return 0;
-        }
-    }
-
-    // RHMPatch's retry remix sub patch locations
-    std::vector<u32> RetryRemixLocs() {
-        switch (region) {
-            case JP:
-                return {0x19a180, 0x16485c, 0x1f8e78};
-            case US:
-            case EU:
-            case KR:
-                return {0x198c9c, 0x16302c, 0x1f7f84};
-            default:
-                return {};
         }
     }
 

@@ -3,6 +3,7 @@
 
 namespace Megamix::Patches {
     void PatchMuseumExtraRows();
+    void PatchRetryRemix();
 }
 
 #endif

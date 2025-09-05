@@ -76,7 +76,7 @@ static void ToggleTouchscreenForceOn(void) {
 
 // This function is called before main and before the game starts
 // Useful to do code edits safely
-void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
+void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
     ToggleTouchscreenForceOn();
 
     // le params :D
@@ -104,14 +104,10 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: remove
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
-    // Remix retry sub patch
-    for (auto loc : Region::RetryRemixLocs()){
-        Process::Patch(loc, 0xE3A0200E); // mov r2, #0xE
-    }
-
-    // Start hooks
+    // Start hooks, apply patches
     Megamix::Hooks::TickflowHooks();
     Megamix::Hooks::RegionHooks();
+    Megamix::Patches::PatchRetryRemix();
     if (region != Region::JP) {
         //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
@@ -134,26 +130,26 @@ void ctrpf::OnProcessExit(void) {
 
 #ifndef RELEASE
 void InitMenu(ctrpf::PluginMenu &menu) {
-    menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry*) {
         ctrpf::MessageBox("Settings", Utils::Format(
             "Result: %d",
             configResult
         ))();
     });
 
-    menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry*) {
         ctrpf::MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
     });
 
-    menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry*) {
         ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry*) {
         ((void(*)(void))nullptr)();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry*) {
         *(volatile int*)nullptr = 100;
     });
 }

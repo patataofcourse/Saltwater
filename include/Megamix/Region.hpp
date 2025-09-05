@@ -36,6 +36,7 @@ namespace Megamix {
         u32 tickflowHookPos;
         u32 gateHookPos;
         u32 gatePracHookPos;
+        mutable std::vector<u32> ptrsToRetryRemix;
 
         // music tempo
 
@@ -47,13 +48,20 @@ namespace Megamix {
 
         // museum row hax
 
-        mutable          std::vector<u32> ptrsToMuseumRowInfo; // what the fuck is this language
-        mutable          std::vector<u32> ptrsToMuseumRowColors;
-        u32              rowColorsInitHookPos;
-        mutable          std::vector<u32> museumRowsR1Cmps;
-        mutable          std::vector<u32> museumRowsR8Cmps;
+        mutable std::vector<u32> ptrsToMuseumRowInfo; // what the fuck is this language
+        mutable std::vector<u32> ptrsToMuseumRowColors;
+        u32                      rowColorsInitHookPos;
+        mutable std::vector<u32> museumRowsR1Cmps;
+        mutable std::vector<u32> museumRowsR8Cmps;
 
-        // placeholders
+        // some common globals / managers
+
+        CSaveData** saveData;
+        CInputManager** inputManager;
+        CFileManager** fileManager;
+
+
+        // placeholders for missing/unimplemented values
 
         static constexpr u32 NO_PTR = 0x404;         // specific region has no applicable func/data
         static constexpr u32 UNIMPLEMENTED = 0xdead; // specific region has applicable func/data but it's not yet implemented
@@ -86,7 +94,11 @@ namespace Megamix {
         inline GateGameDef* gGateTable() { return pointers->gateTable; }
         inline TempoTable* gTempoTable() { return pointers->tempoTable; }
 
-        // for hooks: feel free to drop em here, or make a namespace named hHookGroupName if you feel it needs more info
+        inline CSaveData* gSaveData() { return *pointers->saveData; }
+        inline CInputManager* gInputManager() { return *pointers->inputManager; }
+        inline CFileManager* gFileManager() { return *pointers->fileManager; }
+
+        // for hooks: feel free to drop em here, or make a namespace named hHookGroupName if you feel it needs more context
         namespace Hooks {
             inline u32 tickflow() { return pointers->tickflowHookPos; }
             inline u32 gate() { return pointers->gateHookPos; }
@@ -97,8 +109,12 @@ namespace Megamix {
             inline u32 allTempo() { return pointers->allTempoHookPos; }
         }
 
-        // for patches: make a namespace named pPatchName
-        // if there's any simple hooks (stubs for example) involved you can put em in here
+        // for patches: feel free to drop em here, or make a namespace named pPatchName if you feel it needs more context
+        namespace Patches {
+            inline const std::vector<u32> ptrsToRetryRemix() { return pointers->ptrsToRetryRemix; }
+        }
+
+        // if there's any simple hooks (stubs for example) involved you can put em in the patch namespace
         namespace pMuseumRows {
             inline const std::vector<u32> ptrsToInfo() { return pointers->ptrsToMuseumRowInfo; }
             inline const std::vector<u32> ptrsToColors() { return pointers->ptrsToMuseumRowColors; }
@@ -126,12 +142,6 @@ namespace Region {
     u32 TickflowCommandsSwitch();
     u32 TickflowCommandsEnd();
     u32 TickflowAsyncSubLocation();
-
-    u32 GlobalSaveDataPointer();
-    u32 GlobalInputManagerPointer();
-    u32 GlobalFileManagerPointer();
-
-    std::vector<u32> RetryRemixLocs();
 
     u32 RegionFSHookFunc();
     u32 RegionOtherHookFunc();

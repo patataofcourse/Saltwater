@@ -8,6 +8,7 @@
 
 #include "Megamix.hpp"
 #include "Config.hpp"
+#include "Megamix/Region.hpp"
 
 namespace Megamix::Patches {
     std::vector<MuseumRow> museumRows {
@@ -76,7 +77,7 @@ namespace Megamix::Patches {
 
     // see section F5.1.35 in the arm A-profile reference manual
     // register is 4 bits, value is 12 bits
-    u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
+    constexpr u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
         // 1110 == no condition
         const u32 cond = 0b1110 << 28;
         const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
@@ -212,6 +213,26 @@ namespace Megamix::Patches {
 
         for (auto address : Game::pMuseumRows::ptrsToColors()) {
             Process::Patch(address, (u32) museumRowColors.data());
+        }
+    }
+
+    // see section F5.1.122 in the arm A-profile reference manual
+    // register is 4 bits, value is 12 bits
+    constexpr u32 make_mov_immediate_instruction(u32 reg, u32 value) {
+        // 1110 == no condition
+        const u32 cond = 0b1110 << 28;
+        const u32 cmp_imm_base = 0b0000'00111'01'0 << 20;
+        reg <<= 12;
+
+        return cond | cmp_imm_base | reg | value;
+    }
+
+    void PatchRetryRemix() {
+        u32 instr = // mov r2, #0xE
+            make_mov_immediate_instruction(2, 0xE);
+
+        for (auto loc: Game::Patches::ptrsToRetryRemix()){
+            Process::Patch(loc, instr); 
         }
     }
 } // namespace Megamix::Patches
