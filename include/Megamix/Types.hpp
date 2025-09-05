@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include "types.h"
+#include <3ds/types.h>
 
 namespace Megamix {
     struct GameDef {
@@ -139,7 +139,7 @@ namespace Megamix {
         RvlManjuL = 0x37,
         RvlMuscleL = 0x38,
         RvlRapL = 0x39,
-        RvlRecieveL = 0x3a,
+        RvlReceiveL = 0x3a,
         RvlRobotL = 0x3b,
         RvlRocketL = 0x3c,
         RvlRotationL = 0x3d,
@@ -523,8 +523,8 @@ namespace Megamix {
         u8 field12_0x2a;
         u8 field13_0x2b;
         u32 field14_0x2c;
-        u16 locale[9];
-        u16 sublocale[9];
+        char16_t locale[9];
+        char16_t sublocale[9];
     };
 
     struct FileInfo {

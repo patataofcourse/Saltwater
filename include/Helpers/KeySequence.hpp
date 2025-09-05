@@ -1,7 +1,7 @@
 #ifndef HELPERS_KEYSEQUENCE_HPP
 #define HELPERS_KEYSEQUENCE_HPP
 
-#include "types.h"
+#include <3ds/types.h>
 #include "CTRPluginFramework/System/Controller.hpp"
 #include "CTRPluginFramework/System/Clock.hpp"
 

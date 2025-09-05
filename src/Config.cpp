@@ -10,39 +10,49 @@ using CTRPluginFramework::File;
 
 int configResult;
 
+Config config;
+
+#define CHAR4_LE(char1, char2, char3, char4) ( \
+    ((u32)(char4) << 24) | ((u32)(char3) << 16) | \
+    ((u32)(char2) <<  8) | ((u32)(char1) <<  0) \
+)
+
 Config::Config() {
     tickflows = {};
 }
 
-Config::Config(map tf) {
+Config::Config(TickflowMap tf) {
     tickflows = tf;
 }
 
-Config* Config::FromFile(std::string fname) {
+Config Config::FromFile(std::string fname) {
     File file(fname, File::Mode::READ);
-    char* contents = new char[4];
-    configResult = file.Read(contents, 4);
-    if (configResult || file.GetSize() < 4) return new Config();
-    if (configResult == 0 && strcmp(contents, "SCF\2")) {
-        map tfmap = {};
+    u32 magic;
+    configResult = file.Read(&magic, 4);
+    if (configResult || file.GetSize() < 4) return Config();
+
+    if (configResult == 0 && magic == CHAR4_LE('S', 'C', 'F', '\2')) {
+        TickflowMap tfmap = {};
+        
         while (true) {
-            u16* index = new u16;
-            configResult = file.Read(index, 2);
-            if (configResult) return new Config();
-            if (*index == 0xC000) break;
+            u16 index;
+            configResult = file.Read(&index, 2);
+            if (configResult) return Config();
+            if (index == 0xC000) break;
             
-            u16* strlen = new u16;
-            configResult = file.Read(strlen, 2);
-            if (configResult) return new Config();
+            u16 strlen;
+            configResult = file.Read(&strlen, 2);
+            if (configResult) return Config();
             
-            char* str = new char[*strlen + 1];
-            configResult = file.Read(str, *strlen);
-            if (configResult) return new Config();
-            str[*strlen] = 0;
+            std::string str;
+            str.resize(strlen);
+            configResult = file.Read(str.data(), strlen);
+            if (configResult) return Config();
+            str[strlen] = 0;
             
-            tfmap[*index] = std::string(str);
+            tfmap[index] = str;
         }
-        return new Config(tfmap);
+        return Config(tfmap);
     }
-    return new Config();
+    return Config();
 }

@@ -26,8 +26,8 @@ namespace Megamix::Hooks {
     RT_HOOK tickflowCommandsHook;
 
     void* getTickflowOffset(int index) {
-        if (config->tickflows.contains(index)) {
-            int result = Megamix::btks.LoadFile(config->tickflows[index]);
+        if (config.tickflows.contains(index)) {
+            int result = Megamix::btks.LoadFile(config.tickflows[index]);
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
@@ -38,8 +38,8 @@ namespace Megamix::Hooks {
     }
 
     void* getGateTickflowOffset(int index) {
-        if (config->tickflows.contains(index + 0x100)) {
-            int result = Megamix::btks.LoadFile(config->tickflows[index + 0x100]);
+        if (config.tickflows.contains(index + 0x100)) {
+            int result = Megamix::btks.LoadFile(config.tickflows[index + 0x100]);
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
@@ -50,8 +50,8 @@ namespace Megamix::Hooks {
     }
 
     void* getGatePracticeTickflowOffset(int index) {
-        if (config->tickflows.contains((index >> 2) + 0x110)) {
-            int result = Megamix::btks.LoadFile(config->tickflows[(index >> 2) + 0x110]);
+        if (config.tickflows.contains((index >> 2) + 0x110)) {
+            int result = Megamix::btks.LoadFile(config.tickflows[(index >> 2) + 0x110]);
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {

@@ -8,16 +8,16 @@
 #include <map>
 
 struct Config {
-    typedef std::map<u16, std::string> map;
+    typedef std::map<u16, std::string> TickflowMap;
 
-    map tickflows;
+    TickflowMap tickflows;
 
     Config();
-    Config(map map);
-    static Config* FromFile(std::string fname);
+    Config(Config::TickflowMap map);
+    static Config FromFile(std::string fname);
 };
 
-extern Config* config;
+extern Config config;
 extern int configResult;
 
 #endif

@@ -1,6 +1,6 @@
 #ifndef HELPERS_QUICKMENU_HPP
 #define HELPERS_QUICKMENU_HPP
-#include "types.h"
+#include <3ds/types.h>
 #include <string>
 #include <vector>
 #include <stack>

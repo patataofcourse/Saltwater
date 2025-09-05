@@ -2,18 +2,13 @@
 #include <CTRPluginFramework.hpp>
 #include <CTRPluginFramework/Menu/MessageBox.hpp>
 
-#include "Megamix/Error.hpp"
-#include "Megamix/Region.hpp"
 #include "csvc.h"
 #include "external/plgldr.h"
 
 #include "Megamix.hpp"
 #include "Config.hpp"
-
+#include "Saltwater.hpp"
 #include "Stuff.hpp"
-
-Config* config;
-using Megamix::btks;
 
 const char* version = VERSION;
 
@@ -79,18 +74,19 @@ static void ToggleTouchscreenForceOn(void) {
 void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
     ToggleTouchscreenForceOn();
 
-    // le params :D
-    params = *(SaltwaterParams*)ctrpf::FwkSettings::Header->config;
+    // plugin params - these are used for shorter types (bools usually)
+    params = *reinterpret_cast<SaltwaterParams*>(ctrpf::FwkSettings::Header->config);
 
     if (params.rhmpatch) {
-        // move RHMPatch back to where it was
+        // barista moved RHMPatch's code.ips, move it back to where it was
         ctrpf::File::Rename(
             "/luma/titles/000400000018a400/code.old.ips",
             "/luma/titles/000400000018a400/code.ips"
         );
     }
+
     if (params.plgldr) {
-        // disable plugin loader
+        // had to specifically turn on the plgldr, turn it off to not cause any issues
         plgLdrInit();
         PLGLDR__SetPluginLoaderState(false);
         plgLdrExit(); 
@@ -125,7 +121,6 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
 void ctrpf::OnProcessExit(void) {
     Megamix::Hooks::DisableAllHooks(); // Probably not needed, but still
     ToggleTouchscreenForceOn();
-    delete config;
 }
 
 #ifndef RELEASE
@@ -138,11 +133,11 @@ void InitMenu(ctrpf::PluginMenu &menu) {
     });
 
     menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry*) {
-        ctrpf::MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
+        ctrpf::MessageBox("Map shit", Stuff::FileMapToString(config.tickflows))();
     });
 
     menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry*) {
-        ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
+        ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(Megamix::btks.tempos))();
     });
 
     menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry*) {

@@ -2,6 +2,8 @@
 #define MEGAMIX_BTKS_H
 
 #include <map>
+#include <string>
+
 #include "Megamix/Types.hpp"
 
 namespace Megamix {

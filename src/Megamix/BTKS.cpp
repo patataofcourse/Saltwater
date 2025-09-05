@@ -3,6 +3,7 @@
 #include <map>
 
 #include "Megamix.hpp"
+#include "Saltwater.hpp"
 
 using CTRPluginFramework::File;
 using CTRPluginFramework::OSD;

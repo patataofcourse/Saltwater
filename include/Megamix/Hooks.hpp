@@ -1,7 +1,7 @@
 #ifndef MEGAMIX_HOOKS_H
 #define MEGAMIX_HOOKS_H
 
-#include "types.h"
+#include <3ds/types.h>
 
 namespace Megamix::Hooks {
     void TickflowHooks();

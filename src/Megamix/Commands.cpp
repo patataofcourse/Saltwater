@@ -1,8 +1,10 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include <string>
+
 #include "Megamix.hpp"
-#include "Megamix/Region.hpp"
+#include "Saltwater.hpp"
 
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
@@ -84,23 +86,22 @@ namespace Megamix {
         if(saveLanguage == 1){
             self->condvar = 0;
         } else {
-            wchar_t sublocale[5];
-            utf16_to_utf32((u32*)sublocale, Game::gFileManager()->sublocale, 4);
-            sublocale[4] = '\0';
-            std::wstring localews(sublocale);
-            if(localews.find(L"JP") != (unsigned int)-1){
+            std::u16string sublocale(Game::gFileManager()->sublocale);
+            
+            sublocale = sublocale.substr(2, 2);
+            if (sublocale == u"JP") {
                 self->condvar = 0; 
-            } else if (localews.find(L"EN") != (unsigned int)-1){
+            } else if (sublocale == u"EN") {
                 self->condvar = 1; 
-            } else if (localews.find(L"FR") != (unsigned int)-1) {
+            } else if (sublocale == u"FR") {
                 self->condvar = 2; 
-            } else if (localews.find(L"GE") != (unsigned int)-1) {
+            } else if (sublocale == u"GE") {
                 self->condvar = 3; 
-            } else if (localews.find(L"IT") != (unsigned int)-1) {
+            } else if (sublocale == u"IT") {
                 self->condvar = 4; 
-            } else if (localews.find(L"SP") != (unsigned int)-1) {
+            } else if (sublocale == u"SP") {
                 self->condvar = 5; 
-            } else if (localews.find(L"KR") != (unsigned int)-1) {
+            } else if (sublocale == u"KR") {
                 self->condvar = 6; 
             } else {
                 self->condvar = -1;

@@ -38,7 +38,7 @@ namespace Megamix::Patches {
         /* 23 */ MuseumRow({ AgbHoppingL,    AgbNightWalkL, AgbQuizL,      None,            None       }, "bonus_AGB",     0, 0),
         /* 24 */ MuseumRow({ NtrBoxShowL,    NtrShortLiveL, RvlKarate2,    None,            None       }, "bonus_NTR",     0, 0),
         /* 25 */ MuseumRow({ RvlAssembleL,   RvlDateL,      RvlFishingL,   None,            None       }, "bonus_RVL0",    0, 0),
-        /* 26 */ MuseumRow({ RvlForkL,       RvlRapL,       RvlRecieveL,   None,            None       }, "bonus_RVL1",    0, 0),
+        /* 26 */ MuseumRow({ RvlForkL,       RvlRapL,       RvlReceiveL,   None,            None       }, "bonus_RVL1",    0, 0),
         /* 27 */ MuseumRow({ RvlRobotL,      RvlRotationL,  RvlSamuraiL,   None,            None       }, "bonus_RVL2",    0, 0),
         /* 28 */ MuseumRow({ RvlSortL,       RvlWatchL,     RvlKarate3,    None,            None       }, "bonus_RVL3",    0, 0),
     };
@@ -112,7 +112,7 @@ namespace Megamix::Patches {
 
         // not all slots are valid museum games
         u32 validGameIds = 0;
-        for (auto &[key, _] : config->tickflows) {
+        for (auto &[key, _] : config.tickflows) {
             if (SlotIdToMuseumGameId(key).has_value()) {
                 validGameIds += 1;
             }
@@ -120,7 +120,7 @@ namespace Megamix::Patches {
 
         // museum don't support rows with only 2 games
         if (validGameIds == 2) {
-            for (auto &pair : config->tickflows) {
+            for (auto &pair : config.tickflows) {
                 std::optional<u16> id = SlotIdToMuseumGameId(pair.first);
                 if (!id.has_value()) {
                     continue;
@@ -132,7 +132,7 @@ namespace Megamix::Patches {
             std::array<u16, 5> newRowIds { None, None, None, None, None };
             size_t newRowLength = 0;
 
-            for (auto &pair : config->tickflows) {
+            for (auto &pair : config.tickflows) {
                 std::optional<u16> id = SlotIdToMuseumGameId(pair.first);
                 if (!id.has_value()) {
                     continue;
