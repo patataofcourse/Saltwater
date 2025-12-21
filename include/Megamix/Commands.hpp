@@ -13,7 +13,7 @@ namespace Megamix{
         DisplayCondvar = 0x300
     };
 
-    void tickflowCommandsHook();
+    void tickflowCommands();
 }
 
 #endif

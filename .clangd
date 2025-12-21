@@ -7,3 +7,5 @@ CompileFlags:
 Diagnostics:
   Suppress:
     - unused-includes
+InlayHints:
+  Designators: false

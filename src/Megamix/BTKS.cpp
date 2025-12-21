@@ -50,10 +50,8 @@ namespace Megamix {
         if (header.revision != 2)
             return -7; // Unsupported version
         
-        if (!(header.tickflowVariant == 0 || (region == Region::JP && header.tickflowVariant == 1)))
+        if (!((isJP() && header.tickflowVariant == 0) || (isJP() && header.tickflowVariant == 1)))
             return -13; // Unsupported Tickflow format
-
-        
 
         // Seek to end of header (in case there's some non-standard stuff idfk)
         result = file.Seek(header.headerSize, File::SeekPos::SET);

@@ -6,8 +6,6 @@
 
 #define CALL_STACK_SIZE 5
 
-struct Void{};
-
 namespace Megamix {
     std::string ErrorMessage(int code);
 
