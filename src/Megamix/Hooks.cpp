@@ -140,7 +140,7 @@ namespace Megamix::Hooks {
 
     // ---
 
-    void TickflowHooks() {
+    void initTickflowHooks() {
         rtInitHook(&tickflowHook, GHooks::tickflow(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
         rtInitHook(&gateHook, GHooks::gate(), (u32)getGateTickflowOffset);
@@ -149,7 +149,7 @@ namespace Megamix::Hooks {
         rtEnableHook(&gatePracHook);
     }
 
-    void TempoHooks() {
+    void initTempoHooks() {
         rtInitHook(&tempoStrmHook, GHooks::strmTempo(), (u32)getTempoStrm);
         rtEnableHook(&tempoStrmHook);
         rtInitHook(&tempoSeqHook, GHooks::seqTempo(), (u32)getTempoSeq);
@@ -158,7 +158,7 @@ namespace Megamix::Hooks {
         rtEnableHook(&tempoAllHook);
     }
 
-    void RegionHooks() {
+    void initRegionHooks() {
         if (!Megamix::isJP()){
             rtInitHook(&regionFSHook, GHooks::megamixRegionCode(), (u32)getRegionMegamix);
             rtEnableHook(&regionFSHook);
@@ -167,7 +167,7 @@ namespace Megamix::Hooks {
         rtEnableHook(&regionOtherHook);
     }
 
-    void CommandHook() {
+    void initCommandHooks() {
         rtInitHook(&tickflowCommandsHook, Game::hTickflowCmds::hook(), (u32)tickflowCommands);
         rtEnableHook(&tickflowCommandsHook);
     }
