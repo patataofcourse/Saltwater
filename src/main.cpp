@@ -1,9 +1,6 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
-#include <CTRPluginFramework/Menu/MessageBox.hpp>
 
-#include "Megamix/Error.hpp"
-#include "Megamix/Region.hpp"
 #include "csvc.h"
 #include "external/plgldr.h"
 

@@ -1,7 +1,6 @@
 #ifndef MEGAMIX_ERROR_HPP
 #define MEGAMIX_ERROR_HPP
 
-#include <CTRPluginFramework/Menu/MessageBox.hpp>
 #include <string>
 #include <CTRPluginFramework.hpp>
 

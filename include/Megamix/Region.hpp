@@ -1,12 +1,13 @@
 #ifndef RHMREGION_H
 #define RHMREGION_H
 
-#include <CTRPluginFramework/Menu/MessageBox.hpp>
 #include <expected>
 #include <vector>
 #include <string>
 
 #include "types.h"
+
+#include <CTRPluginFramework.hpp>
 
 #include "Megamix/Error.hpp"
 #include "Megamix/Types.hpp"

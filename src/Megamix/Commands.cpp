@@ -2,7 +2,6 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
-#include "Megamix/Region.hpp"
 
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;

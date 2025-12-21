@@ -1,7 +1,6 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "Megamix/Region.hpp"
 #include "external/rt.h"
 
 #include "Megamix.hpp"

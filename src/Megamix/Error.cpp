@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Megamix.hpp"
-#include "Megamix/Region.hpp"
 
 using CTRPluginFramework::Process;
 using CTRPluginFramework::Utils;

@@ -8,7 +8,6 @@
 
 #include "Megamix.hpp"
 #include "Config.hpp"
-#include "Megamix/Region.hpp"
 
 namespace Megamix::Patches {
     std::vector<MuseumRow> museumRows {
