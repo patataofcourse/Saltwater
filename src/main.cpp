@@ -99,23 +99,24 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
     // Init region and config
     auto region_res = Megamix::initGameInterface(ctrpf::Process::GetTitleID());
     if (!region_res.has_value()) {
-        Megamix::panic("what the hell how did you get this\nyou're running saltwater on something that isn't megamix");
+        Megamix::panic("what the hell how did you get this\nyou're running saltwater on something that isn't megamix\nluma3ds shouldn't allow this, please report this bug!");
     }
-    region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: remove
+
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
     // Start hooks, apply patches
     Megamix::Hooks::TickflowHooks();
     Megamix::Hooks::RegionHooks();
     Megamix::Patches::PatchRetryRemix();
-    if (region != Region::JP) {
+    if (!Megamix::isJP()) {
         //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
         //TODO: find out how to make the tickflow commands hook JP-compatible
         Megamix::Hooks::CommandHook();
     }
 
-    if (region != Region::JP && params.extra_rows) {
+    if (!Megamix::isJP() && params.extra_rows) {
+        //TODO: find out how to make the extra row patches JP-compatible
         Megamix::Patches::PatchMuseumExtraRows();
     }
 }

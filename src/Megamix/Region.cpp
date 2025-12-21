@@ -42,10 +42,21 @@ namespace Megamix {
         .museumRowsR1Cmps=      {GameInterface::UNIMPLEMENTED},
         .museumRowsR8Cmps=      {GameInterface::UNIMPLEMENTED},
 
+        .regionAHookPos= GameInterface::NO_PTR,
+        .regionBHookPos= 0x11932c,
+
         // TODO: any of these could have been made incompatible by version differences
         .saveData=     (CSaveData**)GameInterface::UNIMPLEMENTED,
         .inputManager= (CInputManager**)GameInterface::UNIMPLEMENTED,
         .fileManager=  (CFileManager**)GameInterface::UNIMPLEMENTED,
+
+        .tickflowCommandsHook=   0x25e054,
+        .tickflowCommandsCmd0=   0x25e338,
+        .tickflowCommandsReturn= 0x262eac,
+
+        .blackbarLayout=       (CBlackBarManager**)0x526404,
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x100914 + 1),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x3204f8,
     };
 
     const GameInterface usCode = {
@@ -81,9 +92,20 @@ namespace Megamix {
         .museumRowsR1Cmps=      { 0x2423c4, 0x2423DC, 0x2619B0 },
         .museumRowsR8Cmps=      { 0x242400, 0x2424a0 },
 
+        .regionAHookPos= 0x28c070,
+        .regionBHookPos= 0x119560,
+
         .saveData=     (CSaveData**)0x54d350,
         .inputManager= (CInputManager**)0x54eed0,
         .fileManager=  (CFileManager**)0x54eedc,
+
+        .tickflowCommandsHook=   0x25c3c0,
+        .tickflowCommandsCmd0=   0x25c6c0,
+        .tickflowCommandsReturn= 0x2613cc,
+
+        .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x28a2d0 + 1),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
 
     const GameInterface euCode = {
@@ -114,9 +136,20 @@ namespace Megamix {
         .museumRowsR1Cmps=      usCode.museumRowsR1Cmps,
         .museumRowsR8Cmps=      usCode.museumRowsR8Cmps,
 
+        .regionAHookPos= 0x28c070,
+        .regionBHookPos= 0x119560,
+
         .saveData=     (CSaveData**)0x54d448, 
         .inputManager= (CInputManager**)0x54efc8, 
         .fileManager=  (CFileManager**)0x54efd4,
+
+        .tickflowCommandsHook=   0x25c3c0,
+        .tickflowCommandsCmd0=   0x25c6c0,
+        .tickflowCommandsReturn= 0x2613cc,
+
+        .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x28a2d0 + 1),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
 
     const GameInterface krCode = {
@@ -152,9 +185,20 @@ namespace Megamix {
         .museumRowsR1Cmps=      { 0x24239c, 0x2423b4, 0x261988 },
         .museumRowsR8Cmps=      { 0x2423d8, 0x242478 },
 
+        .regionAHookPos= 0x28c048,
+        .regionBHookPos= 0x119560,
+
         .saveData=     (CSaveData**)0x54d448, 
         .inputManager= (CInputManager**)0x54efc8, 
         .fileManager=  (CFileManager**)0x54efd4,
+
+        .tickflowCommandsHook=   0x25c398,
+        .tickflowCommandsCmd0=   0x25c698,
+        .tickflowCommandsReturn= 0x2613a4,
+
+        .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x28a2a8 + 1),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
 #pragma GCC diagnostic pop
 
@@ -202,135 +246,23 @@ namespace Megamix {
     }
 }
 
-namespace Region {
-    u8 FromCode(u32 code) {
-        switch (code) {
-            case 0x155a00:
-                return JP;
-            case 0x18a400:
-                return US;
-            case 0x18a500:
-                return EU;
-            case 0x18a600:
-                return KR;
-            default:
-                return UNK;
-        }
-    }
+// there is LITERALLY NO OTHER WAY to make a wrapper around a varargs function than making it raw asm
+// and there is LITERALLY NO WAY to access a struct member from asm
+// tldr: fml
+NAKED int Megamix::Game::swprintf(char16_t* buffer, size_t size, const char16_t* format, ...) {
+    asm(
+        "push {r4, lr} \n"
+        "push {r0-r3, r12} \n"
+        "bl __swprintf_inner \n"
+        "mov r4, r0 \n"
+        "pop {r0-r3, r12} \n"
+        "blx r4 \n"
+        "pop {r4, pc}"
+    );
+};
 
-    // Various locations used for the Tickflow Command flow
-
-    u32 TickflowCommandsSwitch() {
-        switch (region) {
-            case JP:
-                return 0x25e054;
-            case US:
-            case EU:
-                return 0x25c3c0;
-            case KR:
-                return 0x25c398;
-            default:
-                return 0;
-        }
-    }
-
-    u32 TickflowCommandsEnd() {
-        switch (region) {
-            case JP:
-                return 0x262eac;
-            case US:
-            case EU:
-                return 0x2613cc;
-            case KR:
-                return 0x2613a4;
-            default:
-                return 0;
-        }
-    }
-
-    // Location of the code for async_sub (fixes custom commands)
-
-    u32 TickflowAsyncSubLocation() {
-        switch (region) {
-            case JP:
-                return 0x25e338;
-            case US:
-            case EU:
-                return 0x25c6c0;
-            case KR:
-                return 0x25c698;
-            default:
-                return 0;
-        }
-    }
-
-    // Region checker
-    u32 RegionFSHookFunc() {
-        switch (region) {
-            case US:
-            case EU:
-                return 0x28c070;
-            case KR:
-                return 0x28c048;
-            default: // this function doesn't exist in JP afaik
-                return 0;
-
-        }
-    }
-
-    u32 RegionOtherHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x11932c;
-            case US:
-            case EU:
-            case KR:
-                return 0x119560;
-            default:
-                return 0;
-
-        }
-    }
-
-    // printf to MSBT
-
-    Megamix::CBlackBarManager** BlackbarLayout() {
-        switch(region) {
-            case JP:
-                return (Megamix::CBlackBarManager**)0x526404;
-            case US:
-            case EU:
-            case KR:
-                return (Megamix::CBlackBarManager**)0x52f3f8;
-            default:
-                return 0;
-        }
-    }
-
-    SWPrintfSignature SWPrintfFunc() {
-        switch (region) {
-            case JP:
-                return (SWPrintfSignature)(0x100914 + 1);
-            case US:
-            case EU:
-                return (SWPrintfSignature)(0x28a2d0 + 1);
-            case KR:
-                return (SWPrintfSignature)(0x28a2a8 + 1);
-            default:
-                return nullptr;
-        }
-    }
-
-    SetTextBoxStringSignature SetTextBoxStringFunc() {
-        switch (region) {
-            case JP:
-                return (SetTextBoxStringSignature)0x3204f8;
-            case US:
-            case EU:
-            case KR:
-                return (SetTextBoxStringSignature)0x31fcd8;
-            default:
-                return nullptr;
-        }
+extern "C" {
+    static __used Megamix::GameInterface::SWPrintfSignature __swprintf_inner() {
+        return Megamix::pointers->swprintfFunc;
     }
 }

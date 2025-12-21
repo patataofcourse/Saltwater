@@ -22,7 +22,7 @@ namespace Megamix {
         switch(cmd_num){
              // Necessary, as our hook overrides case 0.
             case 0:
-                return Region::TickflowAsyncSubLocation();
+                return Game::hTickflowCmds::cmd0();
             
             // 0x200 range - regular custom commands
             case InputCheck:
@@ -43,7 +43,7 @@ namespace Megamix {
                 displayCondvar(self, arg0, args);
                 break;
         }
-        return Region::TickflowCommandsEnd();
+        return Game::hTickflowCmds::return_();
     }
 
     void input_cmd(CTickflow* self, u32 arg0, u32* args) {
@@ -111,11 +111,11 @@ namespace Megamix {
     void msbtWithNum(CTickflow* self, u32 arg0, u32* args) {
         if (arg0 != 0) return;
 
-        TextBox* textBox = (*Region::BlackbarLayout())->textBox;
+        TextBox* textBox = Game::gBlackbarLayout()->textBox;
         char16_t* out = new char16_t[0x100];
 
-        Region::SWPrintfFunc()(out, 0x100, textBox->textBuf, self->condvar);
-        Region::SetTextBoxStringFunc()(textBox, out, 0);
+        Game::swprintf(out, 0x100, textBox->textBuf, self->condvar);
+        Game::setTextBoxString(textBox, out, 0);
 
         delete[] out;
     }
