@@ -226,10 +226,10 @@ namespace Megamix {
             else if (gameIndices[4] == 0x101) columnCount = 4;
             else                              columnCount = 5;
 
-            gameIndices = gameIndices;
-            titleId = titleId;
-            highIndex = highIndex;
-            lowIndex = lowIndex;
+            this->gameIndices = gameIndices;
+            this->titleId = titleId;
+            this->highIndex = highIndex;
+            this->lowIndex = lowIndex;
         }
     };
 
@@ -271,8 +271,8 @@ namespace Megamix {
             unk1 = {0x00, 0x00, 0x00, 0x00};
             unk3 = {0xFF, 0xFF, 0xFF, 0x6E};
 
-            background = background;
-            edgeFade = edgeFade;
+            this->background = background;
+            this->edgeFade = edgeFade;
         }
     };
 
