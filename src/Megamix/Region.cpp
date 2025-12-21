@@ -7,6 +7,8 @@
 
 u8 region;
 
+#define THUMB_CALL_ADDR(pos) (pos | 1)
+
 namespace Megamix {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic error "-Wmissing-field-initializers"
@@ -53,7 +55,7 @@ namespace Megamix {
         .tickflowCommandsReturn= 0x262eac,
 
         .blackbarLayout=       (CBlackBarManager**)0x526404,
-        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x100914 + 1),
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x100914),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x3204f8,
     };
 
@@ -102,7 +104,7 @@ namespace Megamix {
         .tickflowCommandsReturn= 0x2613cc,
 
         .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
-        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x28a2d0 + 1),
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
 
@@ -146,7 +148,7 @@ namespace Megamix {
         .tickflowCommandsReturn= 0x2613cc,
 
         .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
-        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x28a2d0 + 1),
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
 
@@ -195,7 +197,7 @@ namespace Megamix {
         .tickflowCommandsReturn= 0x2613a4,
 
         .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
-        .swprintfFunc=         (GameInterface::SWPrintfSignature)(0x28a2a8 + 1),
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2a8),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
 #pragma GCC diagnostic pop
@@ -232,12 +234,20 @@ namespace Megamix {
                 vec.shrink_to_fit();
             };
 
-            free_vec(region->ptrsToRetryRemix);
+            if (region->ptrsToRetryRemix != pointers->ptrsToRetryRemix)
+                free_vec(region->ptrsToRetryRemix);
             
-            free_vec(region->ptrsToMuseumRowInfo);
-            free_vec(region->ptrsToMuseumRowColors);
-            free_vec(region->museumRowsR1Cmps);
-            free_vec(region->museumRowsR8Cmps);
+            if (region->ptrsToMuseumRowInfo != pointers->ptrsToMuseumRowInfo)
+                free_vec(region->ptrsToMuseumRowInfo);
+
+            if (region->ptrsToMuseumRowColors != pointers->ptrsToMuseumRowColors)
+                free_vec(region->ptrsToMuseumRowColors);
+
+            if (region->museumRowsR1Cmps != pointers->museumRowsR1Cmps)
+                free_vec(region->museumRowsR1Cmps);
+
+            if (region->museumRowsR8Cmps != pointers->museumRowsR8Cmps)
+                free_vec(region->museumRowsR8Cmps);
         }
 
         return {};
