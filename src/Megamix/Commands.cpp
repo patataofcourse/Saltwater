@@ -118,7 +118,7 @@ namespace Megamix {
         // alternatively, load the current slot loaded with the tickflow hook into a global, and use that instead
         // that way we can avoid the UB on non-gate slots
         GateGameIndex slot = Game::D_0054ef10()->currentGateSlot;
-        if ((slot & Difficulty) != Endless || Game::isGateGameValid(slot))
+        if ((slot & Difficulty) != Endless || !Game::isGateGameValid(slot))
             return;
 
         u32 oldScore = Game::gSaveData()->getGateScore(slot, -1);

@@ -108,8 +108,8 @@ namespace Megamix {
         .regionBHookPos= 0x119560,
 
         .saveData=     (CSaveData**)0x54d350,
-        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
-        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .getGateScore = (GameInterface::GetGateScoreSignature)0x261a6c,
+        .setGateScore = (GameInterface::SetGateScoreSignature)0x2366c0,
 
         .inputManager= (CInputManager**)0x54eed0,
         .fileManager=  (CFileManager**)0x54eedc,
