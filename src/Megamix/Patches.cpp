@@ -76,7 +76,7 @@ namespace Megamix::Patches {
 
     // see section F5.1.35 in the arm A-profile reference manual
     // register is 4 bits, value is 12 bits
-    u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
+    constexpr u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
         // 1110 == no condition
         const u32 cond = 0b1110 << 28;
         const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
@@ -190,28 +190,48 @@ namespace Megamix::Patches {
         AddExtraRowsToFront();
 
         // patch in new museum rows
-        for (auto address : Region::MuseumRowsInfoAddresses()) {
+        for (auto address : Game::pMuseumRows::ptrsToInfo()) {
             Process::Patch(address, (u32) museumRows.data());
         }
 
         u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
             make_cmp_immediate_instruction(1, museumRows.size());
 
-        for (auto address : Region::MuseumRowsR1Cmps()) {
+        for (auto address : Game::pMuseumRows::r1Cmps()) {
             Process::Patch(address, compare_r1_instruction);
         }
 
         u32 compare_r8_instruction = // cmp r8, MUSEUM_ROW_COUNT
             make_cmp_immediate_instruction(8, museumRows.size());
 
-        for (auto address : Region::MuseumRowsR8Cmps()) {
+        for (auto address : Game::pMuseumRows::r8Cmps()) {
             Process::Patch(address, compare_r8_instruction);
         }
 
-        Hooks::StubFunction<void>(Region::MuseumRowsColorsInitFunc());
+        Hooks::StubFunction<void>(Game::pMuseumRows::colorInitHookPos());
 
-        for (auto address : Region::MuseumRowsColorsAddresses()) {
+        for (auto address : Game::pMuseumRows::ptrsToColors()) {
             Process::Patch(address, (u32) museumRowColors.data());
         }
     }
-}
+
+    // see section F5.1.122 in the arm A-profile reference manual
+    // register is 4 bits, value is 12 bits
+    constexpr u32 make_mov_immediate_instruction(u32 reg, u32 value) {
+        // 1110 == no condition
+        const u32 cond = 0b1110 << 28;
+        const u32 cmp_imm_base = 0b0000'00111'01'0 << 20;
+        reg <<= 12;
+
+        return cond | cmp_imm_base | reg | value;
+    }
+
+    void PatchRetryRemix() {
+        u32 instr = // mov r2, #0xE
+            make_mov_immediate_instruction(2, 0xE);
+
+        for (auto loc: Game::Patches::ptrsToRetryRemix()){
+            Process::Patch(loc, instr); 
+        }
+    }
+} // namespace Megamix::Patches

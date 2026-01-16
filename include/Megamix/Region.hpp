@@ -1,89 +1,217 @@
 #ifndef RHMREGION_H
 #define RHMREGION_H
 
+#include <expected>
 #include <vector>
 #include <string>
 
 #include "types.h"
+
+#include <CTRPluginFramework.hpp>
+
+#include "Megamix/Error.hpp"
 #include "Megamix/Types.hpp"
 
-#include "Megamix.hpp"
+extern u8 region; //TODO: remove
 
-extern u8 region;
+namespace Megamix {
+    struct GameInterface {
+        u32 gameCode;
+        u32 revision; // for potential future use?
+        const char* regionName;
 
-namespace Region {
+        // general code regions
 
-    enum {
-        JP = 0,
-        US = 1,
-        EU = 2,
-        KR = 3,
-        KR_CTR = 5, // in the SDK, KR is 5 instead of 3
-        UNK
+        u32 textEnd;
+        u32 rodataEnd;
+        u32 dataEnd;
+        u32 bssEnd;
+
+        // game definitions
+
+        GameDef* gameTable;
+        GateGameDef* gateTable;
+
+        // tickflow loading
+
+        u32 tickflowHookPos;
+        u32 gateHookPos;
+        u32 gatePracHookPos;
+        mutable std::vector<u32> ptrsToRetryRemix;
+
+        // music tempo
+
+        TempoTable* tempoTable;
+
+        u32 strmTempoHookPos;
+        u32 seqTempoHookPos;
+        u32 allTempoHookPos;
+
+        // museum row hax
+
+        mutable std::vector<u32> ptrsToMuseumRowInfo; // what the fuck is this language
+        mutable std::vector<u32> ptrsToMuseumRowColors;
+        u32                      rowColorsInitHookPos;
+        mutable std::vector<u32> museumRowsR1Cmps;
+        mutable std::vector<u32> museumRowsR8Cmps;
+
+        // region patch
+        u32 regionAHookPos;
+        u32 regionBHookPos;
+
+        // some common globals / managers
+
+        typedef u16 (*GetGateScoreSignature) (CSaveData* self, GateGameIndex index, s32 file);
+        typedef void (*SetGateScoreSignature) (CSaveData* self, GateGameIndex index, u16 score, s32 file);
+    
+        CSaveData** saveData;
+        GetGateScoreSignature getGateScore;
+        SetGateScoreSignature setGateScore;
+
+        CInputManager** inputManager;
+        CFileManager** fileManager;
+        UnkStruct0054ef10** unk0054ef10;
+
+        typedef void (*SaveDataSignature) (CSaveManager*);
+
+        CSaveManager** saveManager;
+        SaveDataSignature saveGame;
+
+        CBlackBarManager** blackbarLayout;
+
+        // endless score saving
+
+        typedef bool (*IsGateGameValidSignature)(GateGameIndex slot);
+        IsGateGameValidSignature isGateGameValid;
+
+        // tickflow commands
+        u32 tickflowCommandsHook;
+        u32 tickflowCommandsCmd0;
+        u32 tickflowCommandsReturn;
+
+        // MSBT printf
+
+        typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
+        typedef u32 (*SetTextBoxStringSignature) (Megamix::TextBox *, const char16_t *, u32);
+
+        SWPrintfSignature swprintfFunc;
+        SetTextBoxStringSignature setTextBoxStringFunc;
+
+
+        // placeholders for missing/unimplemented values
+
+        static constexpr u32 NO_PTR = 0x404;         // specific region has no applicable func/data
+        static constexpr u32 UNIMPLEMENTED = 0xdead; // specific region has applicable func/data but it's not yet implemented
     };
 
-    u8 FromCode(u32 code);
-    std::string Name();
+    // Rhythm Tengoku: The Best + (Japan) (0004000000155a00) (rev0)
+    extern const GameInterface jpCode;
+    // Rhythm Heaven Megamix (Americas) (000400000018a400) (rev0)
+    extern const GameInterface usCode;
+    // Rhythm Paradise Megamix (Europe) (000400000018a500) (rev0)
+    extern const GameInterface euCode;
+    // Rhythm Sesang: The Best + (Korea) (000400000018a600) (rev0)
+    extern const GameInterface krCode;
 
-    std::vector<u32> MuseumRowsInfoAddresses();
-    std::vector<u32> MuseumRowsColorsAddresses();
-    u32              MuseumRowsColorsInitFunc();
-    // TODO: maybe make this into MuseumRowsCmps that returns a
-    // map of int -> vector<u8> other regions might use different registers
-    std::vector<u32> MuseumRowsR1Cmps();
-    std::vector<u32> MuseumRowsR8Cmps();
+    static const GameInterface* allRegions[4] = {&jpCode, &usCode, &euCode, &krCode};
 
-    u32 GameTable();
-    u32 TempoTable();
-    u32 GateTable();
+    extern const GameInterface* pointers;
 
-    u32 TickflowHookFunc();
-    u32 GateHookFunc();
-    u32 GatePracHookFunc();
+    // TODO: if we ever add extra game revisions, add check for those
 
-    u32 StrmTempoHookFunc();
-    u32 SeqTempoHookFunc();
-    u32 AllTempoHookFunc();
+    std::expected<Void, u32> initGameInterface(u32 gameCode);
+    inline bool isJP() {
+        return pointers->gameCode == 0x155a00;
+    }
+    inline bool isUS() {
+        return pointers->gameCode == 0x18a400;
+    }
+    inline bool isEU() {
+        return pointers->gameCode == 0x18a500;
+    }
+    inline bool isKR() {
+        return pointers->gameCode == 0x18a600;
+    }
 
-    u32 TextEnd();
-    u32 RodataEnd();
-    u32 DataEnd();
-    u32 BssEnd();
 
-    u32 TickflowCommandsSwitch();
-    u32 TickflowCommandsEnd();
-    u32 TickflowAsyncSubLocation();
+    namespace Game {
+        inline u32 _textEnd () { return pointers->textEnd; }
+        inline u32 _rodataEnd() { return pointers->rodataEnd; }
+        inline u32 _dataEnd() { return pointers->dataEnd; }
+        inline u32 _bssEnd() { return pointers->dataEnd; }
 
-    Megamix::CSaveData** GlobalSaveDataPointer();
-    Megamix::CInputManager** GlobalInputManagerPointer();
-    Megamix::CFileManager** GlobalFileManagerPointer();
+        inline const char* _regionName() { return pointers->regionName; }
 
-    std::vector<u32> RetryRemixLocs();
+        inline GameDef* gGameTable() { return pointers->gameTable; }
+        inline GateGameDef* gGateTable() { return pointers->gateTable; }
+        inline TempoTable* gTempoTable() { return pointers->tempoTable; }
 
-    u32 RegionFSHookFunc();
-    u32 RegionOtherHookFunc();
+        inline CSaveData* gSaveData() { return *pointers->saveData; }
+        inline CInputManager* gInputManager() { return *pointers->inputManager; }
+        inline CFileManager* gFileManager() { return *pointers->fileManager; }
+        inline UnkStruct0054ef10* D_0054ef10() { return *pointers->unk0054ef10; }
+        inline CSaveManager* gSaveManager() { return *pointers->saveManager; }
+        inline CBlackBarManager* gBlackbarLayout() { return *pointers->blackbarLayout; }
 
-    Megamix::CSaveManager** SaveManager();
-    Megamix::CBlackBarManager** BlackbarLayout();
+        inline bool isGateGameValid(GateGameIndex slot) { return pointers->isGateGameValid(slot); }
 
-    typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
-    typedef u32 (*SetTextBoxStringSignature) (Megamix::TextBox *, const char16_t *, u32);
+        // see cpp file for impl details of this - tldr it's not good
+        extern int swprintf(char16_t* buffer, size_t size, const char16_t* format, ...);
 
-    SWPrintfSignature SWPrintfFunc();
-    SetTextBoxStringSignature SetTextBoxStringFunc();
+        inline u32 setTextBoxString(Megamix::TextBox *textbox, const char16_t *string, u32 arg2) {
+            return pointers->setTextBoxStringFunc(textbox, string, arg2);
+        }
 
-    Megamix::UnkStruct0054ef10** D_0054ef10();
+        // for hooks: feel free to drop em here, or make a namespace named hHookGroupName if you feel it needs more context
+        namespace Hooks {
+            inline u32 tickflow() { return pointers->tickflowHookPos; }
+            inline u32 gate() { return pointers->gateHookPos; }
+            inline u32 gatePractice() { return pointers->gatePracHookPos; }
 
-    typedef bool (*IsGateGameValidSignature) (Megamix::GateGameIndex index);
-    typedef u16 (*GetGateScoreSignature) (Megamix::CSaveData* self, Megamix::GateGameIndex index, s32 file);
-    typedef void (*SetGateScoreSignature) (Megamix::CSaveData* self, Megamix::GateGameIndex index, u16 score, s32 file);
-    typedef void (*SaveGameSignature) (Megamix::CSaveManager* self);
+            inline u32 strmTempo() { return pointers->strmTempoHookPos; }
+            inline u32 seqTempo() { return pointers->seqTempoHookPos; }
+            inline u32 allTempo() { return pointers->allTempoHookPos; }
 
-    IsGateGameValidSignature IsGateGameValidFunc();
-    GetGateScoreSignature GetGateScoreFunc();
-    SetGateScoreSignature SetGateScoreFunc();
-    SaveGameSignature SaveGameFunc();
+            inline u32 megamixRegionCode() { return pointers->regionAHookPos; }
+            inline u32 sdkRegionCode() { return pointers->regionBHookPos; }
+        }
 
+        namespace hTickflowCmds {
+            inline u32 hook() { return pointers->tickflowCommandsHook; }
+            inline u32 cmd0() { return pointers->tickflowCommandsCmd0; }
+            inline u32 return_() {return pointers->tickflowCommandsReturn; }
+        }
+
+        // for patches: feel free to drop em here, or make a namespace named pPatchName if you feel it needs more context
+        namespace Patches {
+            inline const std::vector<u32> ptrsToRetryRemix() { return pointers->ptrsToRetryRemix; }
+        }
+
+        // if there's any simple hooks (stubs for example) involved you can put em in the patch namespace
+        namespace pMuseumRows {
+            inline const std::vector<u32> ptrsToInfo() { return pointers->ptrsToMuseumRowInfo; }
+            inline const std::vector<u32> ptrsToColors() { return pointers->ptrsToMuseumRowColors; }
+            inline u32 colorInitHookPos() { return pointers->rowColorsInitHookPos; }
+            inline const std::vector<u32> r1Cmps() { return pointers->museumRowsR1Cmps; }
+            inline const std::vector<u32> r8Cmps() { return pointers->museumRowsR8Cmps; }
+        }
+
+        enum class RegionSDK: u32 {
+            JP = 0,
+            US = 1,
+            EU = 2,
+            KR = 5,
+            UNK = 0xFF,
+        };
+
+        enum class RegionMegamix: u32 {
+            JP = 0,
+            US = 1,
+            EU = 2,
+            KR = 3,
+            UNK = 0xFF,
+        };
+    }
 }
 
 #endif

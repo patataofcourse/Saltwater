@@ -19,27 +19,42 @@ SOURCES 	:= 	src src/Megamix src/external #src/Helpers
 RELEASE		?= 0
 
 FLATPAK 	:= 0
-BARISTA_DIR	?= ../Barista/Barista
+AZAHAR 		:= 1
+BARISTA_DIR	?= ../Barista
 
+ifeq ($(shell which azahar 2> /dev/null || true),)
+# RIP citra
+	AZAHAR	:= 0
+else ifeq ($(shell which citra 2> /dev/null || which citra-qt 2> /dev/null || true),)
 # Assume flatpak
-ifeq ($(shell which citra 2> /dev/null || which citra-qt 2> /dev/null || true),)
-	FLATPAK		:= 1
+	FLATPAK	:= 1
 endif
 
 ifeq ($(OS),Windows_NT)
-	CITRA_DIR	:= $(APPDATA)/Citra/sdmc
+	ifeq ($(AZAHAR),1)
+		CITRA_DIR	:= $(APPDATA)/Azahar/sdmc
+	else
+		CITRA_DIR	:= $(APPDATA)/Citra/sdmc
+	endif
 else
 	ifeq ($(shell uname -s),Linux)
-		ifeq ($(FLATPAK),1)
+		ifeq ($(AZAHAR),1)
+			CITRA_DIR := ~/.local/share/azahar-emu/sdmc
+		else ifeq ($(FLATPAK),1)
 			CITRA_DIR := ~/.var/app/org.citra_emu.citra/data/citra-emu/sdmc
 		else
 			CITRA_DIR := ~/.local/share/citra-emu/sdmc
 		endif
 	else
-		ifeq ($(shell uname -s), macOS)
-			CITRA_DIR := ~/Library/Application Support/Citra/sdmc
+		ifeq ($(shell uname -s),macOS)
+			ifeq ($(AZAHAR),1)
+#				TODO: triple check with a mac user
+				CITRA_DIR := ~/Library/Application Support/Azahar/sdmc
+			else
+				CITRA_DIR := ~/Library/Application Support/Citra/sdmc
+			endif
 		else
-			CITRA :=
+			CITRA_DIR := OPERATING_SYSTEM_NOT_SUPPORTED
 		endif
 	endif
 endif
@@ -58,7 +73,7 @@ ifneq ($(RELEASE), 0)
 CFLAGS		+= -DRELEASE
 endif
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++23
 
 ASFLAGS		:=	$(ARCH)
 LDFLAGS		:= -T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,--gc-sections
@@ -87,7 +102,7 @@ SFILES			:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 export LD 		:= 	$(CXX)
 export OFILES	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I $(CURDIR)/$(dir) ) \
-					$(foreach dir,$(LIBDIRS),-I $(dir)/include) \
+					$(foreach dir,$(LIBDIRS),-isystem $(dir)/include) \
 					-I $(CURDIR)/$(BUILD)
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L $(dir)/lib)
@@ -115,7 +130,7 @@ re: clean all
 
 load: all
 	@mkdir -p $(CITRA_DIR)/spicerack/bin/
-	@cp $(OUTPUT).3gx $(CITRA_DIR)/spicerack/bin/
+	cp $(OUTPUT).3gx $(CITRA_DIR)/spicerack/bin/
 
 #---------------------------------------------------------------------------------
 

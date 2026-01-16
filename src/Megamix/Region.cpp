@@ -1,543 +1,332 @@
+#include "Megamix/Region.hpp"
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
+#include "Megamix/Types.hpp"
+
+#include <expected>
 
 u8 region;
 
-namespace Region {
-    u8 FromCode(u32 code) {
-        switch (code) {
-            case 0x155a00:
-                return JP;
-            case 0x18a400:
-                return US;
-            case 0x18a500:
-                return EU;
-            case 0x18a600:
-                return KR;
-            default:
-                return UNK;
-        }
-    }
+#define THUMB_CALL_ADDR(pos) ((pos) | 1)
 
-    std::string Name() {
-        switch (region) {
-            case US: return "US";
-            case EU: return "EU";
-            case JP: return "JP";
-            case KR: return "KR";
-            default: return "UNK";
-        }
-    }
+namespace Megamix {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic error "-Wmissing-field-initializers"
+    const GameInterface jpCode = {
+        .gameCode=  0x155a00,
+        .revision=  0,
+        .regionName="Japan",
 
-    // Extra museum rows patch
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x518000,
+        .dataEnd=   0x540754,
+        .bssEnd=    0x5ce1f0,
 
-    std::vector<u32> MuseumRowsInfoAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-                return {
+        .gameTable=        (GameDef*)0x522498,
+        .gateTable=        (GateGameDef*)0x525488,
+        .tickflowHookPos=  0x25a1b4,
+        .gateHookPos=      0x242510,
+        .gatePracHookPos=  0x32e01c,
+        .ptrsToRetryRemix= {0x19a180, 0x16485c, 0x1f8e78},
+
+        .tempoTable=       (TempoTable*)0x5324B0,
+        .strmTempoHookPos= GameInterface::NO_PTR,
+        .seqTempoHookPos=  GameInterface::NO_PTR,
+        // TODO: this function combines getTempoFromTable and US' func_0024f47c, adapt the hook
+        .allTempoHookPos=  GameInterface::UNIMPLEMENTED, // 0x25098c
+
+        // TODO: museum rows.......... in japan
+        .ptrsToMuseumRowInfo=   {GameInterface::UNIMPLEMENTED},
+        .ptrsToMuseumRowColors= {GameInterface::UNIMPLEMENTED},
+        .rowColorsInitHookPos=  GameInterface::UNIMPLEMENTED,
+        .museumRowsR1Cmps=      {GameInterface::UNIMPLEMENTED},
+        .museumRowsR8Cmps=      {GameInterface::UNIMPLEMENTED},
+
+        .regionAHookPos= GameInterface::NO_PTR,
+        .regionBHookPos= 0x11932c,
+
+        // TODO: any of these could have been made incompatible by version differences
+        .saveData=      (CSaveData**)GameInterface::UNIMPLEMENTED,
+        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+
+        .inputManager= (CInputManager**)GameInterface::UNIMPLEMENTED,
+        .fileManager=  (CFileManager**)GameInterface::UNIMPLEMENTED,
+        .unk0054ef10 = (UnkStruct0054ef10**)GameInterface::UNIMPLEMENTED,
+
+        .saveManager = (CSaveManager**)GameInterface::UNIMPLEMENTED,
+        .saveGame =    (GameInterface::SaveDataSignature)GameInterface::UNIMPLEMENTED,
+
+        .blackbarLayout= (CBlackBarManager**)0x526404,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)GameInterface::UNIMPLEMENTED,
+
+        .tickflowCommandsHook=   0x25e054,
+        .tickflowCommandsCmd0=   0x25e338,
+        .tickflowCommandsReturn= 0x262eac,
+
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x100914),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x3204f8,
+    };
+
+    const GameInterface usCode = {
+        .gameCode=  0x18a400,
+        .revision=  0,
+        .regionName="Americas",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f074,
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=        (GameDef*)0x52b498,
+        .gateTable=        (GateGameDef*)0x52e488,
+        .tickflowHookPos=  0x258df4,
+        .gateHookPos=      0x240f9c,
+        .gatePracHookPos=  0x32d630,
+        .ptrsToRetryRemix= {0x198c9c, 0x16302c, 0x1f7f84},
+
+        .tempoTable=       (TempoTable*)0x53EF54,
+        .strmTempoHookPos= 0x276424,
+        .seqTempoHookPos=  0x2763c8,
+        .allTempoHookPos=  0x203c08,
+
+        .ptrsToMuseumRowInfo=   {
                     0x2421e8, 0x24c480, 0x24d408,                     // gRowInfo
                     0x1979e0, 0x1983fc, 0x242350, 0x2424bc, 0x24e010, // gRowInfo1
                     0x2423d4, 0x2619c0,                               // gRowInfo2
                     0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
-                };
-            case KR:
-                return {
+        },
+        .ptrsToMuseumRowColors= { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
+        .rowColorsInitHookPos=  0x38de58,
+        .museumRowsR1Cmps=      { 0x2423c4, 0x2423DC, 0x2619B0 },
+        .museumRowsR8Cmps=      { 0x242400, 0x2424a0 },
+
+        .regionAHookPos= 0x28c070,
+        .regionBHookPos= 0x119560,
+
+        .saveData=     (CSaveData**)0x54d350,
+        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+
+        .inputManager= (CInputManager**)0x54eed0,
+        .fileManager=  (CFileManager**)0x54eedc,
+        .unk0054ef10 = (UnkStruct0054ef10**)0x54ef10,
+
+        .saveManager = (CSaveManager**)0x54ef28,
+        .saveGame =    (GameInterface::SaveDataSignature)0x28bf14,
+
+        .blackbarLayout= (CBlackBarManager**)0x52f3f8,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)0x255550,
+
+        .tickflowCommandsHook=   0x25c3c0,
+        .tickflowCommandsCmd0=   0x25c6c0,
+        .tickflowCommandsReturn= 0x2613cc,
+
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
+    };
+
+    const GameInterface euCode = {
+        .gameCode=  0x18a500,
+        .revision=  0,
+        .regionName="Europe",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f16c,
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258df4,
+        .gateHookPos=     0x240f9c,
+        .gatePracHookPos= 0x32d630,
+        .ptrsToRetryRemix= usCode.ptrsToRetryRemix,
+
+        .tempoTable=       (TempoTable*)0x53F04C,
+        .strmTempoHookPos= 0x276424,
+        .seqTempoHookPos=  0x2763c8,
+        .allTempoHookPos=  0x203c08,
+
+        .ptrsToMuseumRowInfo=   usCode.ptrsToMuseumRowInfo,
+        .ptrsToMuseumRowColors= usCode.ptrsToMuseumRowColors,
+        .rowColorsInitHookPos=  0x38de58,
+        .museumRowsR1Cmps=      usCode.museumRowsR1Cmps,
+        .museumRowsR8Cmps=      usCode.museumRowsR8Cmps,
+
+        .regionAHookPos= 0x28c070,
+        .regionBHookPos= 0x119560,
+
+        .saveData=     (CSaveData**)0x54d448,
+        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+
+        .inputManager= (CInputManager**)0x54efc8, 
+        .fileManager=  (CFileManager**)0x54efd4,
+        .unk0054ef10 = (UnkStruct0054ef10**)GameInterface::UNIMPLEMENTED,
+
+        .saveManager = (CSaveManager**)GameInterface::UNIMPLEMENTED,
+        .saveGame =    (GameInterface::SaveDataSignature)GameInterface::UNIMPLEMENTED,
+
+        .blackbarLayout= (CBlackBarManager**)0x52f3f8,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)GameInterface::UNIMPLEMENTED,
+
+        .tickflowCommandsHook=   0x25c3c0,
+        .tickflowCommandsCmd0=   0x25c6c0,
+        .tickflowCommandsReturn= 0x2613cc,
+
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
+    };
+
+    const GameInterface krCode = {
+        .gameCode=  0x18a600,
+        .revision=  0,
+        .regionName="Korea",
+
+        .textEnd=   0x39a000,
+        .rodataEnd= 0x521000,
+        .dataEnd=   0x54f16c, //TODO: check
+        .bssEnd=    0x5dc2f0,
+
+        .gameTable=       (GameDef*)0x52b498,
+        .gateTable=       (GateGameDef*)0x52e488,
+        .tickflowHookPos= 0x258dcc,
+        .gateHookPos=     0x240f74,
+        .gatePracHookPos= 0x32d630,
+        .ptrsToRetryRemix= usCode.ptrsToRetryRemix,
+
+        .tempoTable=       (TempoTable*)0x53F04C,
+        .strmTempoHookPos= 0x276424,
+        .seqTempoHookPos=  0x2763c8,
+        .allTempoHookPos=  0x203c08,
+
+        .ptrsToMuseumRowInfo=   {
                     0x2421c0, 0x24c458, 0x24d3e0,                     // gRowInfo
                     0x1979e0, 0x1983fc, 0x242328, 0x242494, 0x24dfe8, // gRowInfo1
                     0x2423ac, 0x261998,                               // gRowInfo2
                     0x224fe8, 0x225008, 0x225024, 0x225044, 0x225068, // gRowInfo3
-                };
+                },
+        .ptrsToMuseumRowColors= { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 },
+        .rowColorsInitHookPos=  0x38de58,
+        .museumRowsR1Cmps=      { 0x24239c, 0x2423b4, 0x261988 },
+        .museumRowsR8Cmps=      { 0x2423d8, 0x242478 },
 
-            // TODO:
-            case JP:
+        .regionAHookPos= 0x28c048,
+        .regionBHookPos= 0x119560,
 
-            default: return {};
-        }
-    }
+        .saveData=     (CSaveData**)0x54d448,
+        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
 
-    u32 MuseumRowsColorsInitFunc() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return 0x38de58;
+        .inputManager= (CInputManager**)0x54efc8, 
+        .fileManager=  (CFileManager**)0x54efd4,
+        .unk0054ef10 = (UnkStruct0054ef10**)GameInterface::UNIMPLEMENTED,
 
-            // TODO:
-            case JP:
+        .saveManager = (CSaveManager**)GameInterface::UNIMPLEMENTED,
+        .saveGame =    (GameInterface::SaveDataSignature)GameInterface::UNIMPLEMENTED,
 
-            default: return {};
-        }
-    }
+        .blackbarLayout= (CBlackBarManager**)0x52f3f8,
 
-    std::vector<u32> MuseumRowsColorsAddresses() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241fc4, 0x38e6d8 };
-            case KR:
-                return { 0x17d8b4, 0x17e318, 0x17e4c4, 0x241f9c, 0x38e6d8 };
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)GameInterface::UNIMPLEMENTED,
 
-            // TODO:
-            case JP:
+        .tickflowCommandsHook=   0x25c398,
+        .tickflowCommandsCmd0=   0x25c698,
+        .tickflowCommandsReturn= 0x2613a4,
 
-            default: return {};
-        }
-    }
+        .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2a8),
+        .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
+    };
+#pragma GCC diagnostic pop
 
-    std::vector<u32> MuseumRowsR1Cmps() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x2423c4, 0x2423DC, 0x2619B0 };
+    // everything down here is initializing code - don't pay it any mind unless you have any struct that allocates heap mem
 
-            case KR:
-                return { 0x24239c, 0x2423b4, 0x261988 };
+    const GameInterface* pointers = nullptr;
 
-            // TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    std::vector<u32> MuseumRowsR8Cmps() {
-        switch (region) {
-            case US:
-            case EU:
-                return { 0x242400, 0x2424a0 };
-            case KR:
-                return { 0x2423d8, 0x242478 };
-
-            //TODO:
-            case JP:
-
-            default: return {};
-        }
-    }
-
-    // Tables and stuff
-
-    u32 GameTable() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return 0x52b498;
-            case JP:
-                return 0x522498;
+    std::expected<Void, u32> initGameInterface(u32 gameCode) {
+        switch (gameCode) {
+            case 0x155a00:
+                pointers = &jpCode;
+                break;
+            case 0x18a400:
+                pointers = &usCode;
+                break;
+            case 0x18a500:
+                pointers = &euCode;
+                break;
+            case 0x18a600:
+                pointers = &krCode;
+                break;
             default:
-                return 0;
+                return std::unexpected(gameCode);
         }
-    }
 
-    u32 TempoTable() {
-        switch (region) {
-            case US:
-                return 0x53EF54;
-            case EU:
-            case KR:
-                return 0x53F04C;
-            case JP:
-                return 0x5324B0;
-            default:
-                return 0;
+        // return memory by freeing all heap data in the unused GameInterfaces
+
+        for (auto region: allRegions) {
+            if (region == pointers) continue;
+
+            auto free_vec = []<typename V>(std::vector<V> vec){
+                vec.resize(0);
+                vec.shrink_to_fit();
+            };
+
+            if (region->ptrsToRetryRemix != pointers->ptrsToRetryRemix)
+                free_vec(region->ptrsToRetryRemix);
+            
+            if (region->ptrsToMuseumRowInfo != pointers->ptrsToMuseumRowInfo)
+                free_vec(region->ptrsToMuseumRowInfo);
+
+            if (region->ptrsToMuseumRowColors != pointers->ptrsToMuseumRowColors)
+                free_vec(region->ptrsToMuseumRowColors);
+
+            if (region->museumRowsR1Cmps != pointers->museumRowsR1Cmps)
+                free_vec(region->museumRowsR1Cmps);
+
+            if (region->museumRowsR8Cmps != pointers->museumRowsR8Cmps)
+                free_vec(region->museumRowsR8Cmps);
         }
+
+        return {};
     }
+}
 
-    u32 GateTable() {
-        switch (region) {
-            case US:
-            case EU:
-            case KR:
-                return 0x52E488;
-            case JP:
-                return 0x525488;
-            default:
-                return 0;
-        }
+// there is LITERALLY NO OTHER WAY to make a wrapper around a varargs function than making it raw asm
+// and there is LITERALLY NO WAY to access a struct member from asm
+// tldr: fml
+NAKED int Megamix::Game::swprintf(char16_t* buffer, size_t size, const char16_t* format, ...) {
+    asm(
+        "push {r4, lr} \n"
+        "push {r0-r3, r12} \n"
+        "bl __swprintf_inner \n"
+        "mov r4, r0 \n"
+        "pop {r0-r3, r12} \n"
+        "blx r4 \n"
+        "pop {r4, pc}"
+    );
+};
+
+extern "C" {
+    static __used Megamix::GameInterface::SWPrintfSignature __swprintf_inner() {
+        return Megamix::pointers->swprintfFunc;
     }
+}
 
-    // Hooks - Tickflow
+// definitions from type stuff cause, lol
 
-    u32 TickflowHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x25a1b4;
-            case US:
-            case EU:
-                return 0x258df4;
-            case KR:
-                return 0x258dcc;
-            default:
-                return 0;
-        }
-    }
+void Megamix::CSaveManager::saveGame() {
+    pointers->saveGame(this);
+}
 
-    u32 GateHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x242510;
-            case US:
-            case EU:
-                return 0x240f9c;
-            case KR:
-                return 0x240f74;
-            default:
-                return 0;
-        }
-    }
+u16 Megamix::CSaveData::getGateScore(Megamix::GateGameIndex index, s32 file) {
+    return pointers->getGateScore(this, index, file);
+}
 
-    u32 GatePracHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x32e01c;
-            case US:
-            case EU:
-            case KR:
-                return 0x32d630;
-            default:
-                return 0;
-        }
-    }
-
-    // Hooks - Tempo
-
-    u32 StrmTempoHookFunc() {
-        switch (region) {
-            // can't seem to find a JP equivalent?
-            case US:
-            case EU:
-                return 0x276424;
-            case KR:
-                return 0x2763fc;
-            default:
-                return 0;
-        }
-    }
-
-    u32 SeqTempoHookFunc() {
-        switch (region) {
-            // can't seem to find a JP equivalent?
-            case US:
-            case EU:
-                return 0x2763c8;
-            case KR:
-                return 0x2763a0;
-            default:
-                return 0;
-        }
-    }
-
-    u32 AllTempoHookFunc() {
-        switch (region) {
-            case JP:
-                // TODO: this function combines getTempoFromTable and US' func_0024f47c, adapt the hook
-                return 0x25098c;
-            case US:
-            case EU:
-            case KR:
-                return 0x203c08;
-            default:
-                return 0;
-        }
-    }
-
-    // Code sections
-
-    u32 TextEnd() {
-        return 0x39a000;
-    }
-
-    u32 RodataEnd() {
-        switch (region) {
-            case JP:
-                return 0x518000;
-            case US:
-            case EU:
-            case KR:
-                return 0x521000;
-            default:
-                return 0;
-        }
-    }
-
-    u32 DataEnd() {
-        switch (region) {
-            case JP:
-                return 0x540754;
-            case US:
-                return 0x54f074;
-            case EU:
-                return 0x54f16c;
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-    u32 BssEnd() {
-        switch (region) {
-            case JP:
-                return 0x5ce1f0;
-            case US:
-                return 0x5dc2f0;
-            case EU:
-            case KR:
-                return 0x5dc2f0;
-            default:
-                return 0;
-        }
-    }
-
-    // Various locations used for the Tickflow Command flow
-
-    u32 TickflowCommandsSwitch() {
-        switch (region) {
-            case JP:
-                return 0x25e054;
-            case US:
-            case EU:
-                return 0x25c3c0;
-            case KR:
-                return 0x25c398;
-            default:
-                return 0;
-        }
-    }
-
-    u32 TickflowCommandsEnd() {
-        switch (region) {
-            case JP:
-                return 0x262eac;
-            case US:
-            case EU:
-                return 0x2613cc;
-            case KR:
-                return 0x2613a4;
-            default:
-                return 0;
-        }
-    }
-
-    // Location of the code for async_sub (fixes custom commands)
-
-    u32 TickflowAsyncSubLocation() {
-        switch (region) {
-            case JP:
-                return 0x25e338;
-            case US:
-            case EU:
-                return 0x25c6c0;
-            case KR:
-                return 0x25c698;
-            default:
-                return 0;
-        }
-    }
-
-    // Locations of global variables
-
-    Megamix::CSaveData** GlobalSaveDataPointer(){
-        switch (region) {
-            case US:
-                return (Megamix::CSaveData**)0x54d350;
-            case EU:
-            case KR:
-                return (Megamix::CSaveData**)0x54d448;
-            case JP:
-            default:
-                return 0;
-        }
-    }
-
-    Megamix::CInputManager** GlobalInputManagerPointer(){
-        switch (region) {
-            case US:
-                return (Megamix::CInputManager**)0x54eed0;
-            case EU:
-            case KR:
-                return (Megamix::CInputManager**)0x54efc8;
-            case JP:
-            default:
-                return 0;
-        }
-    }
-
-    Megamix::CFileManager** GlobalFileManagerPointer(){
-        switch (region) {
-            case US:
-                return (Megamix::CFileManager**)0x54eedc;
-            case EU:
-            case KR:
-                return (Megamix::CFileManager**)0x54efd4;
-            case JP:
-            default:
-                return 0;
-        }
-    }
-
-    // RHMPatch's retry remix sub patch locations
-    std::vector<u32> RetryRemixLocs() {
-        switch (region) {
-            case JP:
-                return {0x19a180, 0x16485c, 0x1f8e78};
-            case US:
-            case EU:
-            case KR:
-                return {0x198c9c, 0x16302c, 0x1f7f84};
-            default:
-                return {};
-        }
-    }
-
-    // Region checker
-    u32 RegionFSHookFunc() {
-        switch (region) {
-            case US:
-            case EU:
-                return 0x28c070;
-            case KR:
-                return 0x28c048;
-            default: // this function doesn't exist in JP afaik
-                return 0;
-
-        }
-    }
-
-    u32 RegionOtherHookFunc() {
-        switch (region) {
-            case JP:
-                return 0x11932c;
-            case US:
-            case EU:
-            case KR:
-                return 0x119560;
-            default:
-                return 0;
-
-        }
-    }
-
-    // Endless stuff
-
-    Megamix::UnkStruct0054ef10** D_0054ef10() {
-        switch (region) {
-            case US:
-                return (Megamix::UnkStruct0054ef10**)0x54ef10;
-            case JP:
-            case EU:
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-
-
-    IsGateGameValidSignature IsGateGameValidFunc() {
-        switch (region) {
-            case US:
-                return (IsGateGameValidSignature)0x255550;
-            case JP:
-            case EU:
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-
-    GetGateScoreSignature GetGateScoreFunc() {
-        switch (region) {
-            case US:
-                return (GetGateScoreSignature)0x261a6c;
-            case JP:
-            case EU:
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-    SetGateScoreSignature SetGateScoreFunc() {
-        switch (region) {
-            case US:
-                return (SetGateScoreSignature)0x2366c0;
-            case JP:
-            case EU:
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-    SaveGameSignature SaveGameFunc() {
-        switch (region) {
-            case US:
-                return (SaveGameSignature)0x28bf14;
-            case JP:
-            case EU:
-            case KR:
-            default:
-                return 0;
-        }
-    }
-
-    Megamix::CSaveManager** SaveManager() {
-        switch (region) {
-            case US:
-                return (Megamix::CSaveManager**)0x54ef28;
-            case JP:
-            case EU:
-            case KR:
-            default:
-                return 0;
-
-        }
-    }
-    
-    // printf to MSBT
-
-    Megamix::CBlackBarManager** BlackbarLayout() {
-        switch(region) {
-            case JP:
-                return (Megamix::CBlackBarManager**)0x526404;
-            case US:
-            case EU:
-            case KR:
-                return (Megamix::CBlackBarManager**)0x52f3f8;
-            default:
-                return 0;
-        }
-    }
-
-    SWPrintfSignature SWPrintfFunc() {
-        switch (region) {
-            case JP:
-                return (SWPrintfSignature)(0x100914 + 1);
-            case US:
-            case EU:
-                return (SWPrintfSignature)(0x28a2d0 + 1);
-            case KR:
-                return (SWPrintfSignature)(0x28a2a8 + 1);
-            default:
-                return nullptr;
-        }
-    }
-
-    SetTextBoxStringSignature SetTextBoxStringFunc() {
-        switch (region) {
-            case JP:
-                return (SetTextBoxStringSignature)0x3204f8;
-            case US:
-            case EU:
-            case KR:
-                return (SetTextBoxStringSignature)0x31fcd8;
-            default:
-                return nullptr;
-        }
-    }
+void Megamix::CSaveData::setGateScore(Megamix::GateGameIndex index, u16 score, s32 file) {
+    pointers->setGateScore(this, index, score, file);
 }

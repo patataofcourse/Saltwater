@@ -24,6 +24,8 @@ To install them, you'll need [devkitPro pacman](https://devkitpro.org/wiki/devki
 
 Run `make` to build the plugin.
 
+> If you're trying to use clangd, you'll need to add `--query-driver=$DEVKITARM/bin/arm-none-eabi-*` to its arguments
+
 ## Credits
 * patataofcourse, 0xadk, and TheAlternateDoctor for programming the actual plugin
 * EstexNT for a LOT of the research used in this project - thank you so much!

@@ -6,6 +6,36 @@
 #include "types.h"
 
 namespace Megamix {
+    struct GameDef {
+        u8 console;
+        void* tfStart;
+        void* tfAsset;
+        char16_t* prologueArc;
+        char16_t* epilogueArc;
+        char* titleEntry;
+        char* infoEntry;
+        char* scoreHiEntry;
+        char* scoreOkEntry;
+        char* scoreNgEntry;
+        u32 prologueSfx;
+        u32 x2C;
+        u8 x30;
+        u8 x31;
+        u8 x32;
+    };
+
+    struct GateGameDef {
+        u8 console;
+        void* tfStart;
+        void* tfGatePractice;
+        char16_t* prologueArc;
+        char* titleEntry;
+        char* infoEntry;
+        char* unkEntry;
+        u32 prologueSfx;
+        u32 x20;
+    };
+
     struct Tempo {
         float beats;
         u32 time;
@@ -282,6 +312,58 @@ namespace Megamix {
     //Save File
     //-----------------
 
+
+    enum class GateGameIndex: u8 {
+        Game = 0xC,
+        AgbVirus = 0,
+        NtrCoinToss = 4,
+        RvlSword = 8,
+        CtrChicken = 0xC,
+
+        Difficulty = 0x3,
+        Easy = 0,
+        Medium = 1,
+        Hard = 2,
+        Endless = 3,
+
+        AgbVirusEasy = AgbVirus | Easy,
+        AgbVirusMedium = AgbVirus | Medium,
+        AgbVirusHard = AgbVirus | Hard,
+        AgbVirusEndless = AgbVirus | Endless,
+        NtrCoinTossEasy = NtrCoinToss | Easy,
+        NtrCoinTossMedium = NtrCoinToss | Medium,
+        NtrCoinTossHard = NtrCoinToss | Hard,
+        NtrCoinTossEndless = NtrCoinToss | Endless,
+        RvlSwordEasy = RvlSword | Easy,
+        RvlSwordMedium = RvlSword | Medium,
+        RvlSwordHard = RvlSword | Hard,
+        RvlSwordEndless = RvlSword | Endless,
+        CtrChickenEasy = CtrChicken | Easy,
+        CtrChickenMedium = CtrChicken | Medium,
+        CtrChickenHard = CtrChicken | Hard,
+        CtrChickenEndless = CtrChicken | Endless,
+
+        Invalid = 0x11,
+    };
+
+    inline GateGameIndex operator&(GateGameIndex lhs, GateGameIndex rhs) {
+        return (GateGameIndex)((u8)lhs & (u8)rhs);
+    }
+
+    enum class GateGameRank : u8 {
+        Unplayed = 0,
+        Failed = 1,
+        Beaten = 2,
+        Invalid = 4,
+    };
+
+    // Not really sure what this is, and it's undocumented
+    struct UnkStruct0054ef10 {
+        u8 padding[0x4c];
+        GateGameIndex currentGateSlot;
+        GateGameRank currentGateState;
+    };
+
     enum class EGameRank : u8 {
         Locked = 0,
         Unplayed = 1,
@@ -341,10 +423,15 @@ namespace Megamix {
         u8 cSaveData_sub1[0x1c20];
         struct CSaveFileData fileData[4];
         u32 currentFile;
+
+        u16 getGateScore(GateGameIndex index, s32 file);
+        void setGateScore(Megamix::GateGameIndex index, u16 score, s32 file);
     };
 
     // TODO
-    struct CSaveManager {};
+    struct CSaveManager {
+        void saveGame(); // defined in Region
+    };
 
     //-----------------
     //Input Manager
@@ -518,57 +605,6 @@ namespace Megamix {
         u8 field14_0x122;
         u8 field15_0x123;
         s32 id;
-    };
-
-    enum class GateGameIndex: u8 {
-        Game = 0xC,
-        AgbVirus = 0,
-        NtrCoinToss = 4,
-        RvlSword = 8,
-        CtrChicken = 0xC,
-
-        Difficulty = 0x3,
-        Easy = 0,
-        Medium = 1,
-        Hard = 2,
-        Endless = 3,
-
-        AgbVirusEasy = AgbVirus | Easy,
-        AgbVirusMedium = AgbVirus | Medium,
-        AgbVirusHard = AgbVirus | Hard,
-        AgbVirusEndless = AgbVirus | Endless,
-        NtrCoinTossEasy = NtrCoinToss | Easy,
-        NtrCoinTossMedium = NtrCoinToss | Medium,
-        NtrCoinTossHard = NtrCoinToss | Hard,
-        NtrCoinTossEndless = NtrCoinToss | Endless,
-        RvlSwordEasy = RvlSword | Easy,
-        RvlSwordMedium = RvlSword | Medium,
-        RvlSwordHard = RvlSword | Hard,
-        RvlSwordEndless = RvlSword | Endless,
-        CtrChickenEasy = CtrChicken | Easy,
-        CtrChickenMedium = CtrChicken | Medium,
-        CtrChickenHard = CtrChicken | Hard,
-        CtrChickenEndless = CtrChicken | Endless,
-
-        Invalid = 0x11,
-    };
-
-    inline GateGameIndex operator&(GateGameIndex lhs, GateGameIndex rhs) {
-        return (GateGameIndex)((u8)lhs & (u8)rhs);
-    }
-
-    enum class GateGameRank : u8 {
-        Unplayed = 0,
-        Failed = 1,
-        Beaten = 2,
-        Invalid = 4,
-    };
-
-    // Not really sure what this is, and it's undocumented
-    struct UnkStruct0054ef10 {
-        u8 padding[0x4c];
-        GateGameIndex currentGateSlot;
-        GateGameRank currentGateState;
     };
 
     //-----------------

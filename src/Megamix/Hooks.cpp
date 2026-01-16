@@ -10,6 +10,9 @@ using CTRPluginFramework::OSD;
 
 using Megamix::TempoTable;
 
+// c++ is stupid
+namespace GHooks = Megamix::Game::Hooks;
+
 namespace Megamix::Hooks {
     RT_HOOK tickflowHook;
     RT_HOOK gateHook;
@@ -33,7 +36,7 @@ namespace Megamix::Hooks {
                 OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
-        return *(void**)(Region::GameTable() + index * 0x34 + 4);  // og code
+        return Game::gGameTable()[index].tfStart;  // og code
     }
 
     void* getGateTickflowOffset(int index) {
@@ -45,7 +48,7 @@ namespace Megamix::Hooks {
                 OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
             }
         }
-        return *(void**)(Region::GateTable() + index * 0x24 + 4); // og code
+        return Game::gGateTable()[index].tfStart; // og code
     }
 
     void* getGatePracticeTickflowOffset(int index) {
@@ -57,7 +60,7 @@ namespace Megamix::Hooks {
                 OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
             }
         }
-        return *(void**)(Region::GateTable() + index * 0x24 + 8); // og code
+        return Game::gGateTable()[index].tfGatePractice; // og code
     }
 
     TempoTable* getTempoStrm(Megamix::CSoundManager* this_, u32 id) {
@@ -103,48 +106,68 @@ namespace Megamix::Hooks {
         }
     }
 
-    u32 getRegionCTR() {
-        //TODO: handle JP region / JP langpack
-        if (region == Region::KR)
-            return Region::KR_CTR;
-        return region;
+    Game::RegionSDK getRegionCTR() {
+        using namespace Game;
+        //TODO: handle JP region / JP langpack (?)
+
+        if (isJP())
+            return RegionSDK::JP;
+        else if (isUS())
+            return RegionSDK::US;
+        else if (isEU())
+            return RegionSDK::EU;
+        else if (isKR())
+            return RegionSDK::KR;
+        else
+            return RegionSDK::UNK;
     }
 
-    u32 getRegionMegamix() {
-        //TODO: handle JP region / JP langpack
-        return region;
+    Game::RegionMegamix getRegionMegamix() {
+        using namespace Game;
+        //TODO: handle JP region / JP langpack (?)
+
+        if (isJP())
+            return RegionMegamix::JP;
+        else if (isUS())
+            return RegionMegamix::US;
+        else if (isEU())
+            return RegionMegamix::EU;
+        else if (isKR())
+            return RegionMegamix::KR;
+        else
+            return RegionMegamix::UNK;
     }
 
 
     void TickflowHooks() {
-        rtInitHook(&tickflowHook, Region::TickflowHookFunc(), (u32)getTickflowOffset);
+        rtInitHook(&tickflowHook, GHooks::tickflow(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
-        rtInitHook(&gateHook, Region::GateHookFunc(), (u32)getGateTickflowOffset);
+        rtInitHook(&gateHook, GHooks::gate(), (u32)getGateTickflowOffset);
         rtEnableHook(&gateHook);
-        rtInitHook(&gatePracHook, Region::GatePracHookFunc(), (u32)getGatePracticeTickflowOffset);
+        rtInitHook(&gatePracHook, GHooks::gatePractice(), (u32)getGatePracticeTickflowOffset);
         rtEnableHook(&gatePracHook);
     }
 
     void TempoHooks() {
-        rtInitHook(&tempoStrmHook, Region::StrmTempoHookFunc(), (u32)getTempoStrm);
+        rtInitHook(&tempoStrmHook, GHooks::strmTempo(), (u32)getTempoStrm);
         rtEnableHook(&tempoStrmHook);
-        rtInitHook(&tempoSeqHook, Region::SeqTempoHookFunc(), (u32)getTempoSeq);
+        rtInitHook(&tempoSeqHook, GHooks::seqTempo(), (u32)getTempoSeq);
         rtEnableHook(&tempoSeqHook);
-        rtInitHook(&tempoAllHook, Region::AllTempoHookFunc(), (u32)getTempoAll);
+        rtInitHook(&tempoAllHook, GHooks::allTempo(), (u32)getTempoAll);
         rtEnableHook(&tempoAllHook);
     }
 
     void RegionHooks() {
-        if (region != Region::JP){
-            rtInitHook(&regionFSHook, Region::RegionFSHookFunc(), (u32)getRegionMegamix);
+        if (!Megamix::isJP()){
+            rtInitHook(&regionFSHook, GHooks::megamixRegionCode(), (u32)getRegionMegamix);
             rtEnableHook(&regionFSHook);
         }
-        rtInitHook(&regionOtherHook, Region::RegionOtherHookFunc(), (u32)getRegionCTR);
+        rtInitHook(&regionOtherHook, GHooks::sdkRegionCode(), (u32)getRegionCTR);
         rtEnableHook(&regionOtherHook);
     }
 
     void CommandHook() {
-        rtInitHook(&tickflowCommandsHook, Region::TickflowCommandsSwitch(), (u32)tickflowCommandsHookWrapper);
+        rtInitHook(&tickflowCommandsHook, Game::hTickflowCmds::hook(), (u32)tickflowCommandsHookWrapper);
         rtEnableHook(&tickflowCommandsHook);
     }
 

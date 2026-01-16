@@ -21,7 +21,7 @@ namespace Megamix {
         switch(cmd_num){
              // Necessary, as our hook overrides case 0.
             case 0:
-                return Region::TickflowAsyncSubLocation();
+                return Game::hTickflowCmds::cmd0();
             
             // 0x200 range - regular custom commands
             case InputCheck:
@@ -45,7 +45,7 @@ namespace Megamix {
                 displayCondvar(self, arg0, args);
                 break;
         }
-        return Region::TickflowCommandsEnd();
+        return Game::hTickflowCmds::return_();
     }
 
     void input_cmd(CTickflow* self, u32 arg0, u32* args) {
@@ -53,21 +53,22 @@ namespace Megamix {
             self->condvar = 0;
             return;
         } else if (arg0 == 2) {
-            CSaveData** gSaveData = Region::GlobalSaveDataPointer();
             // Here, arg0 gets replaced by the playstyle - 0 for buttons, 1 for tap - Results in playstyle-dependant reading
-            arg0 = (u32)(*gSaveData)->fileData[(*gSaveData)->currentFile].playStyle;
+            arg0 = (u32)Game::gSaveData()->fileData[Game::gSaveData()->currentFile].playStyle;
         }
 
-        CInputManager* gInputManager = *Region::GlobalInputManagerPointer();
         if (arg0 == 0) {
+            // set condvar to 1 if button with flag = 2<<args[0] is pressed
+
             if (args[0] >= 32) { // We're working with a 32-bit integer here, so flags are limited to bits 1-31
                 self->condvar = 0;
                 return;
             }
             
-            self->condvar = ((u32)gInputManager->padHandler->holdButtons >> args[0]) & 1;
+            self->condvar = ((u32)Game::gInputManager()->padHandler->holdButtons >> args[0]) & 1;
         } else {
-            self->condvar = (gInputManager->touchPanelHandler->touchPanelStatus.touch);
+            // set condvar to 1 if screen is pressed
+            self->condvar = Game::gInputManager()->touchPanelHandler->touchPanelStatus.touch;
         }
     }
 
@@ -81,14 +82,12 @@ namespace Megamix {
 
     void languageCheck(CTickflow* self, u32 arg0, u32* args) {
         if (arg0 != 0) return;
-        CSaveData* gSaveData = *Region::GlobalSaveDataPointer();
-        CFileManager* gFileManager = *Region::GlobalFileManagerPointer();
-        int saveLanguage = gSaveData->fileData[gSaveData->currentFile].locale;
+        int saveLanguage = Game::gSaveData()->fileData[Game::gSaveData()->currentFile].locale;
         if(saveLanguage == 1){
             self->condvar = 0;
         } else {
             wchar_t sublocale[5];
-            utf16_to_utf32((u32*)sublocale, gFileManager->sublocale, 4);
+            utf16_to_utf32((u32*)sublocale, Game::gFileManager()->sublocale, 4);
             sublocale[4] = '\0';
             std::wstring localews(sublocale);
             if(localews.find(L"JP") != (unsigned int)-1){
@@ -118,29 +117,26 @@ namespace Megamix {
 
         // alternatively, load the current slot loaded with the tickflow hook into a global, and use that instead
         // that way we can avoid the UB on non-gate slots
-        GateGameIndex slot = (*Region::D_0054ef10())->currentGateSlot;
-        if ((slot & Difficulty) != Endless || !Region::IsGateGameValidFunc()(slot))
+        GateGameIndex slot = Game::D_0054ef10()->currentGateSlot;
+        if ((slot & Difficulty) != Endless || Game::isGateGameValid(slot))
             return;
-        
-        CSaveManager* gSaveManager = *Region::SaveManager();
-        CSaveData* gSaveData = *Region::GlobalSaveDataPointer();
 
-        u32 oldScore = Region::GetGateScoreFunc()(gSaveData, slot, -1);
+        u32 oldScore = Game::gSaveData()->getGateScore(slot, -1);
         
         if (oldScore < self->condvar && self->condvar <= 0xFFFF) {
-            Region::SetGateScoreFunc()(gSaveData, slot, self->condvar, -1);
-            Region::SaveGameFunc()(gSaveManager);
+            Game::gSaveData()->setGateScore(slot, self->condvar, -1);
+            Game::gSaveManager()->saveGame();
         }
     }
     
     void msbtWithNum(CTickflow* self, u32 arg0, u32* args) {
         if (arg0 != 0) return;
 
-        TextBox* textBox = (*Region::BlackbarLayout())->textBox;
+        TextBox* textBox = Game::gBlackbarLayout()->textBox;
         char16_t* out = new char16_t[0x100];
 
-        Region::SWPrintfFunc()(out, 0x100, textBox->textBuf, self->condvar);
-        Region::SetTextBoxStringFunc()(textBox, out, 0);
+        Game::swprintf(out, 0x100, textBox->textBuf, self->condvar);
+        Game::setTextBoxString(textBox, out, 0);
 
         delete[] out;
     }

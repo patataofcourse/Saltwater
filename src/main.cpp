@@ -73,7 +73,7 @@ static void ToggleTouchscreenForceOn(void) {
 
 // This function is called before main and before the game starts
 // Useful to do code edits safely
-void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
+void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
     ToggleTouchscreenForceOn();
 
     // le params :D
@@ -94,25 +94,26 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings &settings) {
     }
 
     // Init region and config
-    region = Region::FromCode(ctrpf::Process::GetTitleID()); //TODO: what if US code in JP?
-    config = Config::FromFile(MEGAMIX_CONFIG_PATH);
-
-    // Remix retry sub patch
-    for (auto loc : Region::RetryRemixLocs()){
-        Process::Patch(loc, 0xE3A0200E); // mov r2, #0xE
+    auto region_res = Megamix::initGameInterface(ctrpf::Process::GetTitleID());
+    if (!region_res.has_value()) {
+        Megamix::panic("what the hell how did you get this\nyou're running saltwater on something that isn't megamix\nluma3ds shouldn't allow this, please report this bug!");
     }
 
-    // Start hooks
+    config = Config::FromFile(MEGAMIX_CONFIG_PATH);
+
+    // Start hooks, apply patches
     Megamix::Hooks::TickflowHooks();
     Megamix::Hooks::RegionHooks();
-    if (region != Region::JP) {
+    Megamix::Patches::PatchRetryRemix();
+    if (!Megamix::isJP()) {
         //TODO: find out how to make the tempo hooks JP-compatible
         Megamix::Hooks::TempoHooks();
         //TODO: find out how to make the tickflow commands hook JP-compatible
         Megamix::Hooks::CommandHook();
     }
 
-    if (region != Region::JP && params.extra_rows) {
+    if (!Megamix::isJP() && params.extra_rows) {
+        //TODO: find out how to make the extra row patches JP-compatible
         Megamix::Patches::PatchMuseumExtraRows();
     }
 }
@@ -127,27 +128,27 @@ void ctrpf::OnProcessExit(void) {
 
 #ifndef RELEASE
 void InitMenu(ctrpf::PluginMenu &menu) {
-    menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry*) {
         ctrpf::MessageBox("Settings", Utils::Format(
             "Result: %d",
             configResult
         ))();
     });
 
-    menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry*) {
         ctrpf::MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
     });
 
-    menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry*) {
         ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry *entry) {
+    menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry*) {
         ((void(*)(void))nullptr)();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry *entry) {
-        *(int*)nullptr = 100;
+    menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry*) {
+        *(volatile int*)nullptr = 100;
     });
 }
 #endif
@@ -157,8 +158,7 @@ int ctrpf::main(void) {
     Process::exceptionCallback = Megamix::CrashHandler;
 
     if (params.barista != 0xD06) {
-        ctrpf::MessageBox("Barista not used!", "You must run Saltwater from the Barista launcher!")();
-        Process::ReturnToHomeMenu();
+        Megamix::panic("You seem to be running Saltwater as a regular CTRPlugin. You must run Saltwater from the Barista launcher!");
     }
 
 #ifdef RELEASE
