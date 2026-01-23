@@ -10,8 +10,6 @@
 #include "Megamix/Error.hpp"
 #include "Megamix/Types.hpp"
 
-extern u8 region;
-
 namespace Megamix {
     struct GameInterface {
         u32 gameCode;
@@ -115,6 +113,27 @@ namespace Megamix {
 
 
     namespace Game {
+        enum class GameVariant: u8 {
+            JPRev0,
+            USRev0,
+            EURev0,
+            KRRev0,
+            UNK = (u8)-1,
+        };
+        
+        inline GameVariant getRegion() {
+            if (isJP())
+                return GameVariant::JPRev0;
+            else if (isUS())
+                return GameVariant::USRev0;
+            else if (isEU())
+                return GameVariant::EURev0;
+            else if (isKR())
+                return GameVariant::KRRev0;
+            else
+                return GameVariant::UNK;
+        }
+
         inline u32 _textEnd () { return pointers->textEnd; }
         inline u32 _rodataEnd() { return pointers->rodataEnd; }
         inline u32 _dataEnd() { return pointers->dataEnd; }

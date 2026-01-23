@@ -37,7 +37,7 @@ namespace Megamix {
         // -------------------
 
         BTKSHeader header;
-        result = file.Read(&header, sizeof(header)); // Magic
+        result = file.Read(&header, sizeof(header));
         if (result) return result;
 
         // sanity checks on the header
@@ -69,7 +69,7 @@ namespace Megamix {
             if (result) return result;
             
             // TODO: separate each individual section into a function for readability
-            
+
             // Tickflow section
             if (secHeader.magic == CHAR4_LE('F', 'L', 'O', 'W')) {
                 if (tickflowSize != 0) {
