@@ -221,19 +221,19 @@ namespace Megamix {
         .regionBHookPos= 0x119560,
 
         .saveData=     (CSaveData**)0x54d448,
-        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
-        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .getGateScore = (GameInterface::GetGateScoreSignature)0x261a44,
+        .setGateScore = (GameInterface::SetGateScoreSignature)0x236698,
 
         .inputManager= (CInputManager**)0x54efc8, 
         .fileManager=  (CFileManager**)0x54efd4,
-        .unk0054ef10 = (UnkStruct0054ef10**)GameInterface::UNIMPLEMENTED,
+        .unk0054ef10 = (UnkStruct0054ef10**)0x54f008,
 
-        .saveManager = (CSaveManager**)GameInterface::UNIMPLEMENTED,
-        .saveGame =    (GameInterface::SaveDataSignature)GameInterface::UNIMPLEMENTED,
+        .saveManager = (CSaveManager**)0x54f020,
+        .saveGame =    (GameInterface::SaveDataSignature)0x28beec,
 
         .blackbarLayout= (CBlackBarManager**)0x52f3f8,
 
-        .isGateGameValid= (GameInterface::IsGateGameValidSignature)GameInterface::UNIMPLEMENTED,
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)0x255528,
 
         .tickflowCommandsHook=   0x25c398,
         .tickflowCommandsCmd0=   0x25c698,
