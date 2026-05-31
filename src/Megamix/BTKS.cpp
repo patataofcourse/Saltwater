@@ -50,7 +50,7 @@ namespace Megamix {
         if (header.revision != 2)
             return -7; // Unsupported version
         
-        if (!((!isJP() && header.tickflowVariant == 0) || (isJP() && header.tickflowVariant == 1)))
+        if (isJP() ? header.tickflowVariant == 1 : header.tickflowVariant == 0)
             return -13; // Unsupported Tickflow format
 
         // Seek to end of header (in case there's some non-standard stuff idfk)
