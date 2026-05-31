@@ -48,7 +48,6 @@ else
 	else
 		ifeq ($(shell uname -s),macOS)
 			ifeq ($(AZAHAR),1)
-#				TODO: triple check with a mac user
 				CITRA_DIR := ~/Library/Application Support/Azahar/sdmc
 			else
 				CITRA_DIR := ~/Library/Application Support/Citra/sdmc

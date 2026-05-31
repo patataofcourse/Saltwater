@@ -6,6 +6,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+// ctrpf REQUIRES having this file, don't @ me
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>

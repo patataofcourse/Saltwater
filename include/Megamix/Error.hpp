@@ -2,13 +2,7 @@
 #define MEGAMIX_ERROR_HPP
 
 #include <string>
-#include <CTRPluginFramework.hpp>
-
-#define CALL_STACK_SIZE 5
-
-using CTRPluginFramework::Process;
-
-struct Void{};
+#include "CTRPF.hpp"
 
 namespace Megamix {
     std::string ErrorMessage(int code);
@@ -53,6 +47,7 @@ namespace Megamix {
         u32 statusRegisterA; // IFSR, DFSR, FPEXC
         u32 statusRegisterB; // FAR, FPINST
 
+        static constexpr int CALL_STACK_SIZE = 5;
         u32 callStack[CALL_STACK_SIZE];
     };
 

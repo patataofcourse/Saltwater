@@ -1,23 +1,18 @@
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "csvc.h"
 #include "external/plgldr.h"
 
 #include "Megamix.hpp"
 #include "Config.hpp"
-
+#include "Saltwater.hpp"
 #include "Stuff.hpp"
-
-Config* config;
-using Megamix::btks;
 
 const char* version = VERSION;
 
 SaltwaterParams params;
 
-// tired of typing these names
-namespace ctrpf = CTRPluginFramework;
 namespace CTRPluginFramework {
     void PatchProcess(FwkSettings &settings);
     void OnProcessExit(void);
@@ -57,7 +52,7 @@ static void ToggleTouchscreenForceOn(void) {
     if(R_FAILED(svcMapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, processHandle, (u32)startAddress, textTotalSize)))
         goto exit;
 
-    found = (u32 *)Utils::Search<u32>(0x14000000, (u32)textTotalSize, pattern);
+    found = (u32 *)CTRPF::Utils::Search<u32>(0x14000000, (u32)textTotalSize, pattern);
 
     if (found != nullptr)
     {
@@ -73,28 +68,29 @@ static void ToggleTouchscreenForceOn(void) {
 
 // This function is called before main and before the game starts
 // Useful to do code edits safely
-void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
+void CTRPF::PatchProcess(CTRPF::FwkSettings&) {
     ToggleTouchscreenForceOn();
 
-    // le params :D
-    params = *(SaltwaterParams*)ctrpf::FwkSettings::Header->config;
+    // plugin params - these are used for shorter types (bools usually)
+    params = *reinterpret_cast<SaltwaterParams*>(CTRPF::FwkSettings::Header->config);
 
     if (params.rhmpatch) {
-        // move RHMPatch back to where it was
-        ctrpf::File::Rename(
+        // barista moved RHMPatch's code.ips, move it back to where it was
+        CTRPF::File::Rename(
             "/luma/titles/000400000018a400/code.old.ips",
             "/luma/titles/000400000018a400/code.ips"
         );
     }
+
     if (params.plgldr) {
-        // disable plugin loader
+        // had to specifically turn on the plgldr, turn it off to not cause any issues
         plgLdrInit();
         PLGLDR__SetPluginLoaderState(false);
         plgLdrExit(); 
     }
 
     // Init region and config
-    auto region_res = Megamix::initGameInterface(ctrpf::Process::GetTitleID());
+    auto region_res = Megamix::initGameInterface(CTRPF::Process::GetTitleID());
     if (!region_res.has_value()) {
         Megamix::panic("what the hell how did you get this\nyou're running saltwater on something that isn't megamix\nluma3ds shouldn't allow this, please report this bug!");
     }
@@ -102,14 +98,14 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
     config = Config::FromFile(MEGAMIX_CONFIG_PATH);
 
     // Start hooks, apply patches
-    Megamix::Hooks::TickflowHooks();
-    Megamix::Hooks::RegionHooks();
+    Megamix::Hooks::initTickflowHooks();
+    Megamix::Hooks::initRegionHooks();
     Megamix::Patches::PatchRetryRemix();
     if (!Megamix::isJP()) {
         //TODO: find out how to make the tempo hooks JP-compatible
-        Megamix::Hooks::TempoHooks();
+        Megamix::Hooks::initTempoHooks();
         //TODO: find out how to make the tickflow commands hook JP-compatible
-        Megamix::Hooks::CommandHook();
+        Megamix::Hooks::initCommandHooks();
     }
 
     if (!Megamix::isJP() && params.extra_rows) {
@@ -120,40 +116,39 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
 
 // This function is called when the process exits
 // Useful to save settings, undo patchs or clean up things
-void ctrpf::OnProcessExit(void) {
-    Megamix::Hooks::DisableAllHooks(); // Probably not needed, but still
+void CTRPF::OnProcessExit(void) {
+    Megamix::Hooks::disableAllHooks(); // Probably not needed, but still
     ToggleTouchscreenForceOn();
-    delete config;
 }
 
 #ifndef RELEASE
-void InitMenu(ctrpf::PluginMenu &menu) {
-    menu += new ctrpf::MenuEntry("Config values", nullptr, [](ctrpf::MenuEntry*) {
-        ctrpf::MessageBox("Settings", Utils::Format(
+void InitMenu(CTRPF::PluginMenu &menu) {
+    menu += new CTRPF::MenuEntry("Config values", nullptr, [](CTRPF::MenuEntry*) {
+        CTRPF::MessageBox("Settings", Format(
             "Result: %d",
             configResult
         ))();
     });
 
-    menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry*) {
-        ctrpf::MessageBox("Map shit", Stuff::FileMapToString(config->tickflows))();
+    menu += new CTRPF::MenuEntry("Tickflow contents", nullptr, [](CTRPF::MenuEntry*) {
+        CTRPF::MessageBox("Map shit", Stuff::FileMapToString(config.tickflows))();
     });
 
-    menu += new ctrpf::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](ctrpf::MenuEntry*) {
-        ctrpf::MessageBox("Map shit", Stuff::TempoMapToString(btks.tempos))();
+    menu += new CTRPF::MenuEntry("Tempo contents (do this w a loaded btks)", nullptr, [](CTRPF::MenuEntry*) {
+        CTRPF::MessageBox("Map shit", Stuff::TempoMapToString(Megamix::btks.tempos))();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash (prefetch)", nullptr, [](ctrpf::MenuEntry*) {
+    menu += new CTRPF::MenuEntry("Force a crash (prefetch)", nullptr, [](CTRPF::MenuEntry*) {
         ((void(*)(void))nullptr)();
     });
 
-    menu += new ctrpf::MenuEntry("Force a crash (data)", nullptr, [](ctrpf::MenuEntry*) {
+    menu += new CTRPF::MenuEntry("Force a crash (data)", nullptr, [](CTRPF::MenuEntry*) {
         *(volatile int*)nullptr = 100;
     });
 }
 #endif
 
-int ctrpf::main(void) {
+int CTRPF::main(void) {
     // Crash handler
     Process::exceptionCallback = Megamix::CrashHandler;
 
@@ -164,7 +159,7 @@ int ctrpf::main(void) {
 #ifdef RELEASE
     Process::WaitForExit();
 #else
-    PluginMenu *menu = new PluginMenu(Utils::Format("Saltwater %s debug", VERSION), "", 1);
+    PluginMenu *menu = new PluginMenu(Format("Saltwater %s debug", VERSION), "", 1);
 
     // Synnchronize the menu with frame event
     menu->SynchronizeWithFrame(true);

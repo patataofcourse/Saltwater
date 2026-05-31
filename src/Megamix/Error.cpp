@@ -1,28 +1,23 @@
+#include "Megamix/Error.hpp"
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include <string>
 
 #include "Megamix.hpp"
+#include "Saltwater.hpp"
 
-using CTRPluginFramework::Process;
-using CTRPluginFramework::Utils;
-using CTRPluginFramework::Screen;
-using CTRPluginFramework::Color;
-using CTRPluginFramework::Controller;
-using CTRPluginFramework::Key;
-using CTRPluginFramework::OSD;
-using CTRPluginFramework::File;
-using CTRPluginFramework::Directory;
+using CTRPF::Directory;
+using CTRPF::File;
+using CTRPF::Controller;
+using CTRPF::Key;
 
 extern const u32 _TEXT_END;
 extern const u32 _start;
 
-//TODO: add enum
-//TODO: exceptions?
+//TODO: switch error system to something that does not suck ass
 namespace Megamix {
-    u8 errorImg[] = {};
-
+    // TODO: move all the strings to headers for translation reasons
     std::string ErrorMessage(int code) {
         switch (code) {
             // CTRPF errors
@@ -58,7 +53,7 @@ namespace Megamix {
                 return "Unsupported Tickflow format";
             
             default:
-                return Utils::Format("Unknown error code %08x", code);
+                return Format("Unknown error code %08x", code);
         }
     }
 
@@ -95,33 +90,45 @@ namespace Megamix {
         u32 fsr_status = (info->fsr & 0xf);
         switch (info->type) {
             case ERRF_EXCEPTION_PREFETCH_ABORT:
-                return Utils::Format("0-%02d-%s-%08X", fsr_status, MemSection(regs->pc), regs->pc);
+                return Format("0-%02d-%s-%08X", fsr_status, MemSection(regs->pc), regs->pc);
             case ERRF_EXCEPTION_DATA_ABORT:
                 fsr_status += ((info->fsr >> 10) & 1) * 0x10;
-                return Utils::Format("1-%02d-%s-%07X-%08X", fsr_status, MemSection(info->far), regs->pc, info->far);
+                return Format("1-%02d-%s-%07X-%08X", fsr_status, MemSection(info->far), regs->pc, info->far);
             case ERRF_EXCEPTION_VFP:
-                return Utils::Format("2-%07X", regs->pc);
+                return Format("2-%07X", regs->pc);
             case ERRF_EXCEPTION_UNDEFINED:
-                return Utils::Format("3-%07X", regs->pc);
+                return Format("3-%07X", regs->pc);
             default:
                 return "INVALID";
         }
     }
 
-    static bool render = true;
-    static bool dumped = false;
-    static bool full_info = false;
-    static bool faded = false;
+    // this has to be static because GetCrashData runs every frame for some reason
+    static struct {
+        bool render;
+        bool dumped;
+        bool full_info;
+        bool faded;
 
-    static std::string dump_location = ""; // also serves as error message if dump_error is true
-    static CrashInfo crash;
-    static bool dump_error = false;
+        std::string dump_location;
+        CrashInfo crash;
+        bool dump_error;
+    } s_crash_data = {
+        .render = true,
+        .dumped = false,
+        .full_info = false,
+        .faded = false,
+
+        .dump_location = "",
+        .crash = {},
+        .dump_error = false,
+    };
 
     namespace ErrorScreen {
         static CrashInfo GetCrashData(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
             CrashInfo crash;
             crash.info.type = CrashType::Extended;
-            crash.info.region = region;
+            crash.info.region = (u8)Game::getRegion();
             crash.info.excType = info->type;
 
             #ifdef RELEASE
@@ -163,7 +170,7 @@ namespace Megamix {
 
             // TODO: get call stack
             u32 stack_offset = 0;
-            for (int i = 0; i < CALL_STACK_SIZE; i++) {
+            for (int i = 0; i < ShortCrashInfo::CALL_STACK_SIZE; i++) {
                 while ((u32)stack >= 0x06000000 || (u32)(stack + stack_offset) < 0x01000000) {
                     u32 val = *(u32*)(regs->sp + stack_offset);
                     if ((val >= 0x0010000 && val < Game::_textEnd() || (val >= (u32)_start && val < _TEXT_END))) {
@@ -178,28 +185,30 @@ namespace Megamix {
             return crash;
         }
 
+        // TODO: move all the strings to headers for translation reasons
         static void InfoScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-            Screen screen = OSD::GetTopScreen();
-            if (!faded) {
+            CTRPF::Screen screen = OSD::GetTopScreen();
+            if (!s_crash_data.faded) {
                 screen.Fade(0.3);
-                faded = true;
+                s_crash_data.faded = true;
             }
-            screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
+            screen.DrawRect(16, 16, 368, 208, CTRPF::Color(0, 0, 0));
 
             u32 posY = 20;
-            posY = screen.Draw("Oh, no!", 20, posY, Color(255, 0, 0));
-            posY = screen.Draw(Utils::Format("Error %s", CrashCode(info, regs).c_str()), 20, posY, Color(255, 127, 127));
+            posY = screen.Draw("Oh, no!", 20, posY, CTRPF::Color(255, 0, 0));
+            posY = screen.Draw(Format("Error %s", CrashCode(info, regs).c_str()), 20, posY, CTRPF::Color(255, 127, 127));
             posY += 10;
             posY = screen.Draw("Something went wrong!", 20, posY);
             posY = screen.Draw("But don't panic, report the error to the SpiceRack", 20, posY);
             posY = screen.Draw("Discord server (discord.gg/xAKFPaERRG)", 20, posY);
             posY += 10;
             
-            if (dump_location != "") {
-                if (dump_error)
-                    posY = screen.Draw(std::string("Error while saving dump: ").append(dump_location), 20, posY);
-                else
-                    posY = screen.Draw(std::string("Crash dump saved to ").append(dump_location), 20, posY);
+            if (s_crash_data.dump_location.empty()) {
+                if (s_crash_data.dump_error) {
+                    posY = screen.Draw(std::string("Error while saving dump: ").append(s_crash_data.dump_location), 20, posY);
+                } else {
+                    posY = screen.Draw(std::string("Crash dump saved to ").append(s_crash_data.dump_location), 20, posY);
+                }
                 posY += 10;
             } else {
                 posY = screen.Draw("> Press A to dump crash (WIP)", 20, posY);
@@ -211,32 +220,32 @@ namespace Megamix {
         }
 
         static void DevScreen(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-            Screen screen = OSD::GetTopScreen();
-            screen.DrawRect(16, 16, 368, 208, Color(0, 0, 0));
+            CTRPF::Screen screen = OSD::GetTopScreen();
+            screen.DrawRect(16, 16, 368, 208, CTRPF::Color(0, 0, 0));
 
             u32 posY = 20;
 
-            posY = screen.Draw(Utils::Format("Debug info (%s)", Game::_regionName()), 20, posY);
-            posY = screen.Draw(Utils::Format("@ %08x -> %08x (@ PC -> LR)", regs->pc, regs->lr), 20, posY);
-            posY = screen.Draw(Utils::Format("Exception type %d", info->type), 20, posY);
+            posY = screen.Draw(Format("Debug info (%s)", Game::_regionName()), 20, posY);
+            posY = screen.Draw(Format("@ %08x -> %08x (@ PC -> LR)", regs->pc, regs->lr), 20, posY);
+            posY = screen.Draw(Format("Exception type %d", info->type), 20, posY);
             
             posY += 10;
             
             posY = screen.Draw("Call stack:", 20, posY);
-            for (int i = 0; i < CALL_STACK_SIZE; i++) {
-                posY = screen.Draw(Utils::Format(" - %08x", crash.info.callStack[i]), 20, posY);
+            for (int i = 0; i < ShortCrashInfo::CALL_STACK_SIZE; i++) {
+                posY = screen.Draw(Format(" - %08x", s_crash_data.crash.info.callStack[i]), 20, posY);
             }
 
             posY += 10;
 
-            posY = screen.Draw(Utils::Format("r0 = %08x    r1 = %08x", crash.registers[0], crash.registers[1]), 20, posY);
-            posY = screen.Draw(Utils::Format("r2 = %08x    r3 = %08x", crash.registers[2], crash.registers[3]), 20, posY);
-
-            if (dump_location != "") {
-                if (dump_error)
-                    posY = screen.Draw(std::string("Error while saving dump: ").append(dump_location), 20, posY);
+            posY = screen.Draw(Format("r0 = %08x    r1 = %08x", s_crash_data.crash.registers[0], s_crash_data.crash.registers[1]), 20, posY);
+            posY = screen.Draw(Format("r2 = %08x    r3 = %08x", s_crash_data.crash.registers[2], s_crash_data.crash.registers[3]), 20, posY);
+            
+            if (s_crash_data.dump_location != "") {
+                if (s_crash_data.dump_error)
+                    posY = screen.Draw(std::string("Error while saving dump: ").append(s_crash_data.dump_location), 20, posY);
                 else
-                    posY = screen.Draw(std::string("Crash dump saved to ").append(dump_location), 20, posY);
+                    posY = screen.Draw(std::string("Crash dump saved to ").append(s_crash_data.dump_location), 20, posY);
                 posY += 10;
             } else {
                 posY = screen.Draw("> Press A to dump crash", 20, posY);
@@ -260,7 +269,7 @@ namespace Megamix {
         int num = 0;
         std::string path;
         for (;; num++) {
-            path = Utils::Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num);
+            path = Format(MEGAMIX_CRASH_PATH "swcrash_%05d.swd", num);
             if (!File::Exists(path))
                 break;
         }
@@ -274,26 +283,26 @@ namespace Megamix {
         res = file.Write("SELCRAH\0", 8);
         if (res) return res;
 
-        res = file.Write(&crash, sizeof(crash));
+        res = file.Write(&s_crash_data.crash, sizeof(s_crash_data.crash));
         if (res) return res;
 
         res = file.Close();
         if (res) return res;
 
-        dump_location = path;
+        s_crash_data.dump_location = path;
 
         return 0;
     }
 
     Process::ExceptionCallbackState CrashHandler(ERRF_ExceptionInfo* info, CpuRegisters* regs) {
-        if (!dumped) {
-            crash = ErrorScreen::GetCrashData(info, regs);
-            dumped = true;
+        if (!s_crash_data.dumped) {
+            s_crash_data.crash = ErrorScreen::GetCrashData(info, regs);
+            s_crash_data.dumped = true;
         }
         
-        if (render) {
-            render = false;
-            if (full_info) {
+        if (s_crash_data.render) {
+            s_crash_data.render = false;
+            if (s_crash_data.full_info) {
                 ErrorScreen::DevScreen(info, regs);
             } else {
                 ErrorScreen::InfoScreen(info, regs);
@@ -301,21 +310,23 @@ namespace Megamix {
         }
         
         Controller::Update();
+
         if (Controller::IsKeyPressed(Key::B)) {
             return Process::ExceptionCallbackState::EXCB_RETURN_HOME;
-        } else {
-            if (Controller::IsKeyPressed(Key::A) && dump_location == "") {
-                int result = SaveCrashDump();
-                if (result != 0) {
-                    dump_error = true;
-                    dump_location = ErrorMessage(result);
-                }
-                render = true;
-            } else if (Controller::IsKeyPressed(Key::Y)) {
-                render = true;
-                full_info = !full_info;
-            }
-            return Process::ExceptionCallbackState::EXCB_LOOP;
         }
+
+        if (Controller::IsKeyPressed(Key::A) && s_crash_data.dump_location == "") {
+            int result = SaveCrashDump();
+            if (result != 0) {
+                s_crash_data.dump_error = true;
+                s_crash_data.dump_location = ErrorMessage(result);
+            }
+            s_crash_data.render = true;
+        } else if (Controller::IsKeyPressed(Key::Y)) {
+            s_crash_data.render = true;
+            s_crash_data.full_info = !s_crash_data.full_info;
+        }
+        return Process::ExceptionCallbackState::EXCB_LOOP;
+    
     }
 }

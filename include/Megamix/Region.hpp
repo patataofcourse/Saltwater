@@ -5,14 +5,10 @@
 #include <vector>
 #include <string>
 
-#include "types.h"
-
-#include <CTRPluginFramework.hpp>
+#include <3ds/types.h>
 
 #include "Megamix/Error.hpp"
 #include "Megamix/Types.hpp"
-
-extern u8 region;
 
 namespace Megamix {
     struct GameInterface {
@@ -101,7 +97,7 @@ namespace Megamix {
 
     // TODO: if we ever add extra game revisions, add check for those
 
-    std::expected<Void, u32> initGameInterface(u32 gameCode);
+    std::expected<void, u32> initGameInterface(u32 gameCode);
     inline bool isJP() {
         return pointers->gameCode == 0x155a00;
     }
@@ -117,6 +113,27 @@ namespace Megamix {
 
 
     namespace Game {
+        enum class GameVariant: u8 {
+            JPRev0,
+            USRev0,
+            EURev0,
+            KRRev0,
+            UNK = (u8)-1,
+        };
+        
+        inline GameVariant getRegion() {
+            if (isJP())
+                return GameVariant::JPRev0;
+            else if (isUS())
+                return GameVariant::USRev0;
+            else if (isEU())
+                return GameVariant::EURev0;
+            else if (isKR())
+                return GameVariant::KRRev0;
+            else
+                return GameVariant::UNK;
+        }
+
         inline u32 _textEnd () { return pointers->textEnd; }
         inline u32 _rodataEnd() { return pointers->rodataEnd; }
         inline u32 _dataEnd() { return pointers->dataEnd; }

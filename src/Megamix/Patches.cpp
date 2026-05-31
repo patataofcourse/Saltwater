@@ -4,12 +4,39 @@
 #include <optional>
 
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "Megamix.hpp"
 #include "Config.hpp"
 
+// TODO: these currently have no way to unpatch. should we not do that?
+
 namespace Megamix::Patches {
+    // see specified sections in the arm A-profile reference manual
+    namespace BuildInstr {
+        // register is 4 bits, value is 12 bits
+        // see F5.1.35
+        static constexpr u32 cmp_immediate(u32 reg, u32 value) {
+            // 1110 == no condition
+            const u32 cond = 0b1110 << 28;
+            const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
+            reg <<= 16;
+
+            return cond | cmp_imm_base | reg | value;
+        }
+
+        // register is 4 bits, value is 12 bits
+        // see F5.1.122
+        static constexpr u32 mov_immediate(u32 reg, u32 value) {
+            // 1110 == no condition
+            const u32 cond = 0b1110 << 28;
+            const u32 cmp_imm_base = 0b0000'00111'01'0 << 20;
+            reg <<= 12;
+
+            return cond | cmp_imm_base | reg | value;
+        }
+    }
+
     std::vector<MuseumRow> museumRows {
         /* 0  */ MuseumRow({ RvlKarate0,     NtrRobotS,     RvlBadmintonS, CtrStepS,        None       }, "stage_gr00",    0, 0),
         /* 1  */ MuseumRow({ AgbHairS,       NtrChorusS,    RvlMuscleS,    CtrFruitbasketS, None       }, "stage_gr01",    0, 1),
@@ -37,7 +64,7 @@ namespace Megamix::Patches {
         /* 23 */ MuseumRow({ AgbHoppingL,    AgbNightWalkL, AgbQuizL,      None,            None       }, "bonus_AGB",     0, 0),
         /* 24 */ MuseumRow({ NtrBoxShowL,    NtrShortLiveL, RvlKarate2,    None,            None       }, "bonus_NTR",     0, 0),
         /* 25 */ MuseumRow({ RvlAssembleL,   RvlDateL,      RvlFishingL,   None,            None       }, "bonus_RVL0",    0, 0),
-        /* 26 */ MuseumRow({ RvlForkL,       RvlRapL,       RvlRecieveL,   None,            None       }, "bonus_RVL1",    0, 0),
+        /* 26 */ MuseumRow({ RvlForkL,       RvlRapL,       RvlReceiveL,   None,            None       }, "bonus_RVL1",    0, 0),
         /* 27 */ MuseumRow({ RvlRobotL,      RvlRotationL,  RvlSamuraiL,   None,            None       }, "bonus_RVL2",    0, 0),
         /* 28 */ MuseumRow({ RvlSortL,       RvlWatchL,     RvlKarate3,    None,            None       }, "bonus_RVL3",    0, 0),
     };
@@ -74,17 +101,6 @@ namespace Megamix::Patches {
         /* 28 */ MuseumRowColor(0x78500AFF, 0x643C3200),
     };
 
-    // see section F5.1.35 in the arm A-profile reference manual
-    // register is 4 bits, value is 12 bits
-    constexpr u32 make_cmp_immediate_instruction(u32 reg, u32 value) {
-        // 1110 == no condition
-        const u32 cond = 0b1110 << 28;
-        const u32 cmp_imm_base = 0b0000'00110'10'1 << 20;
-        reg <<= 16;
-
-        return cond | cmp_imm_base | reg | value;
-    }
-
     std::optional<u16> SlotIdToMuseumGameId(u16 gameId) {
         if (gameId < 0x100) {
             return gameId;
@@ -111,7 +127,7 @@ namespace Megamix::Patches {
 
         // not all slots are valid museum games
         u32 validGameIds = 0;
-        for (auto &[key, _] : config->tickflows) {
+        for (auto &[key, _] : config.tickflows) {
             if (SlotIdToMuseumGameId(key).has_value()) {
                 validGameIds += 1;
             }
@@ -119,7 +135,7 @@ namespace Megamix::Patches {
 
         // museum don't support rows with only 2 games
         if (validGameIds == 2) {
-            for (auto &pair : config->tickflows) {
+            for (auto &pair : config.tickflows) {
                 std::optional<u16> id = SlotIdToMuseumGameId(pair.first);
                 if (!id.has_value()) {
                     continue;
@@ -131,7 +147,7 @@ namespace Megamix::Patches {
             std::array<u16, 5> newRowIds { None, None, None, None, None };
             size_t newRowLength = 0;
 
-            for (auto &pair : config->tickflows) {
+            for (auto &pair : config.tickflows) {
                 std::optional<u16> id = SlotIdToMuseumGameId(pair.first);
                 if (!id.has_value()) {
                     continue;
@@ -195,14 +211,14 @@ namespace Megamix::Patches {
         }
 
         u32 compare_r1_instruction = // cmp r1, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(1, museumRows.size());
+            BuildInstr::cmp_immediate(1, museumRows.size());
 
         for (auto address : Game::pMuseumRows::r1Cmps()) {
             Process::Patch(address, compare_r1_instruction);
         }
 
         u32 compare_r8_instruction = // cmp r8, MUSEUM_ROW_COUNT
-            make_cmp_immediate_instruction(8, museumRows.size());
+            BuildInstr::cmp_immediate(8, museumRows.size());
 
         for (auto address : Game::pMuseumRows::r8Cmps()) {
             Process::Patch(address, compare_r8_instruction);
@@ -215,20 +231,9 @@ namespace Megamix::Patches {
         }
     }
 
-    // see section F5.1.122 in the arm A-profile reference manual
-    // register is 4 bits, value is 12 bits
-    constexpr u32 make_mov_immediate_instruction(u32 reg, u32 value) {
-        // 1110 == no condition
-        const u32 cond = 0b1110 << 28;
-        const u32 cmp_imm_base = 0b0000'00111'01'0 << 20;
-        reg <<= 12;
-
-        return cond | cmp_imm_base | reg | value;
-    }
-
     void PatchRetryRemix() {
         u32 instr = // mov r2, #0xE
-            make_mov_immediate_instruction(2, 0xE);
+            BuildInstr::mov_immediate(2, 0xE);
 
         for (auto loc: Game::Patches::ptrsToRetryRemix()){
             Process::Patch(loc, instr); 

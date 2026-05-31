@@ -1,5 +1,5 @@
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "external/rt.h"
 
@@ -28,36 +28,36 @@ namespace Megamix::Hooks {
     RT_HOOK tickflowCommandsHook;
 
     void* getTickflowOffset(int index) {
-        if (config->tickflows.contains(index)) {
-            int result = Megamix::btks.LoadFile(config->tickflows[index]);
+        if (config.tickflows.contains(index)) {
+            int result = Megamix::btks.LoadFile(config.tickflows[index]);
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
-                OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
+                OSD::Notify(Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
         return Game::gGameTable()[index].tfStart;  // og code
     }
 
     void* getGateTickflowOffset(int index) {
-        if (config->tickflows.contains(index + 0x100)) {
-            int result = Megamix::btks.LoadFile(config->tickflows[index + 0x100]);
+        if (config.tickflows.contains(index + 0x100)) {
+            int result = Megamix::btks.LoadFile(config.tickflows[index + 0x100]);
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
-                OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
+                OSD::Notify(Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
         return Game::gGateTable()[index].tfStart; // og code
     }
 
     void* getGatePracticeTickflowOffset(int index) {
-        if (config->tickflows.contains((index >> 2) + 0x110)) {
-            int result = Megamix::btks.LoadFile(config->tickflows[(index >> 2) + 0x110]);
+        if (config.tickflows.contains((index >> 2) + 0x110)) {
+            int result = Megamix::btks.LoadFile(config.tickflows[(index >> 2) + 0x110]);
             if (!result) {
                 return (void*)(Megamix::btks.start);
             } else {
-                OSD::Notify(CTRPluginFramework::Utils::Format("Error: %s", Megamix::ErrorMessage(result).c_str()));    
+                OSD::Notify(Format("Error: %s", Megamix::ErrorMessage(result).c_str()));
             }
         }
         return Game::gGateTable()[index].tfGatePractice; // og code
@@ -138,8 +138,9 @@ namespace Megamix::Hooks {
             return RegionMegamix::UNK;
     }
 
+    // ---
 
-    void TickflowHooks() {
+    void initTickflowHooks() {
         rtInitHook(&tickflowHook, GHooks::tickflow(), (u32)getTickflowOffset);
         rtEnableHook(&tickflowHook);
         rtInitHook(&gateHook, GHooks::gate(), (u32)getGateTickflowOffset);
@@ -148,7 +149,7 @@ namespace Megamix::Hooks {
         rtEnableHook(&gatePracHook);
     }
 
-    void TempoHooks() {
+    void initTempoHooks() {
         rtInitHook(&tempoStrmHook, GHooks::strmTempo(), (u32)getTempoStrm);
         rtEnableHook(&tempoStrmHook);
         rtInitHook(&tempoSeqHook, GHooks::seqTempo(), (u32)getTempoSeq);
@@ -157,7 +158,7 @@ namespace Megamix::Hooks {
         rtEnableHook(&tempoAllHook);
     }
 
-    void RegionHooks() {
+    void initRegionHooks() {
         if (!Megamix::isJP()){
             rtInitHook(&regionFSHook, GHooks::megamixRegionCode(), (u32)getRegionMegamix);
             rtEnableHook(&regionFSHook);
@@ -166,19 +167,28 @@ namespace Megamix::Hooks {
         rtEnableHook(&regionOtherHook);
     }
 
-    void CommandHook() {
-        rtInitHook(&tickflowCommandsHook, Game::hTickflowCmds::hook(), (u32)tickflowCommandsHookWrapper);
+    void initCommandHooks() {
+        rtInitHook(&tickflowCommandsHook, Game::hTickflowCmds::hook(), (u32)tickflowCommands);
         rtEnableHook(&tickflowCommandsHook);
     }
 
-    void DisableAllHooks() {
+    void disableTickflowHooks() {
         rtDisableHook(&tickflowHook);
         rtDisableHook(&gateHook);
+    }
+
+    void disableTempoHooks() {
         rtDisableHook(&tempoStrmHook);
         rtDisableHook(&tempoSeqHook);
         rtDisableHook(&tempoAllHook);
+    }
+
+    void disableRegionHooks() {
         rtDisableHook(&regionFSHook);
         rtDisableHook(&regionOtherHook);
+    }
+
+    void disableCommandHooks() {
         rtDisableHook(&tickflowCommandsHook);
     }
 

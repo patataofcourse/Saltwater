@@ -1,23 +1,28 @@
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
+
+#include <string>
 
 #include "Megamix.hpp"
-
-using CTRPluginFramework::OSD;
-using CTRPluginFramework::Utils;
+#include "Saltwater.hpp"
 
 namespace Megamix {
+    void input_cmd(CTickflow* self, u32 arg0, u32* args);
+    void versionCheck(CTickflow* self, u32 arg0, u32* args);
+    void languageCheck(CTickflow* self, u32 arg0, u32* args);
+    void displayCondvar(CTickflow* self, u32 arg0, u32* args);
+    void msbtWithNum(CTickflow* self, u32 arg0, u32* args);
 
-    void tickflowCommandsHookWrapper() {
+    void tickflowCommands() {
         asm(
             "mov r0, r6\n"
-            "bl tickflowCommandsHook\n"
+            "bl tickflowCommandsHookImpl\n"
             "bx r0\n"
         );
     }
 
-    extern "C" __attribute__((used)) 
-    int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
+    extern "C" __attribute__((used))
+    int tickflowCommandsHookImpl(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
         switch(cmd_num){
              // Necessary, as our hook overrides case 0.
             case 0:
@@ -83,23 +88,22 @@ namespace Megamix {
         if(saveLanguage == 1){
             self->condvar = 0;
         } else {
-            wchar_t sublocale[5];
-            utf16_to_utf32((u32*)sublocale, Game::gFileManager()->sublocale, 4);
-            sublocale[4] = '\0';
-            std::wstring localews(sublocale);
-            if(localews.find(L"JP") != (unsigned int)-1){
+            std::u16string sublocale(Game::gFileManager()->sublocale);
+            
+            sublocale = sublocale.substr(2, 2);
+            if (sublocale == u"JP") {
                 self->condvar = 0; 
-            } else if (localews.find(L"EN") != (unsigned int)-1){
+            } else if (sublocale == u"EN") {
                 self->condvar = 1; 
-            } else if (localews.find(L"FR") != (unsigned int)-1) {
+            } else if (sublocale == u"FR") {
                 self->condvar = 2; 
-            } else if (localews.find(L"GE") != (unsigned int)-1) {
+            } else if (sublocale == u"GE") {
                 self->condvar = 3; 
-            } else if (localews.find(L"IT") != (unsigned int)-1) {
+            } else if (sublocale == u"IT") {
                 self->condvar = 4; 
-            } else if (localews.find(L"SP") != (unsigned int)-1) {
+            } else if (sublocale == u"SP") {
                 self->condvar = 5; 
-            } else if (localews.find(L"KR") != (unsigned int)-1) {
+            } else if (sublocale == u"KR") {
                 self->condvar = 6; 
             } else {
                 self->condvar = -1;
@@ -122,11 +126,11 @@ namespace Megamix {
     void displayCondvar(CTickflow* self, u32 arg0, u32* args) {
         // Keeping that just in case
         // Screen bottomScreen = OSD::GetBottomScreen();
-        // bottomScreen.Draw("Condvar:"+Utils::Format("0x%08x",self->condvar), 0, 0, Color::White, Color::Black);
+        // bottomScreen.Draw("Condvar:"+Format("0x%08x",self->condvar), 0, 0, Color::White, Color::Black);
         if(arg0 == 0) {
-            OSD::Notify("Condvar:"+Utils::Format("0x%08x",self->condvar));
+            OSD::Notify("Condvar:"+Format("0x%08x",self->condvar));
         } else if (arg0 == 1){ 
-            OSD::Notify("Condvar:"+Utils::Format("%08d",self->condvar));
+            OSD::Notify("Condvar:"+Format("%08d",self->condvar));
         }
     }
 

@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#include <types.h>
+#include <3ds/types.h>
 
 #define PA_RWX(add)            (add == 0 ? 0 : (add < 0x30000000 ? (u32)((add) | (1u << 31)) : add))
 #define PA_FROM_VA(addr)        PA_RWX(svcConvertVAToPA((void *)addr, false))

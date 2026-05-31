@@ -1,11 +1,9 @@
 #include <3ds.h>
-#include <CTRPluginFramework.hpp>
+#include "CTRPF.hpp"
 
 #include "Megamix.hpp"
 
 #include <expected>
-
-u8 region;
 
 #define THUMB_CALL_ADDR(pos) ((pos) | 1)
 
@@ -206,7 +204,7 @@ namespace Megamix {
 
     const GameInterface* pointers = nullptr;
 
-    std::expected<Void, u32> initGameInterface(u32 gameCode) {
+    std::expected<void, u32> initGameInterface(u32 gameCode) {
         switch (gameCode) {
             case 0x155a00:
                 pointers = &jpCode;
