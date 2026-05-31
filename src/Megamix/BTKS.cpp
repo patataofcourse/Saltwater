@@ -51,7 +51,7 @@ namespace Megamix {
 
         result = file.Read(intBuf, 4); // Tickflow format - supported: 0 (US/EU/KR)
         if (result) return result;
-        if (!((!isJP() && *intBuf == 0) || (isJP() && *intBuf == 1)))
+        if (isJP() ? *intBuf != 1 : *intBuf != 0)
             return -13; // Unsupported Tickflow format
 
         // Seek to end of header
