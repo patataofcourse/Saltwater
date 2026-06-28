@@ -8,10 +8,13 @@ namespace Megamix::Hooks {
     void TempoHooks();
     void RegionHooks();
     void CommandHook();
+    void ScoringHook();
     void DisableAllHooks();
 
     template<typename T> T StubbedFunction();
     template<typename T> void StubFunction(u32 address);
 }
+
+extern std::vector<float> debugScoreArray;
 
 #endif

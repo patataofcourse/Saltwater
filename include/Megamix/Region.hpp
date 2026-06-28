@@ -27,6 +27,9 @@ namespace Megamix {
         u32 dataEnd;
         u32 bssEnd;
 
+        // scoring crap
+        u32 scoringHookPos;
+
         // game definitions
 
         GameDef* gameTable;
@@ -150,6 +153,8 @@ namespace Megamix {
             inline u32 strmTempo() { return pointers->strmTempoHookPos; }
             inline u32 seqTempo() { return pointers->seqTempoHookPos; }
             inline u32 allTempo() { return pointers->allTempoHookPos; }
+
+            inline u32 scoring() { return pointers->scoringHookPos; }
 
             inline u32 megamixRegionCode() { return pointers->regionAHookPos; }
             inline u32 sdkRegionCode() { return pointers->regionBHookPos; }

@@ -22,6 +22,8 @@ namespace Megamix {
         .dataEnd=   0x540754,
         .bssEnd=    0x5ce1f0,
 
+        .scoringHookPos= GameInterface::UNIMPLEMENTED,
+
         .gameTable=        (GameDef*)0x522498,
         .gateTable=        (GateGameDef*)0x525488,
         .tickflowHookPos=  0x25a1b4,
@@ -68,6 +70,8 @@ namespace Megamix {
         .rodataEnd= 0x521000,
         .dataEnd=   0x54f074,
         .bssEnd=    0x5dc2f0,
+
+        .scoringHookPos= 0x276264,
 
         .gameTable=        (GameDef*)0x52b498,
         .gateTable=        (GateGameDef*)0x52e488,
@@ -118,6 +122,8 @@ namespace Megamix {
         .dataEnd=   0x54f16c,
         .bssEnd=    0x5dc2f0,
 
+        .scoringHookPos= GameInterface::UNIMPLEMENTED,
+
         .gameTable=       (GameDef*)0x52b498,
         .gateTable=       (GateGameDef*)0x52e488,
         .tickflowHookPos= 0x258df4,
@@ -161,6 +167,8 @@ namespace Megamix {
         .rodataEnd= 0x521000,
         .dataEnd=   0x54f16c, //TODO: check
         .bssEnd=    0x5dc2f0,
+
+        .scoringHookPos= GameInterface::UNIMPLEMENTED,
 
         .gameTable=       (GameDef*)0x52b498,
         .gateTable=       (GateGameDef*)0x52e488,

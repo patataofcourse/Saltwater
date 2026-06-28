@@ -16,7 +16,7 @@ namespace Megamix {
         );
     }
 
-    extern "C" __attribute__((used)) 
+    extern "C" __attribute__((used))
     int tickflowCommandsHook(CTickflow* self, u32 cmd_num, u32 arg0, u32* args){
         switch(cmd_num){
              // Necessary, as our hook overrides case 0.

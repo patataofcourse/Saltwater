@@ -1,7 +1,9 @@
 build
 *.3gx
 *.elf
+*.kate-swp
 
 .vscode
 .cache
+3gxtool
 compile_commands.json

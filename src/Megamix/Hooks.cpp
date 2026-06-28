@@ -10,6 +10,8 @@ using CTRPluginFramework::OSD;
 
 using Megamix::TempoTable;
 
+std::vector<float> debugScoreArray;
+
 // c++ is stupid
 namespace GHooks = Megamix::Game::Hooks;
 
@@ -26,6 +28,8 @@ namespace Megamix::Hooks {
     RT_HOOK regionOtherHook;
 
     RT_HOOK tickflowCommandsHook;
+
+    RT_HOOK scoringFunctionHook;
 
     void* getTickflowOffset(int index) {
         if (config->tickflows.contains(index)) {
@@ -138,6 +142,79 @@ namespace Megamix::Hooks {
             return RegionMegamix::UNK;
     }
 
+    int decideFinalScore(Megamix::CResultManager *arg1) {
+        u8 amtCategories = arg1->mAmtCategories;
+        u32* amtHit = arg1->mAmtHit;
+        u32* amtBarely = arg1->mAmtBarely;
+        u32* amtMiss = arg1->mAmtMiss;
+        float catScore10000 = 0.0f;
+        float totalWeight = 0.0f;
+        float scoreDivWeight = 0.0f;
+        float amtInputs = 0.0f;
+        float result = 0.0f;
+        int finalResult = 0;
+        float curScoreWeight = 0.0f;
+        int validCategories = 0;
+        float distributedWeight = 0.0f;
+        float distributedAmtInputs = 0.0f;
+        float distributedScore = 0.0f;
+
+        debugScoreArray.clear();
+
+        if (amtCategories != 0) {
+            for (int g = 0; g < 7; g++) {
+                amtInputs = (int)(amtHit[g] + amtBarely[g] + amtMiss[g]);
+                if(amtInputs != 0){
+                    validCategories += 1;
+                }
+            }
+
+            distributedWeight = (float)(arg1->mScoreWeight[7]) / (float)(validCategories);
+            distributedAmtInputs = (float)(amtHit[7] + amtBarely[7] + amtMiss[7]) / (float)(validCategories);
+            if (arg1->points[7] < 1) {
+                distributedScore = (float)(arg1->points[7] + 1) / (float)(validCategories);
+            } else {
+                distributedScore = (float)(arg1->points[7]) / (float)(validCategories);
+            }
+
+            for (int i = 0; amtCategories > i; i++) {
+                if (i != 7) {
+                    amtInputs = (float)(amtHit[i] + amtBarely[i] + amtMiss[i]);
+                    if (amtInputs > 0) {
+                        if ((float)(amtHit[i] + amtBarely[i] + amtMiss[i]) < 1) {
+                            amtInputs = 0;
+                        }
+                        else {
+                            amtInputs += distributedAmtInputs;
+                            if (arg1->points[i] < 1) {
+                                catScore10000 = ((arg1->points[i] + distributedScore + 1) * 10000) / (amtInputs * arg1->mMaxWeight[i]);
+                            } else {
+                                catScore10000 = ((arg1->points[i] + distributedScore) * 10000) / (amtInputs * arg1->mMaxWeight[i]);
+                            }
+                        }
+
+                        debugScoreArray.push_back(catScore10000);
+
+                        curScoreWeight = (float)(arg1->mScoreWeight[i]) + distributedWeight;
+                        totalWeight += curScoreWeight;
+                        scoreDivWeight += curScoreWeight/catScore10000;
+                    }
+                }
+            }
+
+            if (totalWeight > 0.0f) {
+                result = totalWeight/scoreDivWeight;
+                finalResult = (int)(result - (arg1->mAmtPenalties * arg1->mPenalty));
+                if (finalResult > 10000) {
+                    finalResult = 10000;
+                }
+                if (finalResult > 0) {
+                    return finalResult;
+                }
+            }
+        }
+        return 0;
+    }
 
     void TickflowHooks() {
         rtInitHook(&tickflowHook, GHooks::tickflow(), (u32)getTickflowOffset);
@@ -171,6 +248,11 @@ namespace Megamix::Hooks {
         rtEnableHook(&tickflowCommandsHook);
     }
 
+    void ScoringHook(){
+        rtInitHook(&scoringFunctionHook, GHooks::scoring(), (int)decideFinalScore);
+        rtEnableHook(&scoringFunctionHook);
+    }
+
     void DisableAllHooks() {
         rtDisableHook(&tickflowHook);
         rtDisableHook(&gateHook);
@@ -179,8 +261,11 @@ namespace Megamix::Hooks {
         rtDisableHook(&tempoAllHook);
         rtDisableHook(&regionFSHook);
         rtDisableHook(&regionOtherHook);
+        rtDisableHook(&scoringFunctionHook);
         rtDisableHook(&tickflowCommandsHook);
     }
+
+
 
     template<typename T>
     T StubbedFunction() {

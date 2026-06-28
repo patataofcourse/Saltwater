@@ -103,6 +103,9 @@ void ctrpf::PatchProcess(ctrpf::FwkSettings&) {
 
     // Start hooks, apply patches
     Megamix::Hooks::TickflowHooks();
+    if(Megamix::isUS()) {
+        Megamix::Hooks::ScoringHook();
+    }
     Megamix::Hooks::RegionHooks();
     Megamix::Patches::PatchRetryRemix();
     if (!Megamix::isJP()) {
@@ -133,6 +136,16 @@ void InitMenu(ctrpf::PluginMenu &menu) {
             "Result: %d",
             configResult
         ))();
+    });
+
+    menu += new ctrpf::MenuEntry("Category Scores", nullptr, [](ctrpf::MenuEntry*) {
+        std::string debugScoreOutput = "";
+
+        for(float i : debugScoreArray) {
+            debugScoreOutput += std::to_string(i) + "\n";
+        }
+
+        ctrpf::MessageBox("Category Scores", debugScoreOutput)();
     });
 
     menu += new ctrpf::MenuEntry("Tickflow contents", nullptr, [](ctrpf::MenuEntry*) {

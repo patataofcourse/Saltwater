@@ -560,6 +560,44 @@ namespace Megamix {
         TextBox* textBox;
     };
 
+    struct CResultManager{
+        int* _vtable;
+        u8 mAmtCategories;
+        u8 field_0x5;
+        u8 mCommentTargetLowPrio;
+        u8 field_0x7;
+        s32 mCommentTargetHighPrio;
+        u32* mAmtHit;
+        u32* mAmtBarely;
+        u32* mAmtMiss;
+        s32 mAmtPenalties;
+        s32 field10_0x1c;
+        u32* mMaxWeight;
+        u32* field12_0x24;
+        u32* mScoreWeight;
+        u32 mPenalty;
+        u32* field15_0x30;
+        u32* field16_0x34;
+        u32 mOkThreshold;
+        u32 mHiThereshold;
+        u32* points;
+        u32* field20_0x44;
+        u32* mCommentMsbtFile;
+        char** mCommentHiEntry;
+        char** mCommentNgEntry;
+        s32 mSafeComment;
+        char* mSafeHiEntry;
+        char* mSafeOkEntry;
+        char* mSafeNgEntry;
+        s32 mMsbtFile;
+        char* mResultCaptionString;
+        u8 field_0x6c;
+        u8 field_0x6d;
+        u8 field_0x6e;
+        u8 field_0x64;
+        u32 mSkillStarInputNum;
+    };
+
 } // namespace Megamix
 
 #endif
