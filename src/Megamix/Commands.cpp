@@ -2,7 +2,10 @@
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
+#include "Megamix/Region.hpp"
 
+using CTRPluginFramework::Directory;
+using CTRPluginFramework::File;
 using CTRPluginFramework::OSD;
 using CTRPluginFramework::Utils;
 
@@ -32,6 +35,12 @@ namespace Megamix {
                 break;
             case LanguageCheck:
                 languageCheck(self, arg0, args);
+                break;
+            case PersistentStore:
+                persistentStorage(self, arg0, args, false);
+                break;
+            case PersistentFetch:
+                persistentStorage(self, arg0, args, true);
                 break;
             case MSBTWithNum:
                 msbtWithNum(self, arg0, args);
@@ -103,6 +112,131 @@ namespace Megamix {
                 self->condvar = 6; 
             } else {
                 self->condvar = -1;
+            }
+        }
+    }
+
+    void persistentStorage(CTickflow* self, u32 arg0, u32* args, bool fetch) {
+        char* name = (char*)args[0];
+        if (name < (char*)0x0010000) {
+            // invalid string pointer, abort
+            OSD::Notify(Utils::Format("Error: invalid string pointer in 0x%x", fetch ? PersistentFetch : PersistentStore));
+            return;
+        }
+
+        // fetch = false - 0x203 / save to file
+        // fetch = true  - 0x204 / read from file
+
+        if (!fetch) {
+            // save slots to file
+
+            // resolve range
+            u32 start = args[1];
+            u32 end = args[2];
+            if (end > 16 || start > 16 || start > end)
+                return;
+
+            if (end == (u32)-1)
+                end = start;
+
+            // create directory if it doesn't exist
+            Directory _ (MEGAMIX_STORAGE_PATH, true);
+
+            // write range
+            File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::WRITE | File::CREATE);
+            Result res = f.Write(&start, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res).c_str()));
+                return;
+            }
+
+            res = f.Write(&end, 4);
+            if (res < 0) {  
+                OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res).c_str()));
+                return;
+            }
+            
+            if (arg0 == 0) {
+                // write 0xb2 data
+                for (u32 i = start; i <= end; i++) {
+                    u32 value = Game::getU32Var(i);
+                    res = f.Write(&value, 4);
+                    if (res < 0) {
+                        OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res).c_str()));
+                        return;
+                    }
+                }
+            } else if (arg0 == 1) {
+                // write 0xb2<1> data
+                for (u32 i = start; i <= end; i++) {
+                    u8 value = Game::getU8Var(i);
+                    res = f.Write(&value, 1);
+                    if (res < 0) {
+                        OSD::Notify(Utils::Format("Error on %d: %s", PersistentStore, ErrorMessage(res).c_str()));
+                        return;
+                    }
+                }
+            }
+            f.Close();
+        } else {
+            if (arg0 == 2) {
+                // returns to condvar whether specified file exists
+                
+                int res = File::Exists(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name));
+                if (res < 0) {
+                    OSD::Notify(Utils::Format("Error on %d<2>: %s", PersistentFetch, ErrorMessage(res).c_str()));
+                    self->condvar = res;
+                }
+                    
+                self->condvar = res;
+                return;
+            }
+
+            // load slots from file
+
+            File f = File(Utils::Format(MEGAMIX_STORAGE_PATH "%s.bin", name), File::READ);
+                
+            u32 start, end;
+            Result res = f.Read(&start, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d: %s", PersistentFetch, ErrorMessage(res).c_str()));
+                return;
+            }
+
+            res = f.Read(&end, 4);
+            if (res < 0) {
+                OSD::Notify(Utils::Format("Error on %d: %s", PersistentFetch, ErrorMessage(res).c_str()));
+                return;
+            }
+
+            if (arg0 == 0) {
+                // load 0xb3 slots
+                for (u32 i = start; i <= end; i++) {
+                    u32 value;
+                    res = f.Read(&value, 4);
+                    if (res < 0) {
+                        OSD::Notify(Utils::Format("Error on %d: %s", PersistentFetch, ErrorMessage(res).c_str()));
+                        return;
+                    }
+    
+                    Game::setU32Var(i, value);
+    
+                    OSD::Notify(Utils::Format("0xB2 slot 0x%x: 0x%08x", i, Game::getU32Var(i)));
+                }
+            } else if (arg0 == 1) {
+                // load 0xb3<1> slots
+                for (u32 i = start; i <= end; i++) {
+                    u8 value;
+                    res = f.Read(&value, 1);
+                    if (res < 0) {
+                        OSD::Notify(Utils::Format("Error on %d: %s", PersistentFetch, ErrorMessage(res).c_str()));
+                        return;
+                    }
+    
+                    Game::setU8Var(i, value);
+    
+                    OSD::Notify(Utils::Format("0xB2<1> slot 0x%x: 0x%08x", i, Game::getU8Var(i)));
+                }
             }
         }
     }
