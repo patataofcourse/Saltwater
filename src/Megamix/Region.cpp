@@ -1,7 +1,9 @@
+#include "Megamix/Region.hpp"
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
 #include "Megamix.hpp"
+#include "Megamix/Types.hpp"
 
 #include <expected>
 
@@ -46,15 +48,25 @@ namespace Megamix {
         .regionBHookPos= 0x11932c,
 
         // TODO: any of these could have been made incompatible by version differences
-        .saveData=     (CSaveData**)GameInterface::UNIMPLEMENTED,
+        .saveData=      (CSaveData**)GameInterface::UNIMPLEMENTED,
+        .getGateScore = (GameInterface::GetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+        .setGateScore = (GameInterface::SetGateScoreSignature)GameInterface::UNIMPLEMENTED,
+
         .inputManager= (CInputManager**)GameInterface::UNIMPLEMENTED,
         .fileManager=  (CFileManager**)GameInterface::UNIMPLEMENTED,
+        .unk0054ef10 = (UnkStruct0054ef10**)GameInterface::UNIMPLEMENTED,
+
+        .saveManager = (CSaveManager**)GameInterface::UNIMPLEMENTED,
+        .saveGame =    (GameInterface::SaveDataSignature)GameInterface::UNIMPLEMENTED,
+
+        .blackbarLayout= (CBlackBarManager**)0x526404,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)0x2569d8,
 
         .tickflowCommandsHook=   0x25e054,
         .tickflowCommandsCmd0=   0x25e338,
         .tickflowCommandsReturn= 0x262eac,
 
-        .blackbarLayout=       (CBlackBarManager**)0x526404,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x100914),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x3204f8,
     };
@@ -96,14 +108,24 @@ namespace Megamix {
         .regionBHookPos= 0x119560,
 
         .saveData=     (CSaveData**)0x54d350,
+        .getGateScore = (GameInterface::GetGateScoreSignature)0x261a6c,
+        .setGateScore = (GameInterface::SetGateScoreSignature)0x2366c0,
+
         .inputManager= (CInputManager**)0x54eed0,
         .fileManager=  (CFileManager**)0x54eedc,
+        .unk0054ef10 = (UnkStruct0054ef10**)0x54ef10,
+
+        .saveManager = (CSaveManager**)0x54ef28,
+        .saveGame =    (GameInterface::SaveDataSignature)0x28bf14,
+
+        .blackbarLayout= (CBlackBarManager**)0x52f3f8,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)0x255550,
 
         .tickflowCommandsHook=   0x25c3c0,
         .tickflowCommandsCmd0=   0x25c6c0,
         .tickflowCommandsReturn= 0x2613cc,
 
-        .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
@@ -139,15 +161,25 @@ namespace Megamix {
         .regionAHookPos= 0x28c070,
         .regionBHookPos= 0x119560,
 
-        .saveData=     (CSaveData**)0x54d448, 
+        .saveData=     (CSaveData**)0x54d448,
+        .getGateScore = (GameInterface::GetGateScoreSignature)0x261a6c,
+        .setGateScore = (GameInterface::SetGateScoreSignature)0x2366c0,
+
         .inputManager= (CInputManager**)0x54efc8, 
         .fileManager=  (CFileManager**)0x54efd4,
+        .unk0054ef10 = (UnkStruct0054ef10**)0x54f008,
+
+        .saveManager = (CSaveManager**)0x54f020,
+        .saveGame =    (GameInterface::SaveDataSignature)0x28bf14,
+
+        .blackbarLayout= (CBlackBarManager**)0x52f3f8,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)0x255550,
 
         .tickflowCommandsHook=   0x25c3c0,
         .tickflowCommandsCmd0=   0x25c6c0,
         .tickflowCommandsReturn= 0x2613cc,
 
-        .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2d0),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
@@ -188,15 +220,25 @@ namespace Megamix {
         .regionAHookPos= 0x28c048,
         .regionBHookPos= 0x119560,
 
-        .saveData=     (CSaveData**)0x54d448, 
+        .saveData=     (CSaveData**)0x54d448,
+        .getGateScore = (GameInterface::GetGateScoreSignature)0x261a44,
+        .setGateScore = (GameInterface::SetGateScoreSignature)0x236698,
+
         .inputManager= (CInputManager**)0x54efc8, 
         .fileManager=  (CFileManager**)0x54efd4,
+        .unk0054ef10 = (UnkStruct0054ef10**)0x54f008,
+
+        .saveManager = (CSaveManager**)0x54f020,
+        .saveGame =    (GameInterface::SaveDataSignature)0x28beec,
+
+        .blackbarLayout= (CBlackBarManager**)0x52f3f8,
+
+        .isGateGameValid= (GameInterface::IsGateGameValidSignature)0x255528,
 
         .tickflowCommandsHook=   0x25c398,
         .tickflowCommandsCmd0=   0x25c698,
         .tickflowCommandsReturn= 0x2613a4,
 
-        .blackbarLayout=       (CBlackBarManager**)0x52f3f8,
         .swprintfFunc=         (GameInterface::SWPrintfSignature)THUMB_CALL_ADDR(0x28a2a8),
         .setTextBoxStringFunc= (GameInterface::SetTextBoxStringSignature)0x31fcd8,
     };
@@ -273,4 +315,18 @@ extern "C" {
     static __used Megamix::GameInterface::SWPrintfSignature __swprintf_inner() {
         return Megamix::pointers->swprintfFunc;
     }
+}
+
+// definitions from type stuff cause, lol
+
+void Megamix::CSaveManager::saveGame() {
+    pointers->saveGame(this);
+}
+
+u16 Megamix::CSaveData::getGateScore(Megamix::GateGameIndex index, s32 file) {
+    return pointers->getGateScore(this, index, file);
+}
+
+void Megamix::CSaveData::setGateScore(Megamix::GateGameIndex index, u16 score, s32 file) {
+    pointers->setGateScore(this, index, score, file);
 }

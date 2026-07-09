@@ -33,6 +33,9 @@ namespace Megamix {
             case LanguageCheck:
                 languageCheck(self, arg0, args);
                 break;
+            case EndlessSave:
+                endlessSave(self, arg0, args);
+                break;
             case MSBTWithNum:
                 msbtWithNum(self, arg0, args);
                 break;
@@ -107,6 +110,25 @@ namespace Megamix {
         }
     }
 
+    void endlessSave(CTickflow* self, u32 arg0, u32* args) {
+        using enum Megamix::GateGameIndex;
+
+        if (arg0 != 0) return;
+
+        // alternatively, load the current slot loaded with the tickflow hook into a global, and use that instead
+        // that way we can avoid the UB on non-gate slots
+        GateGameIndex slot = Game::D_0054ef10()->currentGateSlot;
+        if ((slot & Difficulty) != Endless || !Game::isGateGameValid(slot))
+            return;
+
+        u32 oldScore = Game::gSaveData()->getGateScore(slot, -1);
+        
+        if (oldScore < self->condvar && self->condvar <= 0xFFFF) {
+            Game::gSaveData()->setGateScore(slot, self->condvar, -1);
+            Game::gSaveManager()->saveGame();
+        }
+    }
+    
     void msbtWithNum(CTickflow* self, u32 arg0, u32* args) {
         if (arg0 != 0) return;
 

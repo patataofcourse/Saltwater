@@ -12,7 +12,7 @@
 #include "Megamix/Error.hpp"
 #include "Megamix/Types.hpp"
 
-extern u8 region;
+extern u8 region; //TODO: remove
 
 namespace Megamix {
     struct GameInterface {
@@ -61,9 +61,28 @@ namespace Megamix {
 
         // some common globals / managers
 
+        typedef u16 (*GetGateScoreSignature) (CSaveData* self, GateGameIndex index, s32 file);
+        typedef void (*SetGateScoreSignature) (CSaveData* self, GateGameIndex index, u16 score, s32 file);
+    
         CSaveData** saveData;
+        GetGateScoreSignature getGateScore;
+        SetGateScoreSignature setGateScore;
+
         CInputManager** inputManager;
         CFileManager** fileManager;
+        UnkStruct0054ef10** unk0054ef10;
+
+        typedef void (*SaveDataSignature) (CSaveManager*);
+
+        CSaveManager** saveManager;
+        SaveDataSignature saveGame;
+
+        CBlackBarManager** blackbarLayout;
+
+        // endless score saving
+
+        typedef bool (*IsGateGameValidSignature)(GateGameIndex slot);
+        IsGateGameValidSignature isGateGameValid;
 
         // tickflow commands
         u32 tickflowCommandsHook;
@@ -72,7 +91,6 @@ namespace Megamix {
 
         // MSBT printf
 
-        CBlackBarManager** blackbarLayout;
         typedef int (*SWPrintfSignature) (char16_t* buffer, size_t size, const char16_t* format, ...);
         typedef u32 (*SetTextBoxStringSignature) (Megamix::TextBox *, const char16_t *, u32);
 
@@ -131,8 +149,11 @@ namespace Megamix {
         inline CSaveData* gSaveData() { return *pointers->saveData; }
         inline CInputManager* gInputManager() { return *pointers->inputManager; }
         inline CFileManager* gFileManager() { return *pointers->fileManager; }
-
+        inline UnkStruct0054ef10* D_0054ef10() { return *pointers->unk0054ef10; }
+        inline CSaveManager* gSaveManager() { return *pointers->saveManager; }
         inline CBlackBarManager* gBlackbarLayout() { return *pointers->blackbarLayout; }
+
+        inline bool isGateGameValid(GateGameIndex slot) { return pointers->isGateGameValid(slot); }
 
         // see cpp file for impl details of this - tldr it's not good
         extern int swprintf(char16_t* buffer, size_t size, const char16_t* format, ...);
